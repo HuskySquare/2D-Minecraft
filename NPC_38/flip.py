@@ -1,4 +1,4 @@
-import glob
+import glob as glob
 from pygame import *
 files=glob.glob("*.png")
 for i in files:
