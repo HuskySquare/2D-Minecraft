@@ -1,5 +1,6 @@
 from pygame import *
 from random import *
+import numpy as np
 import pickle
 
 with open("blockspickle.pickle", "rb") as f:
@@ -11,13 +12,9 @@ with open("blockspickle.pickle", "rb") as f:
 screen = display.set_mode((1248, 704))
 
 #780 x 45
-
-blocks = [[0 for i in range(780)] for j in range(20)]
-for i in range(5):
-    blocks.append([1 for j in range(780)])
-for i in range(20):
-    blocks.append([randint(1,2) for j in range(780)])
-
+blocks=np.zeros((20,780),dtype="int8")
+blocks=np.vstack((blocks,np.ones((5,780),dtype="int8")))
+blocks=np.vstack((blocks,np.random.randint(1,3,size=(20,780))))
 blocksSurface = Surface((12480, 720), SRCALPHA)
 blocksSurface.fill((0, 0, 0, 0))
 
@@ -271,3 +268,5 @@ with open('blockspickle.pickle', 'wb') as f:
     pickle.dump(blocks, f)
 
 quit()
+
+
