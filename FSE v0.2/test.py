@@ -14,7 +14,7 @@ screen = display.set_mode((1248, 704))
 #780 x 45
 blocks=np.zeros((20,780),dtype="int8")
 blocks=np.vstack((blocks,np.ones((5,780),dtype="int8")))
-blocks=np.vstack((blocks,np.random.randint(1,3,size=(20,780))))
+blocks=np.vstack((blocks,np.random.randint(1,3,size=(20,780),dtype="int8")))
 blocksSurface = Surface((12480, 720), SRCALPHA)
 blocksSurface.fill((0, 0, 0, 0))
 
