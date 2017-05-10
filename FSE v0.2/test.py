@@ -1,7 +1,8 @@
-from pygame import *
 from random import *
 import numpy as np
 import pickle
+from time import time as tm
+from pygame import *
 
 with open("blockspickle.pickle", "rb") as f:
     blocks = pickle.load(f)
@@ -11,50 +12,60 @@ with open("blockspickle.pickle", "rb") as f:
 
 screen = display.set_mode((1248, 704))
 
+clock = time.Clock()
+
 #780 x 45
-blocks=np.zeros((20,780),dtype="int8")
-blocks=np.vstack((blocks,np.ones((5,780),dtype="int8")))
-blocks=np.vstack((blocks,np.random.randint(1,3,size=(20,780),dtype="int8")))
+##blocks=np.zeros((20,780))
+##blocks=np.vstack((blocks,np.ones((5,780))))
+##blocks=np.vstack((blocks,np.random.randint(1,3,size=(20,780))))
 blocksSurface = Surface((12480, 720), SRCALPHA)
 blocksSurface.fill((0, 0, 0, 0))
 
+blocks = [[0 for i in range(780)] for j in range(20)]
+for i in range(5):
+    blocks.append([1 for j in range(780)])
+for i in range(20):
+    blocks.append([randint(1,2) for j in range(780)])
+
+blocks = np.array(blocks)
+
 pos = 624
 
-background = image.load("background.png")
+background = image.load("background.png").convert(32, SRCALPHA)
 background = transform.scale(background, (1280, 720))
-block1_0 = image.load("dirt/dirt_block_19.png")
-block1_1 = image.load("dirt/dirt_block_1.png")
-block1_2 = image.load("dirt/dirt_block_0.png")
-block1_3 = image.load("dirt/dirt_block_4.png")
-block1_4 = image.load("dirt/dirt_block_33.png")
-block1_5 = image.load("dirt/dirt_block_69.png")
-block1_6 = image.load("dirt/dirt_block_68.png")
-block1_7 = image.load("dirt/dirt_block_37.png")
-block1_8 = image.load("dirt/dirt_block_51.png")
-block1_9 = image.load("dirt/dirt_block_50.png")
-block1_10 = image.load("dirt/dirt_block_70.png")
-block1_11 = image.load("dirt/dirt_block_59.png")
-block1_12 = image.load("dirt/dirt_block_56.png")
-block1_13 = image.load("dirt/dirt_block_8.png")
-block1_14 = image.load("dirt/dirt_block_12.png")
-block1_15 = image.load("dirt/dirt_block_9.png")
+block1_0 = image.load("dirt/dirt_block_19.png").convert(32, SRCALPHA)
+block1_1 = image.load("dirt/dirt_block_1.png").convert(32, SRCALPHA)
+block1_2 = image.load("dirt/dirt_block_0.png").convert(32, SRCALPHA)
+block1_3 = image.load("dirt/dirt_block_4.png").convert(32, SRCALPHA)
+block1_4 = image.load("dirt/dirt_block_33.png").convert(32, SRCALPHA)
+block1_5 = image.load("dirt/dirt_block_69.png").convert(32, SRCALPHA)
+block1_6 = image.load("dirt/dirt_block_68.png").convert(32, SRCALPHA)
+block1_7 = image.load("dirt/dirt_block_37.png").convert(32, SRCALPHA)
+block1_8 = image.load("dirt/dirt_block_51.png").convert(32, SRCALPHA)
+block1_9 = image.load("dirt/dirt_block_50.png").convert(32, SRCALPHA)
+block1_10 = image.load("dirt/dirt_block_70.png").convert(32, SRCALPHA)
+block1_11 = image.load("dirt/dirt_block_59.png").convert(32, SRCALPHA)
+block1_12 = image.load("dirt/dirt_block_56.png").convert(32, SRCALPHA)
+block1_13 = image.load("dirt/dirt_block_8.png").convert(32, SRCALPHA)
+block1_14 = image.load("dirt/dirt_block_12.png").convert(32, SRCALPHA)
+block1_15 = image.load("dirt/dirt_block_9.png").convert(32, SRCALPHA)
 block1 = [block1_0, block1_1, block1_2, block1_3, block1_4, block1_5, block1_6, block1_7, block1_8, block1_9, block1_10, block1_11, block1_12, block1_13, block1_14, block1_15]
-block2_0 = image.load("stone/stone_block_19.png")
-block2_1 = image.load("stone/stone_block_1.png")
-block2_2 = image.load("stone/stone_block_0.png")
-block2_3 = image.load("stone/stone_block_4.png")
-block2_4 = image.load("stone/stone_block_33.png")
-block2_5 = image.load("stone/stone_block_69.png")
-block2_6 = image.load("stone/stone_block_68.png")
-block2_7 = image.load("stone/stone_block_37.png")
-block2_8 = image.load("stone/stone_block_51.png")
-block2_9 = image.load("stone/stone_block_50.png")
-block2_10 = image.load("stone/stone_block_70.png")
-block2_11 = image.load("stone/stone_block_59.png")
-block2_12 = image.load("stone/stone_block_56.png")
-block2_13 = image.load("stone/stone_block_8.png")
-block2_14 = image.load("stone/stone_block_12.png")
-block2_15 = image.load("stone/stone_block_9.png")
+block2_0 = image.load("stone/stone_block_19.png").convert(32, SRCALPHA)
+block2_1 = image.load("stone/stone_block_1.png").convert(32, SRCALPHA)
+block2_2 = image.load("stone/stone_block_0.png").convert(32, SRCALPHA)
+block2_3 = image.load("stone/stone_block_4.png").convert(32, SRCALPHA)
+block2_4 = image.load("stone/stone_block_33.png").convert(32, SRCALPHA)
+block2_5 = image.load("stone/stone_block_69.png").convert(32, SRCALPHA)
+block2_6 = image.load("stone/stone_block_68.png").convert(32, SRCALPHA)
+block2_7 = image.load("stone/stone_block_37.png").convert(32, SRCALPHA)
+block2_8 = image.load("stone/stone_block_51.png").convert(32, SRCALPHA)
+block2_9 = image.load("stone/stone_block_50.png").convert(32, SRCALPHA)
+block2_10 = image.load("stone/stone_block_70.png").convert(32, SRCALPHA)
+block2_11 = image.load("stone/stone_block_59.png").convert(32, SRCALPHA)
+block2_12 = image.load("stone/stone_block_56.png").convert(32, SRCALPHA)
+block2_13 = image.load("stone/stone_block_8.png").convert(32, SRCALPHA)
+block2_14 = image.load("stone/stone_block_12.png").convert(32, SRCALPHA)
+block2_15 = image.load("stone/stone_block_9.png").convert(32, SRCALPHA)
 
 block2 = [block2_0, block2_1, block2_2, block2_3, block2_4, block2_5, block2_6, block2_7, block2_8, block2_9, block2_10, block2_11, block2_12, block2_13, block2_14, block2_15]
 blockImg = [False, block1, block2]
@@ -121,9 +132,8 @@ move=0      # current move being performed
 marioX, marioY = 400,300
 
 running = True
-myClock = time.Clock()
 
-##logo = image.load("images/logo.png")
+##logo = image.load("images/logo.png").convert(32, SRCALPHA)
 ##logoSurface = Surface((1248, 720))
 ##logoSurface.set_colorkey((0, 0, 0))
 ##logoSurface.blit(logo, (381, 250))
@@ -153,7 +163,7 @@ genMountain(2, 20, 20)
 #             blocks[y][x] = 1
 
 while running:
-
+    #sTime = tm()
     leftClick = False
     rightClick = False
     mx, my = mouse.get_pos()
@@ -256,10 +266,11 @@ while running:
     screen.blit(blocksSurface, (624 - pos, 0))
     moveMario()          
     drawScene()
-    myClock.tick(60)
     #print(blocksSurface.get_colorkey())
     #print(pos)
-
+    #print(tm() - sTime)
+    clock.tick()
+    display.set_caption("dank gaem fps = {0:.0f}".format(clock.get_fps()))
     display.flip()
 
 #blocks = blocks_default
