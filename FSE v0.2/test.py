@@ -101,6 +101,11 @@ def moveMario():
         move = newMove      # make that our current move
         frame = 1
 
+    screen.blit(background, (0, 0))
+    #blocksSurface.fill((0, 0, 0, 0))
+    screen.blit(blocksSurface, (624 - pos, 0))
+    drawPlayer()
+
 def makeMove(name,start,end):
     ''' This returns a list of pictures. They must be in the folder "name"
         and start with the name "name".
@@ -111,83 +116,14 @@ def makeMove(name,start,end):
         move.append(image.load("%s/%s%03d.png" % (name,name,i)))
     return move
 
-def drawScene():
+def drawPlayer():
     pic = pics[move][int(frame)]
     screen.blit(pic, (624-pic.get_width()//2, 323-pic.get_height()))            
     display.flip()
 
-RIGHT = 0 # These are just the indicies of the moves
-DOWN = 1  
-UP = 2
-LEFT = 3
-
-pics = []
-pics.append(makeMove("Mario",1,6))      # RIGHT
-pics.append(makeMove("Mario",7,12))     # DOWN
-pics.append(makeMove("Mario",13,18))    # UP
-pics.append(makeMove("Mario",19,24))    # LEFT
-
-frame=0     # current frame within the move
-move=0      # current move being performed
-marioX, marioY = 400,300
-
-running = True
-
-##logo = image.load("images/logo.png").convert(32, SRCALPHA)
-##logoSurface = Surface((1248, 720))
-##logoSurface.set_colorkey((0, 0, 0))
-##logoSurface.blit(logo, (381, 250))
-
-    
-##for i in range(255, 0, -1):
-##    screen.blit(background, (0, 0))
-##    logoSurface.set_alpha(i)
-##    screen.blit(logoSurface, (0, 0))
-##    display.flip()
-
-def genMountain(x1, x2, h):
-    # for x in range(abs(x2 - x1)):
-    #     for y in range():
-    for x in range(x1, x2 + 1):
-        for y in range(int(((h / ((x1**2)/4 - (x1*x2)/4 + (x2**2)/4)) * (x - (x1 + x2) / 2)**2 + 20 - h)), 20):
-            #print(x, y)
-            blocks[y][x] = 1
-
-genMountain(2, 20, 20)
-
-
-# for x in range(52):
-#     if 0 <= 1/10 * (x - 35)**2 < 30:
-#         blocks[int(1/10 * (x - 35)**2)][x] = 1
-#         for y in range(int(1/10 * (x - 35)**2), 30):
-#             blocks[y][x] = 1
-
-while running:
-    #sTime = tm()
-    leftClick = False
-    rightClick = False
-    mx, my = mouse.get_pos()
-    mb = mouse.get_pressed()
-    
+def drawScene():
     screen.blit(background, (0, 0))
-    blocksSurface.fill((0, 0 , 0, 0))
-    
-    for evt in event.get():
-        if evt.type == QUIT:
-            running = False
-        if evt.type == MOUSEBUTTONDOWN:
-            if evt.button == 1:
-                leftClick = True
-            if evt.button == 3:
-                rightClick = True
-                
-    keys = key.get_pressed()
-    
-    if keys[K_LEFT] and pos > 624:
-        pos -= 5
-    elif keys[K_RIGHT] and pos < 11856:
-        pos += 5
-
+    blocksSurface.fill((0, 0, 0, 0))
     for x in range(pos//16 - 40, pos//16 + 40): #779, pos//16 - 650, pos//16 + 650
         for y in range(44): #44
             if blocks[y][x] != 0:
@@ -247,25 +183,225 @@ while running:
                                 blocksSurface.blit(blockImg[blocks[y][x]][14], (x * 16, y * 16))
                         else:
                             blocksSurface.blit(blockImg[blocks[y][x]][15], (x * 16, y * 16))
-                
-                """if blocks[y][x] == 1:
-                    if blocks[y-1][x] == 0:
-                        if blocks[y-1]
-                        screen.blit(block1_1, (x * 16, y * 16))
+    screen.blit(blocksSurface, (624 - pos, 0))
+
+def drawWorld():
+    screen.blit(background, (0, 0))
+    blocksSurface.fill((0, 0, 0, 0))
+    for x in range(779): #779, pos//16 - 650, pos//16 + 650
+        for y in range(44): #44
+            if blocks[y][x] != 0:
+                top = True
+                down = True
+                left = True
+                right = True
+                if y != 0 and blocks[y-1][x] == 0:
+                    top = False
+                if y != 29 and blocks[y+1][x] == 0:
+                    down = False
+                if x != 0 and blocks[y][x-1] == 0:
+                    left = False
+                if x != 51 and blocks[y][x+1] == 0:
+                    right = False
+
+                if top and down and left and right:
+                    blocksSurface.blit(blockImg[blocks[y][x]][0], (x * 16, y * 16))
+
+                elif not top and not down and not left and not right:
+                    blocksSurface.blit(blockImg[blocks[y][x]][11], (x * 16, y * 16))
+
+                else:
+                    if top and down and right:
+                        blocksSurface.blit(blockImg[blocks[y][x]][2], (x * 16, y * 16))
+
+                    elif down and left and right:
+                        blocksSurface.blit(blockImg[blocks[y][x]][1], (x * 16, y * 16))
+
+                    elif top and down and left:
+                        blocksSurface.blit(blockImg[blocks[y][x]][3], (x * 16, y * 16))
+
+                    elif top and left and right:
+                        blocksSurface.blit(blockImg[blocks[y][x]][4], (x * 16, y * 16))
+
                     else:
-                        screen.blit(block1_0, (x * 16, y * 16))
-                elif blocks[y][x] == 2:
-                    screen.blit(block2, (x * 16, y * 16))"""
+                        if top:
+                            if left:
+                                blocksSurface.blit(blockImg[blocks[y][x]][5], (x * 16, y * 16))
+                            elif right:
+                                blocksSurface.blit(blockImg[blocks[y][x]][6], (x * 16, y * 16))
+                            elif down:
+                                blocksSurface.blit(blockImg[blocks[y][x]][7], (x * 16, y * 16))
+                            else:
+                                blocksSurface.blit(blockImg[blocks[y][x]][12], (x * 16, y * 16))
+                        elif down:
+                            if left:
+                                blocksSurface.blit(blockImg[blocks[y][x]][8], (x * 16, y * 16))
+                            elif right:
+                                blocksSurface.blit(blockImg[blocks[y][x]][9], (x * 16, y * 16))
+                            else:
+                                blocksSurface.blit(blockImg[blocks[y][x]][13], (x * 16, y * 16))
+                        elif left:
+                            if right:
+                                blocksSurface.blit(blockImg[blocks[y][x]][10], (x * 16, y * 16))
+                            else:
+                                blocksSurface.blit(blockImg[blocks[y][x]][14], (x * 16, y * 16))
+                        else:
+                            blocksSurface.blit(blockImg[blocks[y][x]][15], (x * 16, y * 16))
+    screen.blit(blocksSurface, (624 - pos, 0))
+
+def updateBlocks(blockX, blockY):
+    screen.blit(background, (0, 0))
+    draw.rect(blocksSurface, (0, 0, 0, 0), (blockX * 16 - 16, blockY * 16 - 16, 48, 48))
+    for x in range(blockX - 1, blockX + 2):  # 779, pos//16 - 650, pos//16 + 650
+        for y in range(blockY - 1, blockY + 2):  # 44
+            if blocks[y][x] != 0:
+                top = True
+                down = True
+                left = True
+                right = True
+                if y != 0 and blocks[y - 1][x] == 0:
+                    top = False
+                if y != 29 and blocks[y + 1][x] == 0:
+                    down = False
+                if x != 0 and blocks[y][x - 1] == 0:
+                    left = False
+                if x != 51 and blocks[y][x + 1] == 0:
+                    right = False
+
+                if top and down and left and right:
+                    blocksSurface.blit(blockImg[blocks[y][x]][0], (x * 16, y * 16))
+
+                elif not top and not down and not left and not right:
+                    blocksSurface.blit(blockImg[blocks[y][x]][11], (x * 16, y * 16))
+
+                else:
+                    if top and down and right:
+                        blocksSurface.blit(blockImg[blocks[y][x]][2], (x * 16, y * 16))
+
+                    elif down and left and right:
+                        blocksSurface.blit(blockImg[blocks[y][x]][1], (x * 16, y * 16))
+
+                    elif top and down and left:
+                        blocksSurface.blit(blockImg[blocks[y][x]][3], (x * 16, y * 16))
+
+                    elif top and left and right:
+                        blocksSurface.blit(blockImg[blocks[y][x]][4], (x * 16, y * 16))
+
+                    else:
+                        if top:
+                            if left:
+                                blocksSurface.blit(blockImg[blocks[y][x]][5], (x * 16, y * 16))
+                            elif right:
+                                blocksSurface.blit(blockImg[blocks[y][x]][6], (x * 16, y * 16))
+                            elif down:
+                                blocksSurface.blit(blockImg[blocks[y][x]][7], (x * 16, y * 16))
+                            else:
+                                blocksSurface.blit(blockImg[blocks[y][x]][12], (x * 16, y * 16))
+                        elif down:
+                            if left:
+                                blocksSurface.blit(blockImg[blocks[y][x]][8], (x * 16, y * 16))
+                            elif right:
+                                blocksSurface.blit(blockImg[blocks[y][x]][9], (x * 16, y * 16))
+                            else:
+                                blocksSurface.blit(blockImg[blocks[y][x]][13], (x * 16, y * 16))
+                        elif left:
+                            if right:
+                                blocksSurface.blit(blockImg[blocks[y][x]][10], (x * 16, y * 16))
+                            else:
+                                blocksSurface.blit(blockImg[blocks[y][x]][14], (x * 16, y * 16))
+                        else:
+                            blocksSurface.blit(blockImg[blocks[y][x]][15], (x * 16, y * 16))
+    screen.blit(blocksSurface, (624 - pos, 0))
+
+RIGHT = 0 # These are just the indicies of the moves
+DOWN = 1  
+UP = 2
+LEFT = 3
+
+pics = []
+pics.append(makeMove("Mario",1,6))      # RIGHT
+pics.append(makeMove("Mario",7,12))     # DOWN
+pics.append(makeMove("Mario",13,18))    # UP
+pics.append(makeMove("Mario",19,24))    # LEFT
+
+frame=0     # current frame within the move
+move=0      # current move being performed
+marioX, marioY = 400,300
+
+running = True
+
+##logo = image.load("images/logo.png").convert(32, SRCALPHA)
+##logoSurface = Surface((1248, 720))
+##logoSurface.set_colorkey((0, 0, 0))
+##logoSurface.blit(logo, (381, 250))
+
+    
+##for i in range(255, 0, -1):
+##    screen.blit(background, (0, 0))
+##    logoSurface.set_alpha(i)
+##    screen.blit(logoSurface, (0, 0))
+##    display.flip()
+
+def genMountain(x1, x2, h):
+    # for x in range(abs(x2 - x1)):
+    #     for y in range():
+    for x in range(x1, x2 + 1):
+        for y in range(int(((h / ((x1**2)/4 - (x1*x2)/4 + (x2**2)/4)) * (x - (x1 + x2) / 2)**2 + 20 - h)), 20):
+            #print(x, y)
+            blocks[y][x] = 1
+
+genMountain(2, 20, 20)
+drawWorld()
+drawPlayer()
+
+# for x in range(52):
+#     if 0 <= 1/10 * (x - 35)**2 < 30:
+#         blocks[int(1/10 * (x - 35)**2)][x] = 1
+#         for y in range(int(1/10 * (x - 35)**2), 30):
+#             blocks[y][x] = 1
+
+while running:
+    #sTime = tm()
+    leftClick = False
+    rightClick = False
+    mx, my = mouse.get_pos()
+    mb = mouse.get_pressed()
+    
+    for evt in event.get():
+        if evt.type == QUIT:
+            running = False
+        if evt.type == MOUSEBUTTONDOWN:
+            if evt.button == 1:
+                leftClick = True
+            if evt.button == 3:
+                rightClick = True
+                
+    keys = key.get_pressed()
+    
+    if keys[K_LEFT] and pos > 624:
+        pos -= 5
+        moveMario()
+        #move = "left"
+        #drawScene()
+    elif keys[K_RIGHT] and pos < 11856:
+        pos += 5
+        moveMario()
+        #move = "right"
+        #drawScene()
 
     if mb[0] == 1:
         blocks[my // 16][mx // 16 + (pos - 624) // 16] = 0
+        updateBlocks(mx // 16 + (pos - 624) // 16, my // 16)
+        #drawScene()
+        drawPlayer()
 
     if mb[2] == 1:
         blocks[my // 16][mx // 16 + (pos - 624) // 16] = 1
+        updateBlocks(mx // 16 + (pos - 624) // 16, my // 16)
+        #drawScene()
+        drawPlayer()
 
-    screen.blit(blocksSurface, (624 - pos, 0))
-    moveMario()          
-    drawScene()
+    #drawPlayer()
     #print(blocksSurface.get_colorkey())
     #print(pos)
     #print(tm() - sTime)
@@ -279,5 +415,3 @@ with open('blockspickle.pickle', 'wb') as f:
     pickle.dump(blocks, f)
 
 quit()
-
-
