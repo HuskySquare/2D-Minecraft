@@ -405,7 +405,7 @@ while running:
     #print(blocksSurface.get_colorkey())
     #print(pos)
     #print(tm() - sTime)
-    clock.tick(60)
+    clock.tick()
     display.set_caption("dank gaem fps = {0:.0f}".format(clock.get_fps()))
     display.flip()
 
