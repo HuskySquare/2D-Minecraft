@@ -375,7 +375,8 @@ while running:
                 leftClick = True
             if evt.button == 3:
                 rightClick = True
-                
+        if evt.type==KEYUP:
+            moveMario()
     keys = key.get_pressed()
     
     if keys[K_LEFT] and pos > 624:
