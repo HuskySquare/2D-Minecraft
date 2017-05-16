@@ -78,20 +78,23 @@ def moveMario():
     keys = key.get_pressed()
 
     newMove = -1        
-    if keys[K_RIGHT]:
-        newMove = RIGHT
-        marioX += 2
-    elif keys[K_DOWN]:
-        newMove = DOWN
-        marioY += 2
-    elif keys[K_UP]:
-        newMove = UP
-        marioY -= 2
-    elif keys[K_LEFT]:
-        newMove = LEFT
-        marioX -= 2
+    if keys[K_RIGHT] and keys[K_LEFT]:
+        pass
     else:
-        frame = 0
+        if keys[K_RIGHT]:
+            newMove = RIGHT
+            marioX += 2
+        elif keys[K_DOWN]:
+            newMove = DOWN
+            marioY += 2
+        elif keys[K_UP]:
+            newMove = UP
+            marioY -= 2
+        elif keys[K_LEFT]:
+            newMove = LEFT
+            marioX -= 2
+        else:
+            frame = 0
 
     if move == newMove:     # 0 is a standing pose, so we want to skip over it when we are moving
         frame = frame + 0.6 # adding 0.2 allows us to slow down the animation
