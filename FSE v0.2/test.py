@@ -74,25 +74,28 @@ def moveMario():
     ''' moveMario controls the location of Mario as well as adjusts the move and frame
         variables to ensure the right picture is drawn.
     '''
-    global move, frame, marioX, marioY
+    global move, frame, marioX, marioY,pos
     keys = key.get_pressed()
 
-    newMove = -1        
-    if keys[K_RIGHT] and keys[K_LEFT]:
+    newMove = -1
+    if  keys[K_RIGHT] and keys[K_LEFT]:
+        frame=0
         pass
     else:
-        if keys[K_RIGHT]:
+        if keys[K_RIGHT] and pos<11368:
             newMove = RIGHT
             marioX += 2
+            pos+=5
         elif keys[K_DOWN]:
             newMove = DOWN
             marioY += 2
         elif keys[K_UP]:
             newMove = UP
             marioY -= 2
-        elif keys[K_LEFT]:
+        elif keys[K_LEFT] and pos>648:
             newMove = LEFT
             marioX -= 2
+            pos-=5
         else:
             frame = 0
 
@@ -320,6 +323,7 @@ RIGHT = 0 # These are just the indicies of the moves
 DOWN = 1  
 UP = 2
 LEFT = 3
+pos = 624
 
 pics = []
 pics.append(makeMove("Mario",1,6))      # RIGHT
@@ -382,16 +386,6 @@ while running:
             moveMario()
     keys = key.get_pressed()
     
-    if keys[K_LEFT] and pos > 624:
-        pos -= 5
-        moveMario()
-        #move = "left"
-        #drawScene()
-    elif keys[K_RIGHT] and pos < 11856:
-        pos += 5
-        moveMario()
-        #move = "right"
-        #drawScene()
 
     if mb[0] == 1:
         blocks[my // 16][mx // 16 + (pos - 624) // 16] = 0
@@ -404,7 +398,7 @@ while running:
         updateBlocks(mx // 16 + (pos - 624) // 16, my // 16)
         #drawScene()
         drawPlayer()
-
+    moveMario()
     #drawPlayer()
     #print(blocksSurface.get_colorkey())
     #print(pos)
