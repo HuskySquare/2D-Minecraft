@@ -86,12 +86,6 @@ def moveMario():
             newMove = RIGHT
             marioX += 2
             pos+=5
-        elif keys[K_DOWN]:
-            newMove = DOWN
-            marioY += 2
-        elif keys[K_UP]:
-            newMove = UP
-            marioY -= 2
         elif keys[K_LEFT] and pos>648:
             newMove = LEFT
             marioX -= 2
@@ -320,15 +314,11 @@ def updateBlocks(blockX, blockY):
     screen.blit(blocksSurface, (624 - pos, 0))
 
 RIGHT = 0 # These are just the indicies of the moves
-DOWN = 1  
-UP = 2
-LEFT = 3
+LEFT = 1
 pos = 624
 
 pics = []
 pics.append(makeMove("Mario",1,6))      # RIGHT
-pics.append(makeMove("Mario",7,12))     # DOWN
-pics.append(makeMove("Mario",13,18))    # UP
 pics.append(makeMove("Mario",19,24))    # LEFT
 
 frame=0     # current frame within the move
