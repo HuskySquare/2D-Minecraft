@@ -69,7 +69,11 @@ block2_15 = image.load("stone/stone_block_9.png").convert(32, SRCALPHA)
 
 block2 = [block2_0, block2_1, block2_2, block2_3, block2_4, block2_5, block2_6, block2_7, block2_8, block2_9, block2_10, block2_11, block2_12, block2_13, block2_14, block2_15]
 blockImg = [False, block1, block2]
-
+class player():
+    def __init__(self,name):
+        self.name=name
+        self.health=100
+    
 def moveMario():
     ''' moveMario controls the location of Mario as well as adjusts the move and frame
         variables to ensure the right picture is drawn.
