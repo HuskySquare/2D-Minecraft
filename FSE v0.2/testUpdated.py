@@ -430,8 +430,8 @@ while running:
     
 
     if mb[0] == 1:
-        blocks[my // 16][mx // 16 + (marioRect.x - 623) // 16] = 0
-        updateBlocks(mx // 16 + (marioRect.x - 623) // 16, my // 16)
+        blocks[my // 16 + (marioRect.y - 286) // 16 + 1][mx // 16 + (marioRect.x - 624) // 16 + 1] = 0
+        updateBlocks(mx // 16 + (marioRect.x - 624) // 16 + 1, my // 16 + (marioRect.y - 286) // 16 + 1)
         #drawScene()
         #drawPlayer()
 
