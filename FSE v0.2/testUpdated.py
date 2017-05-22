@@ -86,7 +86,7 @@ def moveMario():
     ''' moveMario controls the location of Mario as well as adjusts the move and frame
         variables to ensure the right picture is drawn.
     '''
-    global move, frame, marioX, marioY,pos, vx, vy, jumping
+    global move, frame, marioX, marioY, pos, vx, vy, jumping
     keys = key.get_pressed()
 
     newMove = -1
@@ -94,18 +94,22 @@ def moveMario():
         frame=0
         pass
     else:
-        if keys[K_RIGHT] and pos<11368:
+        if keys[K_RIGHT] and pos < 11368:
             newMove = RIGHT
             marioX += 2
             vx = 2
             pos+=5
-        elif keys[K_LEFT] and pos>648:
+        elif keys[K_LEFT] and pos > 649:
             newMove = LEFT
             marioX -= 2
             pos-=5
             vx = -2
         else:
             frame = 0
+
+    if keys[K_UP] and not jumping:
+        vy = -20
+        jumping = True
 
     if move == newMove:     # 0 is a standing pose, so we want to skip over it when we are moving
         frame = frame + 0.6 # adding 0.2 allows us to slow down the animation
@@ -146,7 +150,7 @@ def marioCollide():
                     marioRect.left = Rect(x * 16, y * 16, 16, 16).right
                     xCollide = True
     vx = 0
-    vy = 2
+    vy = 5
     drawPlayer()
 
 def makeMove(name,start,end):
@@ -163,6 +167,7 @@ def drawPlayer():
     pic = pics[move][int(frame)]
     screen.blit(background, (0, 0))
     screen.blit(blocksSurface.subsurface(marioRect.x - 612, marioRect.y - 283, 1248, 704), (0, 0))
+    draw.rect(playerSurface, (0, 0, 0, 0), (marioRect.x - 2, marioRect. y - 5, 31, 55))
     playerSurface.blit(pic, (marioRect.x, marioRect.y))
     #screen.blit(pic, (624-pic.get_width()//2, 323-pic.get_height()))
     screen.blit(playerSurface.subsurface(marioRect.x - 612, marioRect.y - 283, 1248, 704), (0, 0))
@@ -236,7 +241,7 @@ def drawWorld():
     screen.blit(background, (0, 0))
     blocksSurface.fill((0, 0, 0, 0))
     for x in range(779): #779, pos//16 - 650, pos//16 + 650
-        for y in range(44): #44
+        for y in range(84): #44
             if blocks[y][x] != 0:
                 top = True
                 down = True
@@ -425,14 +430,14 @@ while running:
     
 
     if mb[0] == 1:
-        blocks[my // 16][mx // 16 + (pos - 624) // 16] = 0
-        updateBlocks(mx // 16 + (pos - 624) // 16, my // 16)
+        blocks[my // 16][mx // 16 + (marioRect.x - 623) // 16] = 0
+        updateBlocks(mx // 16 + (marioRect.x - 623) // 16, my // 16)
         #drawScene()
         #drawPlayer()
 
     if mb[2] == 1:
-        blocks[my // 16][mx // 16 + (pos - 624) // 16] = 1
-        updateBlocks(mx // 16 + (pos - 624) // 16, my // 16)
+        blocks[my // 16][mx // 16 + (marioRect.x - 623) // 16] = 1
+        updateBlocks(mx // 16 + (marioRect.x - 623) // 16, my // 16)
         #drawScene()
         #drawPlayer()
     moveMario()
