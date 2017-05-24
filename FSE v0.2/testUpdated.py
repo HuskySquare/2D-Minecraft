@@ -32,12 +32,13 @@ for i in range(40):
 
 blocks = np.array(blocks)
 
-marioRect = Rect(612, 286, 24, 37)
+marioRect = Rect(618, 286, 16, 35)
 pos = 624
 vx = 0
 vy = 0
 jumping = False
 xCollide = False
+jumpingC = 0
 
 background = image.load("background.png").convert(32, SRCALPHA)
 background = transform.scale(background, (1280, 720))
@@ -86,7 +87,7 @@ def moveMario():
     ''' moveMario controls the location of Mario as well as adjusts the move and frame
         variables to ensure the right picture is drawn.
     '''
-    global move, frame, marioX, marioY, pos, vx, vy, jumping
+    global move, frame, marioX, marioY, pos, vx, vy, jumping, jumpingC
     keys = key.get_pressed()
 
     newMove = -1
@@ -97,19 +98,23 @@ def moveMario():
         if keys[K_RIGHT] and pos < 11368:
             newMove = RIGHT
             marioX += 2
-            vx = 2
+            vx = 3
             pos+=5
         elif keys[K_LEFT] and pos > 649:
             newMove = LEFT
             marioX -= 2
             pos-=5
-            vx = -2
+            vx = -3
         else:
             frame = 0
 
     if keys[K_UP] and not jumping:
-        vy = -20
-        jumping = True
+        vy = -7
+        if jumpingC < 7:
+            jumpingC += 1
+        else:
+            jumping = True
+            jumpingC = 0
 
     if move == newMove:     # 0 is a standing pose, so we want to skip over it when we are moving
         frame = frame + 0.6 # adding 0.2 allows us to slow down the animation
@@ -136,7 +141,6 @@ def marioCollide():
                     jumping = False
                 elif vy < 0:
                     marioRect.top = Rect(x * 16, y * 16, 16, 16).bottom
-    vy = 0
 
     marioRect.x += vx
     
@@ -150,7 +154,7 @@ def marioCollide():
                     marioRect.left = Rect(x * 16, y * 16, 16, 16).right
                     xCollide = True
     vx = 0
-    vy = 5
+    vy = 8
     drawPlayer()
 
 def makeMove(name,start,end):
@@ -166,11 +170,14 @@ def makeMove(name,start,end):
 def drawPlayer():
     pic = pics[move][int(frame)]
     screen.blit(background, (0, 0))
-    screen.blit(blocksSurface.subsurface(marioRect.x - 612, marioRect.y - 283, 1248, 704), (0, 0))
-    draw.rect(playerSurface, (0, 0, 0, 0), (marioRect.x - 2, marioRect. y - 5, 31, 55))
+    draw.rect(playerSurface, (0, 0, 0, 0), (marioRect.x - 4, marioRect. y - 8, 34, 55))
     playerSurface.blit(pic, (marioRect.x, marioRect.y))
-    #screen.blit(pic, (624-pic.get_width()//2, 323-pic.get_height()))
-    screen.blit(playerSurface.subsurface(marioRect.x - 612, marioRect.y - 283, 1248, 704), (0, 0))
+    if marioRect.y >= 283:
+        screen.blit(blocksSurface.subsurface(marioRect.x - 612, marioRect.y - 283, 1248, 704), (0, 0))
+        screen.blit(playerSurface.subsurface(marioRect.x - 612, marioRect.y - 283, 1248, 704), (0, 0))
+    else:
+        screen.blit(blocksSurface.subsurface(marioRect.x - 612, 0, 1248, 704), (0, abs(marioRect.y - 283)))
+        screen.blit(playerSurface.subsurface(marioRect.x - 612, 0, 1248, 704), (0, abs(marioRect.y - 283)))
     display.flip()
 
 def drawScene():
@@ -399,7 +406,7 @@ def genMountain(x1, x2, h):
             #print(x, y)
             blocks[y][x] = 1
 
-genMountain(2, 20, 20)
+#genMountain(55, 105, 15)
 drawWorld()
 drawPlayer()
 
@@ -436,10 +443,11 @@ while running:
         #drawPlayer()
 
     if mb[2] == 1:
-        blocks[my // 16][mx // 16 + (marioRect.x - 623) // 16] = 1
-        updateBlocks(mx // 16 + (marioRect.x - 623) // 16, my // 16)
+        blocks[my // 16 + (marioRect.y - 286) // 16 + 1][mx // 16 + (marioRect.x - 624) // 16 + 1] = 1
+        updateBlocks(mx // 16 + (marioRect.x - 624) // 16 + 1, my // 16 + (marioRect.y - 286) // 16 + 1)
         #drawScene()
         #drawPlayer()
+
     moveMario()
     marioCollide()
     #drawPlayer()
