@@ -2,6 +2,8 @@
 from pygame import*
 from time import time as tm
 screen=display.set_mode((800,600))
+screen.fill((0,0,0))
+background=image.load("background.png")
 clock=time.Clock()
 clockCount=0
 positive=True
@@ -13,23 +15,19 @@ while running:
             running=False
 #-------------------------------------------------------
     clock.tick(60)
-    if clockCount<86400:
-        clockCount+=500
+    if clockCount<255 and positive:
+        clockCount+=1
     else:
-        clockCount=1
-    filler=clockCount//339
-    print(filler)
-    if positive:
-        if filler<255:
-            screen.fill((filler,0,0))
-        else:
-            positive=False
+        positive=False
+    if clockCount>0 and not positive:
+        clockCount-=1
     else:
-        if 255-filler>0:
-            screen.fill((255-filler,0,0))
-        else:
-            positive=True
-    print(positive)
+        positive=True
+    screen.fill((clockCount,0,0))
+    #background.set_alpha(clockCount)
+    #screen.blit(background,(0,0))
+    #print(background.get_alpha())
+    display.set_caption("dank example fps = {0:.0f}".format(clock.get_fps()))
 #-------------------------------------------------------
     display.flip()
 quit()
