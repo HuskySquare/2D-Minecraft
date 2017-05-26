@@ -20,10 +20,10 @@ blocksSurface = Surface((12480, 1360), SRCALPHA)
 blocksSurface.fill((0, 0, 0, 0))
 playerSurface = Surface((12480, 1360), SRCALPHA)
 
-
+blocks=np.tri(85,780,1,dtype="int")
 ##blocks = np.array(blocks)
-blocks=np.zeros((85,780),int)
-np.fill_diagonal(blocks,1)
+##blocks=np.zeros((85,780),int)
+#np.fill_diagonal(blocks,1)
 ##di=np.diag_indices(780)
 ##blocks[di]=2
 
