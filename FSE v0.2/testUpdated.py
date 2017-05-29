@@ -173,7 +173,7 @@ def drawPlayer():
     pic = pics[move][int(frame)]
     draw.rect(screen, (0, 0, 0), (0, 0, 1248, 704))
     screen.blit(background, (0, 0))
-    draw.rect(playerSurface, (0, 0, 0, 0), (marioRect.x - 4, marioRect. y - 8, 34, 55))
+    draw.rect(playerSurface, (0, 0, 0, 0), (marioRect.x - 4, marioRect. y - 15, 40, 65))
     playerSurface.blit(pic, (marioRect.x, marioRect.y))
     if marioRect.y >= 283:
         screen.blit(blocksSurface.subsurface(marioRect.x - 612, marioRect.y - 283, 1248, 704), (0, 0))
