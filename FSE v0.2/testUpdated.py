@@ -21,16 +21,19 @@ clock = time.Clock()
 blocksSurface = Surface((12480, 1360), SRCALPHA)
 blocksSurface.fill((0, 0, 0, 0))
 playerSurface = Surface((12480, 1360), SRCALPHA)
+mainSurface = Surface((1248, 704), SRCALPHA)
 
-blocks = [[0 for i in range(780)] for j in range(20)]
+"""blocks = [[0 for i in range(780)] for j in range(20)]
 for i in range(5):
     blocks.append([1 for j in range(780)])
 for i in range(20):
     blocks.append([randint(1,2) for j in range(780)])
 for i in range(40):
-    blocks.append([2 for j in range(780)])
+    blocks.append([2 for j in range(780)])"""
 
-blocks = np.array(blocks)
+filler = 255
+
+#blocks = np.array(blocks)
 
 marioRect = Rect(618, 286, 16, 35)
 pos = 624
@@ -38,7 +41,6 @@ vx = 0
 vy = 0
 jumping = False
 xCollide = False
-jumpingC = 0
 
 background = image.load("background.png").convert(32, SRCALPHA)
 background = transform.scale(background, (1280, 720))
@@ -109,12 +111,8 @@ def moveMario():
             frame = 0
 
     if keys[K_UP] and not jumping:
-        vy = -7
-        if jumpingC < 7:
-            jumpingC += 1
-        else:
-            jumping = True
-            jumpingC = 0
+        vy = -15
+        jumping = True
 
     if move == newMove:     # 0 is a standing pose, so we want to skip over it when we are moving
         frame = frame + 0.6 # adding 0.2 allows us to slow down the animation
@@ -153,8 +151,12 @@ def marioCollide():
                 elif vx < 0:
                     marioRect.left = Rect(x * 16, y * 16, 16, 16).right
                     xCollide = True
+    if jumping and vy < 22:
+        vy+= 2
+    elif not jumping:
+        vy = 5
     vx = 0
-    vy = 8
+
     drawPlayer()
 
 def makeMove(name,start,end):
@@ -169,15 +171,16 @@ def makeMove(name,start,end):
 
 def drawPlayer():
     pic = pics[move][int(frame)]
+    draw.rect(screen, (0, 0, 0), (0, 0, 1248, 704))
     screen.blit(background, (0, 0))
     draw.rect(playerSurface, (0, 0, 0, 0), (marioRect.x - 4, marioRect. y - 8, 34, 55))
     playerSurface.blit(pic, (marioRect.x, marioRect.y))
     if marioRect.y >= 283:
         screen.blit(blocksSurface.subsurface(marioRect.x - 612, marioRect.y - 283, 1248, 704), (0, 0))
-        screen.blit(playerSurface.subsurface(marioRect.x - 612, marioRect.y - 283, 1248, 704), (0, 0))
+        screen.blit(playerSurface.subsurface(marioRect.x, marioRect.y, 650, 320), (612, 283))
     else:
         screen.blit(blocksSurface.subsurface(marioRect.x - 612, 0, 1248, 704), (0, abs(marioRect.y - 283)))
-        screen.blit(playerSurface.subsurface(marioRect.x - 612, 0, 1248, 704), (0, abs(marioRect.y - 283)))
+        screen.blit(playerSurface.subsurface(marioRect.x, 0, 650, 320), (612, abs(marioRect.y - 283)))
     display.flip()
 
 def drawScene():
@@ -406,7 +409,7 @@ def genMountain(x1, x2, h):
             #print(x, y)
             blocks[y][x] = 1
 
-#genMountain(55, 105, 15)
+genMountain(1, 20, 17)
 drawWorld()
 drawPlayer()
 
@@ -455,7 +458,7 @@ while running:
     #print(pos)
     #print(tm() - sTime)
     clock.tick(60)
-    display.set_caption("dank gaem fps = {0:.0f}".format(clock.get_fps()))
+    display.set_caption("FSE FPS = {0:.0f}".format(clock.get_fps()))
     display.flip()
 
 #blocks = blocks_default
