@@ -28,6 +28,7 @@ while running:
     #screen.blit(background,(0,0))
     #print(background.get_alpha())
     display.set_caption("dank example fps = {0:.0f}".format(clock.get_fps()))
+    print((background.get_alpha()))
 #-------------------------------------------------------
     display.flip()
 quit()
