@@ -31,6 +31,7 @@ for i in range(20):
 for i in range(40):
     blocks.append([2 for j in range(780)])"""
 
+
 filler = 255
 
 #blocks = np.array(blocks)
@@ -61,6 +62,7 @@ block1_13 = image.load("dirt/dirt_block_8.png").convert(32, SRCALPHA)
 block1_14 = image.load("dirt/dirt_block_12.png").convert(32, SRCALPHA)
 block1_15 = image.load("dirt/dirt_block_9.png").convert(32, SRCALPHA)
 block1 = [block1_0, block1_1, block1_2, block1_3, block1_4, block1_5, block1_6, block1_7, block1_8, block1_9, block1_10, block1_11, block1_12, block1_13, block1_14, block1_15]
+
 block2_0 = image.load("stone/stone_block_19.png").convert(32, SRCALPHA)
 block2_1 = image.load("stone/stone_block_1.png").convert(32, SRCALPHA)
 block2_2 = image.load("stone/stone_block_0.png").convert(32, SRCALPHA)
@@ -79,7 +81,26 @@ block2_14 = image.load("stone/stone_block_12.png").convert(32, SRCALPHA)
 block2_15 = image.load("stone/stone_block_9.png").convert(32, SRCALPHA)
 
 block2 = [block2_0, block2_1, block2_2, block2_3, block2_4, block2_5, block2_6, block2_7, block2_8, block2_9, block2_10, block2_11, block2_12, block2_13, block2_14, block2_15]
-blockImg = [False, block1, block2]
+
+block3_0 = image.load("grass/grass_block_19.png").convert(32, SRCALPHA)
+block3_1 = image.load("grass/grass_block_1.png").convert(32, SRCALPHA)
+block3_2 = image.load("grass/grass_block_0.png").convert(32, SRCALPHA)
+block3_3 = image.load("grass/grass_block_4.png").convert(32, SRCALPHA)
+block3_4 = image.load("grass/grass_block_33.png").convert(32, SRCALPHA)
+block3_5 = image.load("grass/grass_block_69.png").convert(32, SRCALPHA)
+block3_6 = image.load("grass/grass_block_68.png").convert(32, SRCALPHA)
+block3_7 = image.load("grass/grass_block_37.png").convert(32, SRCALPHA)
+block3_8 = image.load("grass/grass_block_51.png").convert(32, SRCALPHA)
+block3_9 = image.load("grass/grass_block_50.png").convert(32, SRCALPHA)
+block3_10 = image.load("grass/grass_block_70.png").convert(32, SRCALPHA)
+block3_11 = image.load("grass/grass_block_59.png").convert(32, SRCALPHA)
+block3_12 = image.load("grass/grass_block_56.png").convert(32, SRCALPHA)
+block3_13 = image.load("grass/grass_block_8.png").convert(32, SRCALPHA)
+block3_14 = image.load("grass/grass_block_12.png").convert(32, SRCALPHA)
+block3_15 = image.load("grass/grass_block_9.png").convert(32, SRCALPHA)
+
+block3 = [block3_0, block3_1, block3_2, block3_3, block3_4, block3_5, block3_6, block3_7, block3_8, block3_9, block3_10, block3_11, block3_12, block3_13, block3_14, block3_15]
+blockImg = [False, block1, block2, block3]
 class player():
     def __init__(self,name):
         self.name=name
@@ -151,7 +172,7 @@ def marioCollide():
                 elif vx < 0:
                     marioRect.left = Rect(x * 16, y * 16, 16, 16).right
                     xCollide = True
-    if jumping and vy < 22:
+    if jumping and vy < 30:
         vy+= 2
     elif not jumping:
         vy = 5
