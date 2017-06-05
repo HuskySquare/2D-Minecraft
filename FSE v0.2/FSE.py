@@ -33,11 +33,11 @@ for i in range(6, 1126, 56):
 
 for i in range(6, 1126, 56):
     try:
-        pics.append(transform.flip(sprite.subsurface((0, i, 40, 56)), False, True))
+        pics.append(transform.flip(sprite.subsurface((0, i, 40, 56)), True, False))
     except:
         pass
 
-pics = [pics[0:5], pics[5], pics[6:21], pics[21:26], pics[26], pics[27:]]
+pics = [pics[0:5], [pics[5], pics[5]], pics[6:21], pics[21:26], pics[26], pics[27:]]
 
 block1_0 = image.load("dirt/dirt_block_19.png").convert(32, SRCALPHA)
 block1_1 = image.load("dirt/dirt_block_1.png").convert(32, SRCALPHA)
@@ -100,7 +100,7 @@ class Player:
     def __init__(self, x, y, w, h):
         self.rect = Rect(x, y, w, h)
         self.blitPos = [x - 8, y - 7]
-        self.vx = 0
+        self.vx = 0 
         self.vy = 0
         self.jumping = False
         self.move = 0
@@ -117,10 +117,12 @@ class Player:
 
         else:
             if keys[K_RIGHT] and self.rect.x < worldSize[0] * 16 - 629:
-                self.newMove = 2
+                if not self.jumping:
+                    self.newMove = 2
                 self.vx = 3
             elif keys[K_LEFT] and self.rect.x > 629:
-                self.newMove = 5
+                if not self.jumping:
+                    self.newMove = 5
                 self.vx = -3
             else:
                 self.frame = 0
@@ -129,6 +131,9 @@ class Player:
             self.vy = -15
             self.jumping = True
             self.newMove = 1
+
+        if not self.jumping and self.move == 1:
+            self.move = 2
 
         if self.move == self.newMove:  # 0 is a standing pose, so we want to skip over it when we are moving
             self.frame = self.frame + 0.6  # adding 0.2 allows us to slow down the animation
@@ -164,9 +169,12 @@ class Player:
             self.vy = 5
         self.vx = 0
 
+        self.blitPos = [self.rect.x - 8, self.rect.y - 7]
+
     def draw(self):
         pic = pics[self.move][int(self.frame)]
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0], self.blitPos[1], 80, 56))
+        #playerSurface.blit(pic, self.blitPos)
         playerSurface.blit(pic, self.blitPos)
 
 class Block:
@@ -310,7 +318,7 @@ for y in range(len(blockList)):
 
 drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
 
-player = Player(629, 339, 24, 42)
+player = Player(629, 339, 24, 40)
 
 running = True
 
@@ -351,12 +359,13 @@ while running:
     player.collide()
     player.draw()
     screen.blit(background, (0, 0))
-    if player.rect.y >= 283:
+    if player.rect.y >= 339:
         screen.blit(blocksSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
         screen.blit(playerSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
         #screen.blit(playerSurface.subsurface(player.blitPos[0], player.blitPos[1], 650, 320), (621, 339))
     else:
-        screen.blit(blocksSurface.subsurface(player.rect.x - 629, 0, 1248, 704), (0, abs(player.rect.y - 283)))
+        screen.blit(blocksSurface.subsurface(player.rect.x - 629, 0, 1280, 720), (0, abs(player.rect.y - 339)))
+        screen.blit(playerSurface.subsurface(player.rect.x - 629, 0, 1280, 720), (0, abs(player.rect.y - 339)))
         #screen.blit(playerSurface.subsurface(player.rect.x, 0, 650, 320), (612, abs(player.rect.y - 283)))
 
     display.flip()
