@@ -3,6 +3,8 @@ from pygame import*
 from time import time as tm
 screen=display.set_mode((1248,704))
 background=image.load("background.png")
+title=image.load("title.png")
+start=image.load("titleStart.png")
 bacground=transform.scale(background,(1248,704))
 tempClock=time.Clock()
 tempCount=0
@@ -27,11 +29,14 @@ while menu:
     screen.fill(0)
     background.set_alpha(tempCount)
     screen.blit(background,(0,0))
-    buttonRect=Rect(623,352,50,50)
-    draw.rect(screen,(255,0,0),buttonRect)
+    screen.blit(title,(350,100))
+    buttonRect=Rect(543,358,240,80)
+    screen.blit(start,(513,312))
     display.flip()
     
     mx,my=mouse.get_pos()
-    if buttonRect.collidepoint((mx,my)) and leftClick:
-        screen.fill(0)
-        menu=False
+    if buttonRect.collidepoint((mx,my)):
+        draw.rect(screen,(0,0,0),buttonRect,2)
+        if leftClick:
+            screen.fill(0)
+            menu=False
