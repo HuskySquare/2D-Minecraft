@@ -15,6 +15,7 @@ for i in range(780):
 
     pieces.append(temp)
 
+    
 blocks=np.concatenate(pieces,axis=1)
 ##print(blocks)
 
