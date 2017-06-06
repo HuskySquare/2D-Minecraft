@@ -17,9 +17,8 @@ for i in range(780):
             temp[anchor+randint(10,35)]=2
         except IndexError:
             continue
-
+    temp[50:,:]=2
     pieces.append(temp)
-
 blocks=np.concatenate(pieces,axis=1)
-##print(blocks)
+print(blocks)
 
