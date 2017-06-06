@@ -319,7 +319,7 @@ for y in range(len(blockList)):
 drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
 
 player = Player(629, 339, 24, 40)
-
+import menu
 running = True
 
 while running:
