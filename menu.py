@@ -13,8 +13,9 @@ background=transform.scale(background,(1248,704))
 tempClock=time.Clock()
 tempCount=0
 positive=True
-#////////////////////////////////////////////////////////////////
+optionsMenu=False
 screening=True
+#////////////////////////////////////////////////////////////////
 while screening:
     menu=True
     while menu:
@@ -46,6 +47,7 @@ while screening:
         if buttonRectStart.collidepoint((mx,my)) and leftClick:
             screen.fill(0)
             menu=False
+            screening=False
         if buttonRectOptions.collidepoint((mx,my)) and leftClick:
             screen.fill(0)
             menu=False
