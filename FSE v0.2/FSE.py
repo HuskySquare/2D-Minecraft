@@ -3,6 +3,11 @@ import numpy as np
 import pickle
 from time import time as tm
 from pygame import *
+import pygame
+
+pygame.init() #sound
+pygame.mixer.init() #sound
+pygame.mixer.pre_init(22050,-16,2,2048) #more sound
 
 with open("blockspickle.pickle", "rb") as f:
     blockList = pickle.load(f)
@@ -38,7 +43,7 @@ for i in range(6, 1126, 56):
         pass
 
 pics = [pics[0:5], [pics[5], pics[5]], pics[6:21], pics[21:26], pics[26], pics[27:]]
-
+##############################################################################
 block1_0 = image.load("dirt/dirt_block_19.png").convert(32, SRCALPHA)
 block1_1 = image.load("dirt/dirt_block_1.png").convert(32, SRCALPHA)
 block1_2 = image.load("dirt/dirt_block_0.png").convert(32, SRCALPHA)
@@ -56,7 +61,7 @@ block1_13 = image.load("dirt/dirt_block_8.png").convert(32, SRCALPHA)
 block1_14 = image.load("dirt/dirt_block_12.png").convert(32, SRCALPHA)
 block1_15 = image.load("dirt/dirt_block_9.png").convert(32, SRCALPHA)
 block1 = [block1_0, block1_1, block1_2, block1_3, block1_4, block1_5, block1_6, block1_7, block1_8, block1_9, block1_10, block1_11, block1_12, block1_13, block1_14, block1_15]
-
+################################################################################
 block2_0 = image.load("stone/stone_block_19.png").convert(32, SRCALPHA)
 block2_1 = image.load("stone/stone_block_1.png").convert(32, SRCALPHA)
 block2_2 = image.load("stone/stone_block_0.png").convert(32, SRCALPHA)
@@ -73,7 +78,7 @@ block2_12 = image.load("stone/stone_block_56.png").convert(32, SRCALPHA)
 block2_13 = image.load("stone/stone_block_8.png").convert(32, SRCALPHA)
 block2_14 = image.load("stone/stone_block_12.png").convert(32, SRCALPHA)
 block2_15 = image.load("stone/stone_block_9.png").convert(32, SRCALPHA)
-
+############################################################################
 block2 = [block2_0, block2_1, block2_2, block2_3, block2_4, block2_5, block2_6, block2_7, block2_8, block2_9, block2_10, block2_11, block2_12, block2_13, block2_14, block2_15]
 
 block3_0 = image.load("grass/grass_block_19.png").convert(32, SRCALPHA)
@@ -95,7 +100,19 @@ block3_15 = image.load("grass/grass_block_9.png").convert(32, SRCALPHA)
 
 block3 = [block3_0, block3_1, block3_2, block3_3, block3_4, block3_5, block3_6, block3_7, block3_8, block3_9, block3_10, block3_11, block3_12, block3_13, block3_14, block3_15]
 blockImg = [False, block1, block2, block3]
+#####################################MUSIC#################################
+file1="Audio/01-Day.mp3"
 
+music=[]
+music.append(file1)
+
+cSong=music[0]
+pygame.mixer.music.load(cSong)
+#pygame.mixer.music.play()
+END_MUSIC_EVENT=pygame.USEREVENT+0
+pygame.mixer.music.set_endevent(END_MUSIC_EVENT)
+
+###########################################################################
 class Player:
     def __init__(self, x, y, w, h):
         self.rect = Rect(x, y, w, h)
@@ -317,11 +334,12 @@ for y in range(len(blockList)):
     blocks.append(row)
 
 drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
-
+###########################################################################
 player = Player(629, 339, 24, 40)
-import menu
+import menu #IMPORTANT
 running = True
-
+pygame.mixer.music.load(music[0])
+pygame.mixer.music.play()
 while running:
     leftClick = False
     rightClick = False
