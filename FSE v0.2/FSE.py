@@ -39,6 +39,12 @@ for i in range(6, 1126, 56):
 
 pics = [pics[0:5], [pics[5], pics[5]], pics[6:21], pics[21:26], pics[26], pics[27:]]
 
+tile_crack_1 = image.load("tile_cracks/tile_crack_2.png").convert(32, SRCALPHA)
+tile_crack_2 = image.load("tile_cracks/tile_crack_8.png").convert(32, SRCALPHA)
+tile_crack_3 = image.load("tile_cracks/tile_crack_14.png").convert(32, SRCALPHA)
+tile_crack_4 = image.load("tile_cracks/tile_crack_20.png").convert(32, SRCALPHA)
+tile_cracks = [tile_crack_4, tile_crack_3, tile_crack_2, tile_crack_1]
+
 block1_0 = image.load("dirt/dirt_block_19.png").convert(32, SRCALPHA)
 block1_1 = image.load("dirt/dirt_block_1.png").convert(32, SRCALPHA)
 block1_2 = image.load("dirt/dirt_block_0.png").convert(32, SRCALPHA)
@@ -95,6 +101,7 @@ block3_15 = image.load("grass/grass_block_9.png").convert(32, SRCALPHA)
 
 block3 = [block3_0, block3_1, block3_2, block3_3, block3_4, block3_5, block3_6, block3_7, block3_8, block3_9, block3_10, block3_11, block3_12, block3_13, block3_14, block3_15]
 blockImg = [False, block1, block2, block3]
+blockConditions = [False, 150, 500, 150]
 
 class Player:
     def __init__(self, x, y, w, h):
@@ -148,6 +155,7 @@ class Player:
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
             for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
                 if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
+                    self.vy = 5
                     if self.vy > 0:
                         self.rect.bottom = blocks[y][x].rect.top
                         self.jumping = False
@@ -163,18 +171,20 @@ class Player:
                     elif self.vx < 0:
                         self.rect.left = blocks[y][x].rect.right
 
-        if self.jumping and self.vy < 30:
+##        if self.jumping and self.vy < 30:
+##            self.vy += 2
+##        elif not self.jumping:
+##            self.vy = 5
+        if self.vy < 30:
             self.vy += 2
-        elif not self.jumping:
-            self.vy = 5
+        
         self.vx = 0
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
 
     def draw(self):
         pic = pics[self.move][int(self.frame)]
-        draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0], self.blitPos[1], 80, 56))
-        #playerSurface.blit(pic, self.blitPos)
+        draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
         playerSurface.blit(pic, self.blitPos)
 
 class Block:
@@ -183,7 +193,7 @@ class Block:
         self.x = x
         self.y = y
         self.rect = Rect(x * 16, y * 16, 16, 16)
-        self.condition = 6
+        self.condition = blockConditions[self.id]
         top = True
         down = True
         left = True
@@ -245,6 +255,8 @@ class Block:
         draw.rect(blocksSurface, (0, 0, 0, 0), self.rect)
         if self.id != 0:
             blocksSurface.blit(blockImg[self.id][self.surround], (self.x * 16, self.y * 16))
+            if self.condition < blockConditions[self.id] * 4 / 5:
+                blocksSurface.blit(tile_cracks[self.condition // int(blockConditions[self.id] / 5)], (self.x * 16, self.y * 16))
 
     def update(self):
         top = True
@@ -338,7 +350,9 @@ while running:
                 rightClick = True
 
     if mb[0] == 1:
-        blocks[(player.rect.y - 339 + my)//16][(player.rect.x - 629 + mx)//16].id = 0
+        if blocks[(player.rect.y - 339 + my)//16][(player.rect.x - 629 + mx)//16].condition - 5 == 0:
+            blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id = 0
+        blocks[(player.rect.y - 339 + my)//16][(player.rect.x - 629 + mx)//16].condition -= 5
         for x in range((player.rect.x - 629 + mx)//16 - 1, (player.rect.x - 629 + mx)//16 + 2):
             for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my)//16 + 2):
                 blocks[y][x].update()
@@ -358,6 +372,7 @@ while running:
     player.movePlayer()
     player.collide()
     player.draw()
+    
     screen.blit(background, (0, 0))
     if player.rect.y >= 339:
         screen.blit(blocksSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
@@ -371,7 +386,7 @@ while running:
     display.flip()
     clock.tick(60)
     display.set_caption("FSE FPS = {0:.0f}".format(clock.get_fps()))
-
+    
 with open('blockspickle.pickle', 'wb') as f:
     pickle.dump(blockList, f)
 
