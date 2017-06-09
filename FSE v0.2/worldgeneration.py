@@ -19,6 +19,7 @@ for i in range(780):
             continue
     temp[50:,:]=2
     pieces.append(temp)
+print("HA")
 blocks=np.concatenate(pieces,axis=1)
 print(blocks)
 
