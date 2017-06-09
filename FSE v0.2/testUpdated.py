@@ -9,7 +9,7 @@ with open("blockspickle.pickle", "rb") as f:
 
 #with open("blockspickle.pickle", "rb") as f:
 #    blocks_default = pickle.load(f)
-from generation import *
+from generation import *    # Testing for the world generation
 screen = display.set_mode((1248, 704))
 
 clock = time.Clock()

@@ -19,7 +19,7 @@ for i in range(780):
     if i!=0:
         if not length:
 
-            length = randint(0, 20)
+            length = randint(0, 10)
             x=choice([84,0])
             temp=np.delete(pieces[i-1],[x])
             if x:
