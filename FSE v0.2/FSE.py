@@ -362,6 +362,7 @@ while running:
 
     if mb[2] == 1:
         blocks[(player.rect.y - 339 + my)//16][(player.rect.x - 629 + mx)//16].id = 1
+        blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].condition = blockConditions[1]
         for x in range((player.rect.x - 629 + mx)//16 - 1, (player.rect.x - 629 + mx)//16 + 2):
             for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my)//16 + 2):
                 blocks[y][x].update()
