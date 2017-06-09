@@ -30,7 +30,7 @@ for i in range(780):
             else:
                 temp=np.append(temp,0).reshape((85,1))
 
-        # temp.reshape((85,1))
+        
 
     # for j in range(randint(5,30)):
     #     try:
