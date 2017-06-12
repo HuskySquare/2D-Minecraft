@@ -24,6 +24,7 @@ for i in range(780):
             temp=np.delete(pieces[i-1],[x])
             if x:
                 temp = np.insert(temp, 0, 0).reshape((85, 1))
+                anchor+=1
 
             else:
                 temp = np.append(temp, 0).reshape((85, 1))
@@ -49,15 +50,20 @@ for i in range(780):
 
         # temp.reshape((85,1))
 
-    # for j in range(randint(5,30)):
-    #     try:
-    #         temp[anchor+randint(10,35)]=2
-    #     except IndexError:
-    #         continue
+
 
     pieces.append(temp)
 
 blocks=np.concatenate(pieces,axis=1)
 
 blocks[60:,:]=2
-print(blocks)
+for i in range(780):
+    temp=blocks[:,i]
+    anchor=np.where(temp==3)[0][0]
+
+    for j in range(randint(5,10)):
+        try:
+            temp[anchor+randint(5,35)]=2
+        except IndexError:
+            continue
+
