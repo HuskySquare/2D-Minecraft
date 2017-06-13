@@ -32,8 +32,8 @@ def subtract(x,y):
     return (y[0]-x[0],y[1]-x[1],y[2],x[2])
 def updatecolour():
     global anchor,colour,text
-    colour=screen.get_at((mx,my))
 
+    colour=screen.get_at((mx,my))
     screen.fill((255,255,255))
     screen.blit(bar, (478,298))
     screen.blit(andy.render(names[anchor],1,(0,0,0)),(499,208))
@@ -43,12 +43,15 @@ def updatecolour():
 def updatehair():
     global anchor,colour,h
     anchor += 1
-    screen.fill((255, 255, 255))
-    screen.blit(bar, (478,298))
-    screen.blit(andy.render(names[anchor], 1, (0, 0, 0)), (499,208))
-    h = transform.scale(hair[anchor], (400, 7840))
-    h.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
-    screen.blit(h, (375, -75), (0, 0, 400, 560))
+    try:
+        screen.fill((255, 255, 255))
+        screen.blit(bar, (478,298))
+        screen.blit(andy.render(names[anchor], 1, (0, 0, 0)), (499,208))
+        h = transform.scale(hair[anchor], (400, 7840))
+        h.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+        screen.blit(h, (375, -75), (0, 0, 400, 560))
+    except IndexError:
+        anchor=0
 
 
 running= True
