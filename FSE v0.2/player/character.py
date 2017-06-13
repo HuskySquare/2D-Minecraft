@@ -28,8 +28,6 @@ x=transform.scale(h,(200,280))
 barRect=Rect((478,298),bar.get_size())
 hairRect=Rect((499,208),text.get_size())
 
-def subtract(x,y):
-    return (y[0]-x[0],y[1]-x[1],y[2],x[2])
 def updatecolour():
     global anchor,colour,text
 
