@@ -3,7 +3,6 @@ init()     #Initialzie directly after importing to avoid module conflicts
 from glob import glob
 
 colour=Color(171,181,198)
-
 names,hair=[],[]
 x=glob("hair/*.png")
 anchor=0
