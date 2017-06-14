@@ -7,6 +7,9 @@ from pygame import *
 with open("blockspickle.pickle", "rb") as f:
     blockList = pickle.load(f)
 
+with open("inventory.pickle", "rb") as f:
+    inventoryPickleList = pickle.load(f)
+
 screen = display.set_mode((1280, 720))
 
 clock = time.Clock()
@@ -17,6 +20,7 @@ blocksSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
 blocksSurface.fill((0, 0, 0, 0))
 playerSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
 playerSurface.fill((0, 0, 0, 0))
+uiSurface = Surface((1280, 720), SRCALPHA)
 mainSurface = Surface((1280, 720), SRCALPHA)
 
 background = image.load("background.png").convert(32, SRCALPHA)
@@ -61,7 +65,8 @@ block1_12 = image.load("dirt/dirt_block_56.png").convert(32, SRCALPHA)
 block1_13 = image.load("dirt/dirt_block_8.png").convert(32, SRCALPHA)
 block1_14 = image.load("dirt/dirt_block_12.png").convert(32, SRCALPHA)
 block1_15 = image.load("dirt/dirt_block_9.png").convert(32, SRCALPHA)
-block1 = [block1_0, block1_1, block1_2, block1_3, block1_4, block1_5, block1_6, block1_7, block1_8, block1_9, block1_10, block1_11, block1_12, block1_13, block1_14, block1_15]
+block1 = [block1_0, block1_1, block1_2, block1_3, block1_4, block1_5, block1_6, block1_7, block1_8, block1_9, block1_10,
+          block1_11, block1_12, block1_13, block1_14, block1_15]
 
 block2_0 = image.load("stone/stone_block_19.png").convert(32, SRCALPHA)
 block2_1 = image.load("stone/stone_block_1.png").convert(32, SRCALPHA)
@@ -80,7 +85,8 @@ block2_13 = image.load("stone/stone_block_8.png").convert(32, SRCALPHA)
 block2_14 = image.load("stone/stone_block_12.png").convert(32, SRCALPHA)
 block2_15 = image.load("stone/stone_block_9.png").convert(32, SRCALPHA)
 
-block2 = [block2_0, block2_1, block2_2, block2_3, block2_4, block2_5, block2_6, block2_7, block2_8, block2_9, block2_10, block2_11, block2_12, block2_13, block2_14, block2_15]
+block2 = [block2_0, block2_1, block2_2, block2_3, block2_4, block2_5, block2_6, block2_7, block2_8, block2_9, block2_10,
+          block2_11, block2_12, block2_13, block2_14, block2_15]
 
 block3_0 = image.load("grass/grass_block_19.png").convert(32, SRCALPHA)
 block3_1 = image.load("grass/grass_block_1.png").convert(32, SRCALPHA)
@@ -99,15 +105,23 @@ block3_13 = image.load("grass/grass_block_8.png").convert(32, SRCALPHA)
 block3_14 = image.load("grass/grass_block_12.png").convert(32, SRCALPHA)
 block3_15 = image.load("grass/grass_block_9.png").convert(32, SRCALPHA)
 
-block3 = [block3_0, block3_1, block3_2, block3_3, block3_4, block3_5, block3_6, block3_7, block3_8, block3_9, block3_10, block3_11, block3_12, block3_13, block3_14, block3_15]
+block3 = [block3_0, block3_1, block3_2, block3_3, block3_4, block3_5, block3_6, block3_7, block3_8, block3_9, block3_10,
+          block3_11, block3_12, block3_13, block3_14, block3_15]
 blockImg = [False, block1, block2, block3]
 blockConditions = [False, 150, 500, 150]
+
+item1 = image.load("items/item_1.png").convert(32, SRCALPHA)
+item2 = image.load("items/item_2.png").convert(32, SRCALPHA)
+item4 = image.load("items/item_4.png").convert(32, SRCALPHA)
+inventoryBack = image.load("images/Inventory_Back.png")
+inventoryBackSelected = image.load("images/Inventory_Back14.png")
+items = [False, item1, item2, False, item4]
 
 class Player:
     def __init__(self, x, y, w, h):
         self.rect = Rect(x, y, w, h)
         self.blitPos = [x - 8, y - 7]
-        self.vx = 0 
+        self.vx = 0
         self.vy = 0
         self.jumping = False
         self.move = 0
@@ -155,12 +169,12 @@ class Player:
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
             for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
                 if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
-                    self.vy = 5
                     if self.vy > 0:
                         self.rect.bottom = blocks[y][x].rect.top
                         self.jumping = False
                     elif self.vy < 0:
                         self.rect.top = blocks[y][x].rect.bottom
+                    self.vy = 5
 
         self.rect.x += self.vx
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
@@ -171,13 +185,13 @@ class Player:
                     elif self.vx < 0:
                         self.rect.left = blocks[y][x].rect.right
 
-##        if self.jumping and self.vy < 30:
-##            self.vy += 2
-##        elif not self.jumping:
-##            self.vy = 5
+                    ##        if self.jumping and self.vy < 30:
+                    ##            self.vy += 2
+                    ##        elif not self.jumping:
+                    ##            self.vy = 5
         if self.vy < 30:
             self.vy += 2
-        
+
         self.vx = 0
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
@@ -186,6 +200,7 @@ class Player:
         pic = pics[self.move][int(self.frame)]
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
         playerSurface.blit(pic, self.blitPos)
+
 
 class Block:
     def __init__(self, id, x, y):
@@ -198,13 +213,13 @@ class Block:
         down = True
         left = True
         right = True
-        if y != 0 and blockList[y-1][x] == 0:
+        if y != 0 and blockList[y - 1][x] == 0:
             top = False
-        if y != worldSize[1] - 1 and blockList[y+1][x] == 0:
+        if y != worldSize[1] - 1 and blockList[y + 1][x] == 0:
             down = False
-        if x != 0 and blockList[y][x-1] == 0:
+        if x != 0 and blockList[y][x - 1] == 0:
             left = False
-        if x != worldSize[0] - 1 and blockList[y][x+1] == 0:
+        if x != worldSize[0] - 1 and blockList[y][x + 1] == 0:
             right = False
 
         if top and down and left and right:
@@ -256,7 +271,8 @@ class Block:
         if self.id != 0:
             blocksSurface.blit(blockImg[self.id][self.surround], (self.x * 16, self.y * 16))
             if self.condition < blockConditions[self.id] * 4 / 5:
-                blocksSurface.blit(tile_cracks[self.condition // int(blockConditions[self.id] / 5)], (self.x * 16, self.y * 16))
+                blocksSurface.blit(tile_cracks[self.condition // int(blockConditions[self.id] / 5)],
+                                   (self.x * 16, self.y * 16))
 
     def update(self):
         top = True
@@ -316,10 +332,33 @@ class Block:
                 else:
                     self.surround = 15
 
+    def breakBlock(self):
+        if self.id != 0:
+            if self.condition - 5 == 0:
+                self.id = 0
+            self.condition -= 5
+
+class inventory:
+    selected = 0
+    def __init__(self, pos, id, quantity, type):
+        self.id = id
+        self.quantity = quantity
+        self.type = type
+        self.pos = pos
+
+    def draw(self):
+        if self.pos == inventory.selected:
+            uiSurface.blit(inventoryBackSelected, (20 + 52 * self.pos, 20))
+        else:
+            uiSurface.blit(inventoryBack, (20 + 52 * self.pos, 20))
+        if items[self.id] != False:
+            uiSurface.blit(items[self.id], (20 + 52 * self.pos + int((52 - items[self.id].get_width())/2), 20 + int((52 - items[self.id].get_height())/2)))
+
 def drawBlocks(x1, x2, y1, y2):
     for x in range(x1, x2 + 1):
         for y in range(y1, y2 + 1):
             blocks[y][x].draw()
+
 
 blocks = []
 for y in range(len(blockList)):
@@ -327,6 +366,10 @@ for y in range(len(blockList)):
     for x in range(len(blockList[0])):
         row.append(Block(blockList[y][x], x, y))
     blocks.append(row)
+
+inventoryList = []
+for i in range(10):
+    inventoryList.append(inventory(i, inventoryPickleList[i], 0, False))
 
 drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
 
@@ -348,23 +391,31 @@ while running:
                 leftClick = True
             if evt.button == 3:
                 rightClick = True
+            if evt.button == 4:
+                if inventory.selected == 9:
+                    inventory.selected = 0
+                else:
+                    inventory.selected += 1
+            if evt.button == 5:
+                if inventory.selected == 0:
+                    inventory.selected = 9
+                else:
+                    inventory.selected -= 1
 
     if mb[0] == 1:
-        if blocks[(player.rect.y - 339 + my)//16][(player.rect.x - 629 + mx)//16].condition - 5 == 0:
-            blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id = 0
-        blocks[(player.rect.y - 339 + my)//16][(player.rect.x - 629 + mx)//16].condition -= 5
-        for x in range((player.rect.x - 629 + mx)//16 - 1, (player.rect.x - 629 + mx)//16 + 2):
-            for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my)//16 + 2):
+        blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
+        for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
+            for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
                 blocks[y][x].update()
         for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
             for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
                 blocks[y][x].draw()
 
     if mb[2] == 1:
-        blocks[(player.rect.y - 339 + my)//16][(player.rect.x - 629 + mx)//16].id = 1
-        blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].condition = blockConditions[1]
-        for x in range((player.rect.x - 629 + mx)//16 - 1, (player.rect.x - 629 + mx)//16 + 2):
-            for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my)//16 + 2):
+        blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id = inventoryList[inventory.selected].id
+        blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].condition = blockConditions[inventoryList[inventory.selected].id]
+        for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
+            for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
                 blocks[y][x].update()
         for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
             for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
@@ -373,22 +424,30 @@ while running:
     player.movePlayer()
     player.collide()
     player.draw()
-    
+
+    for item in inventoryList:
+        item.draw()
+
     screen.blit(background, (0, 0))
     if player.rect.y >= 339:
         screen.blit(blocksSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
         screen.blit(playerSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
-        #screen.blit(playerSurface.subsurface(player.blitPos[0], player.blitPos[1], 650, 320), (621, 339))
+        # screen.blit(playerSurface.subsurface(player.blitPos[0], player.blitPos[1], 650, 320), (621, 339))
     else:
         screen.blit(blocksSurface.subsurface(player.rect.x - 629, 0, 1280, 720), (0, abs(player.rect.y - 339)))
         screen.blit(playerSurface.subsurface(player.rect.x - 629, 0, 1280, 720), (0, abs(player.rect.y - 339)))
-        #screen.blit(playerSurface.subsurface(player.rect.x, 0, 650, 320), (612, abs(player.rect.y - 283)))
+        # screen.blit(playerSurface.subsurface(player.rect.x, 0, 650, 320), (612, abs(player.rect.y - 283)))
+
+    screen.blit(uiSurface, (0, 0))
 
     display.flip()
     clock.tick(60)
     display.set_caption("FSE FPS = {0:.0f}".format(clock.get_fps()))
-    
+
 with open('blockspickle.pickle', 'wb') as f:
     pickle.dump(blockList, f)
+
+with open("inventory.pickle", "wb") as f:
+    pickle.dump([0, 1, 2, 0, 4, 0, 0, 0, 0, 0], f)
 
 quit()
