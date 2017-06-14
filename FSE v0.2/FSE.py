@@ -448,6 +448,6 @@ with open('blockspickle.pickle', 'wb') as f:
     pickle.dump(blockList, f)
 
 with open("inventory.pickle", "wb") as f:
-    pickle.dump([0, 1, 2, 0, 4, 0, 0, 0, 0, 0], f)
+    pickle.dump(inventoryPickleList, f)
 
 quit()
