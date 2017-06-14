@@ -68,10 +68,10 @@ while running:
     # print(mx,my)
     if barRect.collidepoint(mx,my) and mb[0]==1:
         updatecolour()
-        print("updatecolour")
+
     if textRect.collidepoint(mx,my) and mb[0]==1:
         updatehair()
-        print("updatehair")
+
     for evt in event.get():
         if evt.type == QUIT:
             running = False
