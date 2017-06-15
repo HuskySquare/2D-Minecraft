@@ -68,10 +68,13 @@ for i in range(780):
             continue
 
 #Making caves-----------------------------------------
-for i in range(randint(10,30)):
+for i in range(randint(0,10)):
+    
     width, height = randint(2, 10), randint(2, 10)
     temp = np.random.normal(size=(width, height))
     temp = np.fabs(temp)
     temp = temp.astype(int)
-    x,y=randint(40,84),randint(0,780)
+    x,y=randint(30,84-height),randint(0,780-width)
     blocks[x:x+width,y:y+height]=temp
+
+        
