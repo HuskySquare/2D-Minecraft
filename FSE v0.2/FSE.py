@@ -25,7 +25,7 @@ playerSurface.fill((0, 0, 0, 0))
 uiSurface = Surface((1280, 720), SRCALPHA)
 mainSurface = Surface((1280, 720), SRCALPHA)
 
-background = image.load("background.png").convert(32, SRCALPHA)
+background = image.load("background.png").convert()
 background = transform.scale(background, (1280, 720))
 
 pics = []
@@ -42,8 +42,12 @@ for i in range(6, 1126, 56):
         pics.append(transform.flip(sprite.subsurface((0, i, 40, 56)), True, False))
     except:
         pass
-print(len(pics))
 pics = [pics[0:5], [pics[5], pics[5]], pics[6:19], pics[19:24], [pics[24], pics[24]], pics[25:]]
+
+slimePics=[]
+for i in range(4):
+    name="slime/slime_"+str(i)+".png"
+    slimePics.append(image.load(name))
 
 tile_crack_1 = image.load("tile_cracks/tile_crack_2.png").convert(32, SRCALPHA)
 tile_crack_2 = image.load("tile_cracks/tile_crack_8.png").convert(32, SRCALPHA)
@@ -121,6 +125,87 @@ items = [False, item1, item2, False, item4]
 toolSpeeds = [5, 5, 5, 5, 15]
 effTools = [0.5, 0.5, 4, 0.5]
 
+###########################################################################
+class Slime:
+    def __init__(self, x, y, w, h):
+        self.rect = Rect(x, y, w, h)
+        self.blitPos = [ x - 8, y - 7]
+        self.vx = 0
+        self.vy = 0
+        self.jumping = False
+        self.right = False
+        self.left = False
+        self.move = -1
+        self.frame = 0
+    def moveSlime(self):
+        distance = abs(player.rect.x - slime.rect.x)
+        x = randint(1,60)
+        if x==60:
+            if distance < 500: 
+                if self.rect.x  <  player.rect.x and not self.jumping:
+                    self.vx = 7
+                    self.vy = -7
+                    self.jumping = True
+                    self.right = True
+                if self.rect.x > player.rect.x and not self.jumping:
+                    self.vx = -7
+                    self.vy= -7
+                    self.jumping = True
+                    self.left = True
+    def collide(self):
+        self.rect.x += self.vx
+        for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
+            for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
+                if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
+                    if self.vx > 0:
+                        self.rect.right = blocks[y][x].rect.left
+                    elif self.vx < 0:
+                        self.rect.left = blocks[y][x].rect.right
+        self.rect.y += self.vy            
+        for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
+            for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
+                if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
+                    self.vy = 5
+                    if self.vy > 0:
+                        self.rect.bottom = blocks[y][x].rect.top
+                        self.jumping = False
+                    elif self.vy < 0:
+                        self.rect.top = blocks[y][x].rect.bottom
+
+        if self.right and self.vx > 0:
+            self.vx -= 0.7
+        else:
+            self.vx = 0
+            self.jumping = False
+            self.right = False
+
+        if self.left and self.vx <0:
+            self.vx += 0.7
+        else:
+            self.vx = 0
+            self.jumping = False
+            self.left = False
+        if self.vy < 30:
+            self.vy += 0.7
+        if self.vy == 0:
+            self.jumping = False
+        
+
+        self.blitPos = [self.rect.x - 8, self.rect.y - 7]
+        
+    def clear(self):
+        draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
+        
+    def draw(self):
+        x=randint(1,15)
+        if x==15:
+            if self.frame<3:
+                self.frame+=1
+            else:
+                self.frame=0
+        pic = slimePics[int(self.frame)]
+        playerSurface.blit(pic,self.blitPos)
+###########################################################################
 class Player:
     def __init__(self, x, y, w, h):
         self.rect = Rect(x, y, w, h)
@@ -160,8 +245,6 @@ class Player:
             else:
                 self.newMove = 4
 
-        #elif self.jumping an
-
         if not self.jumping and self.move == 1:
             self.move = 2
 
@@ -194,10 +277,7 @@ class Player:
                     elif self.vx < 0:
                         self.rect.left = blocks[y][x].rect.right
 
-                    ##        if self.jumping and self.vy < 30:
-                    ##            self.vy += 2
-                    ##        elif not self.jumping:
-                    ##            self.vy = 5
+                    
         if self.vy < 30:
             self.vy += 2
 
@@ -205,12 +285,14 @@ class Player:
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
 
+    def clear(self):
+        draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
+
     def draw(self):
         pic = pics[self.move][int(self.frame)]
-        draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
         playerSurface.blit(pic, self.blitPos)
 
-
+###############################################################################
 class Block:
     def __init__(self, id, x, y):
         self.id = id
@@ -355,7 +437,7 @@ class Block:
                     self.condition = 0
                 else:
                     self.condition -= 5
-
+###########################################################################
 class inventory:
     selected = 0
     def __init__(self, pos, id, quantity, type):
@@ -398,12 +480,15 @@ for i in range(10):
 drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
 
 player = Player(629, 339, 24, 40)
+slime= Slime(729,339,14,14)
 EMPTY = 0
 BLOCK = 1
 TOOL = 2
 
+##################################################################
 running = True
-
+positive = True
+time = 0
 while running:
     leftClick = False
     rightClick = False
@@ -449,7 +534,22 @@ while running:
                 inventory.selected = 8
             elif evt.key == K_0:
                 inventory.selected = 9
+########################################################################
+    if time <= 5184000 and positive:
+        time+=5000
+    else:
+        positive = False
+    if time >= 0 and not positive:
+        time-=5000
+    else:
+        positive = True
 
+    alphaCount=time//20330
+    screen.fill((0, 0, 0))
+    background.set_alpha(alphaCount)
+    screen.blit(background,(0,0))
+
+#######################################################################
     if mb[0] == 1:
         blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
         for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
@@ -469,14 +569,20 @@ while running:
             for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
                 blocks[y][x].draw()
 
+    slime.moveSlime()
+    slime.collide()
+    slime.clear()
+
     player.movePlayer()
     player.collide()
+    player.clear()
+
+    slime.draw()
     player.draw()
 
     for item in inventoryList:
         item.draw()
 
-    screen.blit(background, (0, 0))
     if player.rect.y >= 339:
         screen.blit(blocksSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
         screen.blit(playerSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
@@ -491,11 +597,10 @@ while running:
     display.flip()
     clock.tick(60)
     display.set_caption("FSE FPS = {0:.0f}".format(clock.get_fps()))
-
 with open('blockspickle.pickle', 'wb') as f:
     pickle.dump(blockList, f)
 
 with open("inventory.pickle", "wb") as f:
     pickle.dump(inventoryPickleList, f)
-
+    
 quit()
