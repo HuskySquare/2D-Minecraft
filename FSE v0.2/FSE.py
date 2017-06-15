@@ -3,6 +3,7 @@ import numpy as np
 import pickle
 from time import time as tm
 from pygame import *
+init()
 
 with open("blockspickle.pickle", "rb") as f:
     blockList = pickle.load(f)
@@ -11,6 +12,7 @@ with open("inventory.pickle", "rb") as f:
     inventoryPickleList = pickle.load(f)
 
 screen = display.set_mode((1280, 720))
+andy=font.Font("fonts/HW ANDY.ttf", 18)
 
 clock = time.Clock()
 
@@ -40,8 +42,8 @@ for i in range(6, 1126, 56):
         pics.append(transform.flip(sprite.subsurface((0, i, 40, 56)), True, False))
     except:
         pass
-
-pics = [pics[0:5], [pics[5], pics[5]], pics[6:21], pics[21:26], pics[26], pics[27:]]
+print(len(pics))
+pics = [pics[0:5], [pics[5], pics[5]], pics[6:19], pics[19:24], [pics[24], pics[24]], pics[25:]]
 
 tile_crack_1 = image.load("tile_cracks/tile_crack_2.png").convert(32, SRCALPHA)
 tile_crack_2 = image.load("tile_cracks/tile_crack_8.png").convert(32, SRCALPHA)
@@ -117,6 +119,7 @@ inventoryBack = image.load("images/Inventory_Back.png")
 inventoryBackSelected = image.load("images/Inventory_Back14.png")
 items = [False, item1, item2, False, item4]
 toolSpeeds = [5, 5, 5, 5, 15]
+effTools = [0.5, 0.5, 4, 0.5]
 
 class Player:
     def __init__(self, x, y, w, h):
@@ -152,7 +155,12 @@ class Player:
         if keys[K_UP] and not self.jumping:
             self.vy = -15
             self.jumping = True
-            self.newMove = 1
+            if self.move == 2 or self.move == 1:
+                self.newMove = 1
+            else:
+                self.newMove = 4
+
+        #elif self.jumping an
 
         if not self.jumping and self.move == 1:
             self.move = 2
@@ -335,11 +343,18 @@ class Block:
 
     def breakBlock(self):
         if self.id != 0:
-            if self.condition - inventoryList[inventory.selected].speed <= 0:
-                self.id = 0
-                self.condition = 0
+            if inventoryList[inventory.selected].id == effTools[self.id]:
+                if self.condition - inventoryList[inventory.selected].speed <= 0:
+                    self.id = 0
+                    self.condition = 0
+                else:
+                    self.condition -= inventoryList[inventory.selected].speed
             else:
-                self.condition -= inventoryList[inventory.selected].speed
+                if self.condition - 5 <= 0:
+                    self.id = 0
+                    self.condition = 0
+                else:
+                    self.condition -= 5
 
 class inventory:
     selected = 0
@@ -352,11 +367,16 @@ class inventory:
 
     def draw(self):
         if self.pos == inventory.selected:
-            uiSurface.blit(inventoryBackSelected, (20 + 52 * self.pos, 20))
+            uiSurface.blit(inventoryBackSelected, (20 + 56 * self.pos, 20))
         else:
-            uiSurface.blit(inventoryBack, (20 + 52 * self.pos, 20))
+            uiSurface.blit(inventoryBack, (20 + 56 * self.pos, 20))
         if items[self.id] != EMPTY:
-            uiSurface.blit(items[self.id], (20 + 52 * self.pos + int((52 - items[self.id].get_width())/2), 20 + int((52 - items[self.id].get_height())/2)))
+            uiSurface.blit(items[self.id], (20 + 56 * self.pos + int((52 - items[self.id].get_width())/2), 20 + int((52 - items[self.id].get_height())/2)))
+        if self.pos == 9:
+            uiSurface.blit(andy.render("0", 1, (255, 255, 255)), (28 + 56 * self.pos, 22))
+        else:
+            uiSurface.blit(andy.render(str(self.pos + 1), 1, (255, 255, 255)), (28 + 56 * self.pos, 22))
+
 
 def drawBlocks(x1, x2, y1, y2):
     for x in range(x1, x2 + 1):
@@ -408,6 +428,27 @@ while running:
                     inventory.selected = 9
                 else:
                     inventory.selected -= 1
+        if evt.type == KEYDOWN:
+            if evt.key == K_1:
+                inventory.selected = 0
+            elif evt.key == K_2:
+                inventory.selected = 1
+            elif evt.key == K_3:
+                inventory.selected = 2
+            elif evt.key == K_4:
+                inventory.selected = 3
+            elif evt.key == K_5:
+                inventory.selected = 4
+            elif evt.key == K_6:
+                inventory.selected = 5
+            elif evt.key == K_7:
+                inventory.selected = 6
+            elif evt.key == K_8:
+                inventory.selected = 7
+            elif evt.key == K_9:
+                inventory.selected = 8
+            elif evt.key == K_0:
+                inventory.selected = 9
 
     if mb[0] == 1:
         blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
