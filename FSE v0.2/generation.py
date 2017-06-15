@@ -67,3 +67,10 @@ for i in range(780):
         except IndexError:
             continue
 
+#Making caves-----------------------------------------
+width, height = randint(2, 10), randint(2, 10)
+temp = np.random.normal(size=(width, height))
+temp = np.fabs(temp)
+temp = temp.astype(int)
+x,y=randint(0,85),randint(0,780)
+blocks[x:x+width,y:y+height]=temp
