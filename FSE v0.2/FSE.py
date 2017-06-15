@@ -116,6 +116,7 @@ item4 = image.load("items/item_4.png").convert(32, SRCALPHA)
 inventoryBack = image.load("images/Inventory_Back.png")
 inventoryBackSelected = image.load("images/Inventory_Back14.png")
 items = [False, item1, item2, False, item4]
+toolSpeeds = [5, 5, 5, 5, 15]
 
 class Player:
     def __init__(self, x, y, w, h):
@@ -334,9 +335,11 @@ class Block:
 
     def breakBlock(self):
         if self.id != 0:
-            if self.condition - 5 == 0:
+            if self.condition - inventoryList[inventory.selected].speed <= 0:
                 self.id = 0
-            self.condition -= 5
+                self.condition = 0
+            else:
+                self.condition -= inventoryList[inventory.selected].speed
 
 class inventory:
     selected = 0
@@ -345,13 +348,14 @@ class inventory:
         self.quantity = quantity
         self.type = type
         self.pos = pos
+        self.speed = toolSpeeds[self.id]
 
     def draw(self):
         if self.pos == inventory.selected:
             uiSurface.blit(inventoryBackSelected, (20 + 52 * self.pos, 20))
         else:
             uiSurface.blit(inventoryBack, (20 + 52 * self.pos, 20))
-        if items[self.id] != False:
+        if items[self.id] != EMPTY:
             uiSurface.blit(items[self.id], (20 + 52 * self.pos + int((52 - items[self.id].get_width())/2), 20 + int((52 - items[self.id].get_height())/2)))
 
 def drawBlocks(x1, x2, y1, y2):
@@ -369,11 +373,14 @@ for y in range(len(blockList)):
 
 inventoryList = []
 for i in range(10):
-    inventoryList.append(inventory(i, inventoryPickleList[i], 0, False))
+    inventoryList.append(inventory(i, inventoryPickleList[i][0], 1, inventoryPickleList[i][1]))
 
 drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
 
 player = Player(629, 339, 24, 40)
+EMPTY = 0
+BLOCK = 1
+TOOL = 2
 
 running = True
 
