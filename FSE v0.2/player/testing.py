@@ -17,7 +17,7 @@ x=glob("hair/*.png") #Temperory Variable
 
 for i,j in zip(x,range(1,len(x)+1)):
     names.append("Hair {0}".format(j))
-    img["hair"].append(image.load(i))
+    img["hair"].append(image.load(i).subsurface(0,0,40,56).copy())
 del x
 screen=display.set_mode((1248,704))
 screen.fill((255,255,255))
@@ -30,7 +30,7 @@ text=andy.render(names[counter],1,colour)
 # h=transform.scale(transform.chop(hair[counter],(0,0,40,56)),(200,280))
 # h=transform.chop(hair[counter],(0,0,40,56)).convert_alpha()
 # h=transform.scale(hair[counter],(400,7840))
-h=img["hair"][counter].subsurface(0,0,40,56).copy()
+h=img["hair"][counter].copy()
 h.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
 rect={"intro":{"hair":(440,121,78,61),"skin":(440,186,83,61),"clothes":(440,251,138,61)},
       "hair":{"hair":(530,65,40,56),"bar":(478,298,178,16),"back":(495,412,93,61)},
@@ -61,19 +61,20 @@ class current():
         screen.blit(self.shoes,pos)
         #print("Finish drawing")
 
-img["head"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
-img["undershirt"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
-img["shirt"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
-img["pants"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
-img["shoes"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
-img["hands"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
-default=current(img["head"],
-                h,
-                img["undershirt"],
-                img["shirt"],
-                img["pants"],
-                img["shoes"],
-                img["hands"])
+# img["head"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+# img["undershirt"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+# img["shirt"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+# img["pants"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+# img["shoes"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+# img["hands"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+x=[img["head"].copy(),img["hair"][counter].copy(),img["undershirt"].copy()
+,img["shirt"].copy()
+,img["pants"].copy()
+,img["shoes"].copy()
+,img["hands"].copy()]
+for i in x:
+    i.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+default=current(x[0],x[1],x[2],x[3],x[4],x[5],x[6])
 
 
 class intro():  #A class used for bliting the entire body
@@ -107,10 +108,12 @@ class skin():
         # img["hands"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
         # default.head=default.head.copy()
         # default.hands=default.hands.copy()
+
+        default.head=img["head"].copy()
+        default.hands=img["hands"].copy()
+
         default.head.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
         default.hands.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
-        # default.head=img["head"].copy()
-        # default.hands=img["hands"].copy()
 
         current.draw(default,(476,157))
         # screen.blit()
@@ -118,7 +121,6 @@ class skin():
         global colour,anchor
         if Rect(rect["skin"]["bar"]).collidepoint(mx,my) and mb[0]==1:
             colour=screen.get_at((mx,my))
-            print(colour)
             skin.menu()
         elif Rect(rect["skin"]["back"]).collidepoint(mx,my) and mb[0]==1:
             anchor="intro"
