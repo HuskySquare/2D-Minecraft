@@ -3,6 +3,7 @@ import numpy as np
 import pickle
 from time import time as tm
 from pygame import *
+import math
 init()
 
 with open("blockspickle.pickle", "rb") as f:
@@ -12,7 +13,8 @@ with open("inventory.pickle", "rb") as f:
     inventoryPickleList = pickle.load(f)
 
 screen = display.set_mode((1280, 720))
-andy=font.Font("fonts/HW ANDY.ttf", 18)
+andy18 = font.Font("fonts/HW ANDY.ttf", 18)
+andy16 = font.Font("fonts/HW ANDY.ttf", 16)
 
 clock = time.Clock()
 
@@ -42,7 +44,7 @@ for i in range(6, 1126, 56):
         pics.append(transform.flip(sprite.subsurface((0, i, 40, 56)), True, False))
     except:
         pass
-print(len(pics))
+
 pics = [pics[0:5], [pics[5], pics[5]], pics[6:19], pics[19:24], [pics[24], pics[24]], pics[25:]]
 
 tile_crack_1 = image.load("tile_cracks/tile_crack_2.png").convert(32, SRCALPHA)
@@ -117,9 +119,10 @@ item2 = image.load("items/item_2.png").convert(32, SRCALPHA)
 item4 = image.load("items/item_4.png").convert(32, SRCALPHA)
 inventoryBack = image.load("images/Inventory_Back.png")
 inventoryBackSelected = image.load("images/Inventory_Back14.png")
-items = [False, item1, item2, False, item4]
+items = [False, item1, item2, item1, item4]
 toolSpeeds = [5, 5, 5, 5, 15]
 effTools = [0.5, 0.5, 4, 0.5]
+dropsList = []
 
 class Player:
     def __init__(self, x, y, w, h):
@@ -160,7 +163,11 @@ class Player:
             else:
                 self.newMove = 4
 
-        #elif self.jumping an
+        elif self.jumping:
+            if keys[K_RIGHT]:
+                self.newMove = 1
+            elif keys[K_LEFT]:
+                self.newMove = 4
 
         if not self.jumping and self.move == 1:
             self.move = 2
@@ -205,9 +212,11 @@ class Player:
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
 
+    def clear(self):
+        draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
+
     def draw(self):
         pic = pics[self.move][int(self.frame)]
-        draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
         playerSurface.blit(pic, self.blitPos)
 
 
@@ -345,12 +354,14 @@ class Block:
         if self.id != 0:
             if inventoryList[inventory.selected].id == effTools[self.id]:
                 if self.condition - inventoryList[inventory.selected].speed <= 0:
+                    dropsList.append(Drop(self.x, self.y, self.id))
                     self.id = 0
                     self.condition = 0
                 else:
                     self.condition -= inventoryList[inventory.selected].speed
             else:
                 if self.condition - 5 <= 0:
+                    dropsList.append(Drop(self.x, self.y, self.id))
                     self.id = 0
                     self.condition = 0
                 else:
@@ -373,9 +384,40 @@ class inventory:
         if items[self.id] != EMPTY:
             uiSurface.blit(items[self.id], (20 + 56 * self.pos + int((52 - items[self.id].get_width())/2), 20 + int((52 - items[self.id].get_height())/2)))
         if self.pos == 9:
-            uiSurface.blit(andy.render("0", 1, (255, 255, 255)), (28 + 56 * self.pos, 22))
+            uiSurface.blit(andy18.render("0", 1, (255, 255, 255)), (28 + 56 * self.pos, 22))
         else:
-            uiSurface.blit(andy.render(str(self.pos + 1), 1, (255, 255, 255)), (28 + 56 * self.pos, 22))
+            uiSurface.blit(andy18.render(str(self.pos + 1), 1, (255, 255, 255)), (28 + 56 * self.pos, 22))
+        if self.quantity > 1:
+            uiSurface.blit(andy16.render(str(self.quantity), 1, (255, 255, 255)), (32 + 56 * self.pos, 47))
+
+class Drop:
+    def __init__(self, x, y, id):
+        self.rect = Rect(x * 16, y * 16, 16, 16)
+        self.id = id
+        self.delete = False
+
+    def collide(self):
+        if 5 < math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery) < 35:
+            self.rect.x += (player.rect.centerx - self.rect.centerx) / 2
+            self.rect.y += (player.rect.centery - self.rect.centery) / 2
+        elif 5 > math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery):
+            for item in inventoryList:
+                if item.id == self.id:
+                    self.delete = True
+                    item.quantity += 1
+        else:
+            self.rect.y += 15
+            for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
+                for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
+                    if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
+                        self.rect.bottom = blocks[y][x].rect.top
+                        self.falling = False
+
+    def clear(self):
+        draw.rect(playerSurface, (0, 0, 0, 0), (self.rect.x, self.rect.y - 20, 20, 20))
+
+    def draw(self):
+        playerSurface.blit(items[self.id], (self.rect.x, self.rect.y))
 
 
 def drawBlocks(x1, x2, y1, y2):
@@ -401,6 +443,7 @@ player = Player(629, 339, 24, 40)
 EMPTY = 0
 BLOCK = 1
 TOOL = 2
+deleteList = []
 
 running = True
 
@@ -469,8 +512,21 @@ while running:
             for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
                 blocks[y][x].draw()
 
+    if len(dropsList) != 0:
+        for drop in dropsList:
+            drop.collide()
+            drop.clear()
+
+
     player.movePlayer()
     player.collide()
+    player.clear()
+
+    if len(dropsList) != 0:
+        for drop in dropsList:
+            drop.draw()
+        dropsList = [drop for drop in dropsList if not drop.delete]
+
     player.draw()
 
     for item in inventoryList:
