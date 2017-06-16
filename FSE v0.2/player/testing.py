@@ -34,8 +34,8 @@ h=img["hair"][counter].subsurface(0,0,40,56).copy()
 h.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
 rect={"intro":{"hair":(440,121,78,61),"skin":(440,186,83,61),"clothes":(440,251,138,61)},
       "hair":{"hair":(530,65,40,56),"bar":(478,298,178,16),"back":(495,412,93,61)},
-      "clothes":{},
-      "skin":{"bar":(478,298,40,56),"back":(478,474,93,61)}}  #Two dimensional dictionary
+      "clothes":{"back":(478,474,93,61)},
+      "skin":{"bar":(478,298,178,16),"back":(478,474,93,61)}}  #Two dimensional dictionary
 options={"hair":andy.render("Hair",1,(0,0,0)),"skin":andy.render("Skin",1,(0,0,0)),"clothes":andy.render("Clothes",1,(0,0,0)),
          "back":andy.render("Back",1,(0,0,0)),"create":andy.render("Create",1,(0,0,0))}
 
@@ -59,6 +59,7 @@ class current():
         screen.blit(self.shirt,pos)
         screen.blit(self.pants,pos)
         screen.blit(self.shoes,pos)
+        #print("Finish drawing")
 
 img["head"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
 img["undershirt"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
@@ -119,7 +120,7 @@ class skin():
             colour=screen.get_at((mx,my))
             print(colour)
             skin.menu()
-        if Rect(rect["skin"]["back"]).collidepoint(mx,my) and mb[0]==1:
+        elif Rect(rect["skin"]["back"]).collidepoint(mx,my) and mb[0]==1:
             anchor="intro"
 
 class hair():
@@ -167,6 +168,9 @@ class hair():
 class clothes():
     def menu():
         screen.fill((255,255,255))
+
+        screen.blit(bar,rect["clothes"]["bar"][:2])
+        screen.blit(options["back"],rect["clothes"]["back"][:2])
         # screen.blit(bar,)
     def check():
         global anchor,colour
@@ -194,7 +198,6 @@ while running:
 
     if anchor=="intro":
         intro.menu()
-
         intro.check()
     elif anchor=="hair":
         hair.check()
