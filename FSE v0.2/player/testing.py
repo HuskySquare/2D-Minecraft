@@ -5,7 +5,7 @@ img={"hair":[],
      "head":image.load("Player_Head.png").subsurface(0,0,40,56).copy(),
      "undershirt":image.load("Player_Undershirt.png").subsurface(0,0,40,56).copy(),
      "shirt":image.load("Player_Shirt.png").subsurface(0,0,40,56).copy(),
-     "pants":image.load("Player_Shirt.png").subsurface(0,0,40,56).copy(),
+     "pants":image.load("Player_Pants.png").subsurface(0,0,40,56).copy(),
      "shoes":image.load("Player_Shoes.png").subsurface(0,0,40,56).copy(),
      "hands":image.load("Player_Hands.png").subsurface(0,0,40,56).copy()}
 colour={"hair":Color(171,181,198),
