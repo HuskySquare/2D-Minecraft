@@ -51,6 +51,11 @@ slimePics=[]
 for i in range(4):
     name="slime/slime_"+str(i)+".png"
     slimePics.append(image.load(name))
+
+purpleSlimePics = []
+for i in range(4):
+    name="slime/slime2_"+str(i)+".png"
+    purpleSlimePics.append(image.load(name))
 #/////////////////////////////////////////////////////////////////////////    
 tile_crack_1 = image.load("tile_cracks/tile_crack_2.png").convert(32, SRCALPHA)
 tile_crack_2 = image.load("tile_cracks/tile_crack_8.png").convert(32, SRCALPHA)
@@ -129,6 +134,91 @@ toolSpeeds = [5, 5, 5, 5, 15]
 effTools = [0.5, 0.5, 4, 0.5]
 dropsList = []
 #########################################################################
+class PurpleSlime:
+    def __init__(self,x,y,w,h):
+        self.rect = Rect(x,y,w,h)
+        self.blitPos = [x - 8, y - 7]
+        self.vx = 0
+        self.vy = 0
+        self.jumping = False
+        self.right = False
+        self.left = False
+        self.frame = 0
+        self.attack = 0
+        self.health = 500
+        self.status = "Alive"
+#////////////////////////////////////////////////////////////////////////////
+    def moveSlime(self):
+        distance = abs(player.rect.x - slime.rect.x)
+        x = randint(1,60)
+        if x == 60:
+            if distance <400:
+                if self.rect.x <player.rect.x and not self.jumping:
+                    self.vx = 10
+                    self.vy = -10
+                    self.jumping = True
+                    self.right = True
+                if self.rect.x >player.rect.x and not self.jumping:
+                    self.vx = -10
+                    self.vy= -10
+                    self.jumping = True
+                    self.left = True
+#//////////////////////////////////////////////////////////////////////////
+    def collide(self):
+        self.rect.x += self.vx
+        for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
+            for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
+                if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
+                    if self.vx > 0:
+                        self.rect.right = blocks[y][x].rect.left
+                    elif self.vx < 0:
+                        self.rect.left = blocks[y][x].rect.right
+        self.rect.y += self.vy            
+        for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
+            for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
+                if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
+                    self.vy = 5
+                    if self.vy > 0:
+                        self.rect.bottom = blocks[y][x].rect.top
+                        self.jumping = False
+                    elif self.vy < 0:
+                        self.rect.top = blocks[y][x].rect.bottom
+
+        if self.right and self.vx > 0:
+            self.vx -= 0.7
+        else:
+            self.vx = 0
+            self.jumping = False
+            self.right = False
+
+        if self.left and self.vx <0:
+            self.vx += 0.7
+        else:
+            self.vx = 0
+            self.jumping = False
+            self.left = False
+        if self.vy < 30:
+            self.vy += 0.7
+        if self.vy == 0:
+            self.jumping = False
+        
+
+        self.blitPos = [self.rect.x - 8, self.rect.y - 7]
+        self.attack = randint(1,25)
+#////////////////////////////////////////////////////////////////////////////
+    def clear(self):
+        draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
+#///////////////////////////////////////////////////////////////////////////
+    def draw(self):
+        x=randint(1,5)
+        if x==5:
+            if self.frame<3:
+                self.frame+=1
+            else:
+                self.frame=0
+        pic = purpleSlimePics[int(self.frame)]
+        playerSurface.blit(pic,self.blitPos)
+############################################################################          
 class Slime:
     def __init__(self, x, y, w, h):
         self.rect = Rect(x, y, w, h)
@@ -542,6 +632,11 @@ for i in range(5):
     slime= Slime(randint(700,1100),339,14,14)
     slimeList.append(slime)
 
+purpleSlimeList=[]
+for i in range(3):
+    purpleSlime = PurpleSlime(randint(700,1000),339,28,28)
+    purpleSlimeList.append(purpleSlime)
+
 
 EMPTY = 0
 BLOCK = 1
@@ -639,6 +734,11 @@ while running:
         slime.moveSlime()
         slime.collide()
         slime.clear()
+
+    for purpSlime in purpleSlimeList:
+        purpSlime.moveSlime()
+        purpSlime.collide()
+        purpSlime.clear()
         
     player.movePlayer()
     player.collide()
@@ -652,9 +752,11 @@ while running:
     for slime in slimeList:
         slime.draw()
 
+    for purpSlime in purpleSlimeList:
+        purpSlime.draw()
+
     player.draw()
 
-    print(player.health)
     for item in inventoryList:
         item.draw()
 
