@@ -10,6 +10,7 @@ img={"hair":[],
      "hands":image.load("Player_Hands.png").subsurface(0,0,40,56).copy()}
 colour=Color(171,181,198)
 names=[]
+
 anchor="intro"
 x=glob("hair/*.png") #Temperory Variable
 
