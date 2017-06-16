@@ -12,7 +12,7 @@ colour={"hair":Color(171,181,198),
         "skin":Color(171,181,198),
         "pants":Color(171,181,198),
         "shoes":Color(171,181,198)}
-names=[]    #Used for which hair to add.
+names=[]    #Used for hair number.
 
 anchor="intro"
 x=glob("hair/*.png") #Temperory Variable
@@ -62,6 +62,7 @@ class current():
         screen.blit(self.shirt,pos)
         screen.blit(self.pants,pos)
         screen.blit(self.shoes,pos)
+        screen.blit(self.hands,pos)
         #print("Finish drawing")
 
 # img["head"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
@@ -115,9 +116,9 @@ class skin():
 
         default.head=img["head"].copy()
         default.hands=img["hands"].copy()
-
+        default.hands.fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
         default.head.fill(Color(255,255,255)-colour["skin"], special_flags=BLEND_SUB)
-        default.hands.fill(Color(255,255,255)-colour["skin"], special_flags=BLEND_SUB)
+
 
         current.draw(default,(476,157))
 
