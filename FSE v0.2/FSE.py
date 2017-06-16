@@ -138,8 +138,10 @@ class Slime:
         self.jumping = False
         self.right = False
         self.left = False
-        self.move = -1
         self.frame = 0
+        self.attack = 0
+        self.health = 100
+        self.status = "Alive"
     def moveSlime(self):
         distance = abs(player.rect.x - slime.rect.x)
         x = randint(1,60)
@@ -195,6 +197,7 @@ class Slime:
         
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
+        self.attack = randint(1,25)
         
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
@@ -219,6 +222,8 @@ class Player:
         self.move = 0
         self.newMove = -1
         self.frame = 0
+        self.health = 100
+        self.status = "Alive"
 
     def movePlayer(self):
         keys = key.get_pressed()
@@ -297,6 +302,12 @@ class Player:
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
 
+        for slime in slimeList:
+            if slime.rect.colliderect(self.rect) and self.health>=10 and slime.attack==25:
+                self.health -= 10
+            else:
+                self.heatlh = 0
+                self.status = "Dead"
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
 
@@ -643,6 +654,7 @@ while running:
 
     player.draw()
 
+    print(player.health)
     for item in inventoryList:
         item.draw()
 
