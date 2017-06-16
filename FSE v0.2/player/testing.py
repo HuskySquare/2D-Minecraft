@@ -8,7 +8,10 @@ img={"hair":[],
      "pants":image.load("Player_Shirt.png").subsurface(0,0,40,56).copy(),
      "shoes":image.load("Player_Shoes.png").subsurface(0,0,40,56).copy(),
      "hands":image.load("Player_Hands.png").subsurface(0,0,40,56).copy()}
-colour=Color(171,181,198)
+colour={"hair":Color(171,181,198),
+        "skin":Color(171,181,198),
+        "pants":Color(171,181,198),
+        "shoes":Color(171,181,198)}
 names=[]    #Used for which hair to add.
 
 anchor="intro"
@@ -26,12 +29,12 @@ bar=image.load("Hue.png")
 andy=font.Font("HW ANDY.ttf",50)
 clock=time.Clock()
 counter=0  #Used to control what hair to use
-text=andy.render(names[counter],1,colour)
+# text=andy.render(names[counter],1,colour)
 # h=transform.scale(transform.chop(hair[counter],(0,0,40,56)),(200,280))
 # h=transform.chop(hair[counter],(0,0,40,56)).convert_alpha()
 # h=transform.scale(hair[counter],(400,7840))
-h=img["hair"][counter].copy()
-h.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+# h=img["hair"][counter].copy()
+# h.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
 rect={"intro":{"hair":(440,121,78,61),"skin":(440,186,83,61),"clothes":(440,251,138,61)},
       "hair":{"hair":(499,208,40,56),"bar":(478,298,178,16),"back":(511,491,93,61)},
       "clothes":{"back":(478,474,93,61)},
@@ -73,7 +76,7 @@ x=[img["head"].copy(),img["hair"][counter].copy(),img["undershirt"].copy()
 ,img["shoes"].copy()
 ,img["hands"].copy()]
 for i in x:
-    i.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+    i.fill(Color(255,255,255)-colour["hair"], special_flags=BLEND_SUB)
 default=current(x[0],x[1],x[2],x[3],x[4],x[5],x[6])
 
 
@@ -99,7 +102,7 @@ class intro():  #A class used for bliting the entire body
 class skin():
 
     def menu():
-        print("Ran")
+
         global colour
         screen.fill((255,255,255))
         screen.blit(bar,rect["skin"]["bar"][:2])
@@ -113,15 +116,15 @@ class skin():
         default.head=img["head"].copy()
         default.hands=img["hands"].copy()
 
-        default.head.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
-        default.hands.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+        default.head.fill(Color(255,255,255)-colour["skin"], special_flags=BLEND_SUB)
+        default.hands.fill(Color(255,255,255)-colour["skin"], special_flags=BLEND_SUB)
 
         current.draw(default,(476,157))
 
     def check():
         global colour,anchor
         if Rect(rect["skin"]["bar"]).collidepoint(mx,my) and mb[0]==1:
-            colour=screen.get_at((mx,my))
+            colour["skin"]=screen.get_at((mx,my))
             skin.menu()
         elif Rect(rect["skin"]["back"]).collidepoint(mx,my) and mb[0]==1:
             anchor="intro"
@@ -134,7 +137,7 @@ class hair():
         screen.blit(andy.render(names[counter], 1, (0, 0, 0)), (499, 208))
 
         temp = img["hair"][counter].copy()
-        temp.fill(Color(255, 255, 255) - colour, special_flags=BLEND_SUB)
+        temp.fill(Color(255, 255, 255) - colour["hair"], special_flags=BLEND_SUB)
         default.hair = temp
         current.draw(default, (530, 65))
         screen.blit(options["back"],rect["hair"]["back"][:2])
@@ -148,7 +151,7 @@ class hair():
             counter+=1
             hair.menu()
         elif Rect(rect["hair"]["bar"]).collidepoint(mx,my) and mb[0]==1:
-            colour=screen.get_at((mx,my))
+            colour["hair"]=screen.get_at((mx,my))
             hair.menu()
 
         elif Rect(rect["hair"]["back"]).collidepoint(mx,my) and mb[0]==1:
@@ -201,9 +204,9 @@ class clothes():
 
 running= True
 
-screen.blit(bar,(478,298))
-screen.blit(andy.render(names[counter],1,(0,0,0)),(499,208))
-screen.blit(h,(530,65))
+# screen.blit(bar,(478,298))
+# screen.blit(andy.render(names[counter],1,(0,0,0)),(499,208))
+# screen.blit(h,(530,65))
 intro()
 # screen.blit()
 while running:
