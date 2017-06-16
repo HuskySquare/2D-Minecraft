@@ -98,16 +98,22 @@ class skin():
         global colour
         screen.fill((255,255,255))
         screen.blit(bar,rect["skin"]["bar"][:2])
+        img["head"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+        img["hands"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
         # default.head=default.head.copy()
         # default.hands=default.hands.copy()
-        default.head.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
-        default.hands.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+        # default.head.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+        # default.hands.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
+        default.head=img["head"].copy()
+        default.hands=img["hands"].copy()
+
         current.draw(default,(476,157))
         # screen.blit()
     def check():
         global colour
         if Rect(rect["skin"]["bar"]).collidepoint(mx,my) and mb[0]==1:
             colour=screen.get_at((mx,my))
+            print(colour)
             skin.menu()
 
 class hair():
