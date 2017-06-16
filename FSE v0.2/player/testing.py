@@ -35,7 +35,7 @@ h.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
 rect={"intro":{"hair":(440,121,78,61),"skin":(440,186,83,61),"clothes":(440,251,138,61)},
       "hair":{"hair":(530,65,40,56),"bar":(478,298,178,16),"back":(495,412,93,61)},
       "clothes":{},
-      "skin":{"bar":(478,298,40,56)}}  #Two dimensional dictionary
+      "skin":{"bar":(478,298,40,56),"back":(478,474,93,61)}}  #Two dimensional dictionary
 options={"hair":andy.render("Hair",1,(0,0,0)),"skin":andy.render("Skin",1,(0,0,0)),"clothes":andy.render("Clothes",1,(0,0,0)),
          "back":andy.render("Back",1,(0,0,0)),"create":andy.render("Create",1,(0,0,0))}
 
@@ -75,13 +75,14 @@ default=current(img["head"],
                 img["hands"])
 
 
-class intro():
+class intro():  #A class used for bliting the entire body
 
     def menu():
         screen.fill((255,255,255))
         screen.blit(options["hair"],rect["intro"]["hair"][:2])
         screen.blit(options["skin"], rect["intro"]["skin"][:2])
         screen.blit(options["clothes"], rect["intro"]["clothes"][:2])
+        #screen.blit(options["create"],)
     def check():
         global anchor
         if Rect(rect["intro"]["hair"]).collidepoint(mx,my) and mb[0]==1:
@@ -99,6 +100,8 @@ class skin():
         global colour
         screen.fill((255,255,255))
         screen.blit(bar,rect["skin"]["bar"][:2])
+        screen.blit(options["back"],rect["skin"]["back"][:2])
+
         # img["head"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
         # img["hands"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
         # default.head=default.head.copy()
@@ -111,11 +114,13 @@ class skin():
         current.draw(default,(476,157))
         # screen.blit()
     def check():
-        global colour
+        global colour,anchor
         if Rect(rect["skin"]["bar"]).collidepoint(mx,my) and mb[0]==1:
             colour=screen.get_at((mx,my))
             print(colour)
             skin.menu()
+        if Rect(rect["skin"]["back"]).collidepoint(mx,my) and mb[0]==1:
+            anchor="intro"
 
 class hair():
     def menu():
@@ -186,8 +191,10 @@ while running:
     rightClick=False
     mx, my = mouse.get_pos()
     mb = mouse.get_pressed()
+
     if anchor=="intro":
         intro.menu()
+
         intro.check()
     elif anchor=="hair":
         hair.check()
