@@ -9,7 +9,7 @@ img={"hair":[],
      "shoes":image.load("Player_Shoes.png").subsurface(0,0,40,56).copy(),
      "hands":image.load("Player_Hands.png").subsurface(0,0,40,56).copy()}
 colour=Color(171,181,198)
-names=[]
+names=[]    #Used for which hair to add.
 
 anchor="intro"
 x=glob("hair/*.png") #Temperory Variable
@@ -33,14 +33,14 @@ text=andy.render(names[counter],1,colour)
 h=img["hair"][counter].copy()
 h.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
 rect={"intro":{"hair":(440,121,78,61),"skin":(440,186,83,61),"clothes":(440,251,138,61)},
-      "hair":{"hair":(530,65,40,56),"bar":(478,298,178,16),"back":(495,412,93,61)},
+      "hair":{"hair":(499,208,40,56),"bar":(478,298,178,16),"back":(511,491,93,61)},
       "clothes":{"back":(478,474,93,61)},
       "skin":{"bar":(478,298,178,16),"back":(478,474,93,61)}}  #Two dimensional dictionary
 options={"hair":andy.render("Hair",1,(0,0,0)),"skin":andy.render("Skin",1,(0,0,0)),"clothes":andy.render("Clothes",1,(0,0,0)),
          "back":andy.render("Back",1,(0,0,0)),"create":andy.render("Create",1,(0,0,0))}
 
 #--------------------------RECT---------------------------------
-textRect=Rect((499,208),text.get_size())
+# textRect=Rect((499,208),text.get_size())
 barRect=Rect((478,298),bar.get_size())
 #-----------------------------------------------------------------
 class current():
@@ -99,6 +99,7 @@ class intro():  #A class used for bliting the entire body
 class skin():
 
     def menu():
+        print("Ran")
         global colour
         screen.fill((255,255,255))
         screen.blit(bar,rect["skin"]["bar"][:2])
@@ -116,7 +117,7 @@ class skin():
         default.hands.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
 
         current.draw(default,(476,157))
-        # screen.blit()
+
     def check():
         global colour,anchor
         if Rect(rect["skin"]["bar"]).collidepoint(mx,my) and mb[0]==1:
@@ -127,16 +128,29 @@ class skin():
 
 class hair():
     def menu():
+       # global counter
         screen.fill((255,255,255))
-        screen.blit(bar,(478,298))
+        screen.blit(bar,rect["hair"]["bar"][:2])
+        screen.blit(andy.render(names[counter], 1, (0, 0, 0)), (499, 208))
+
+        temp = img["hair"][counter].copy()
+        temp.fill(Color(255, 255, 255) - colour, special_flags=BLEND_SUB)
+        default.hair = temp
+        current.draw(default, (530, 65))
+        screen.blit(options["back"],rect["hair"]["back"][:2])
 
 
     def check():
-        global anchor,colour
-        if Rect(rect["hair"]["hair"]).collidepoint(mx,my) and mb[0]==1:
-            hair.updatehair()
+        global anchor,colour,counter
+
+        textRect=Rect((499,208),andy.render(names[counter],1,(0,0,0)).get_size())
+        if textRect.collidepoint(mx,my) and mb[0]==1:
+            counter+=1
+            hair.menu()
         elif Rect(rect["hair"]["bar"]).collidepoint(mx,my) and mb[0]==1:
-            hair.updatecolour()
+            colour=screen.get_at((mx,my))
+            hair.menu()
+
         elif Rect(rect["hair"]["back"]).collidepoint(mx,my) and mb[0]==1:
             anchor="intro"
             intro.menu()
@@ -150,7 +164,7 @@ class hair():
             screen.fill((255, 255, 255))
             screen.blit(bar, (478,298))
             screen.blit(andy.render(names[counter], 1, (0, 0, 0)), (499,208))
-            h = hair[counter].subsurface(0, 0, 40, 56).copy()
+            h = hair[counter].copy()
             h.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
             default.hair=h
             current.draw(default,(530,65))
