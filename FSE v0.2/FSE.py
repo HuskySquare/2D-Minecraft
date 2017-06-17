@@ -4,16 +4,22 @@ import pickle
 from time import time as tm
 from pygame import *
 import math
+import pygame #music
+
+pygame.init()
+pygame.mixer.init()
+pygame.mixer.pre_init(22050,-16,2,2048)
+
 init()
 ######################################################################
 with open("blockspickle.pickle", "rb") as f:
-    blockList = pickle.load(f)
+    blockList = pickle.load(f) #keeps track of blocks
 
 with open("inventory.pickle", "rb") as f:
-    inventoryPickleList = pickle.load(f)
+    inventoryPickleList = pickle.load(f) #keeps track of inventory
 
 screen = display.set_mode((1280, 720))
-andy18 = font.Font("fonts/HW ANDY.ttf", 18)
+andy18 = font.Font("fonts/HW ANDY.ttf", 18) 
 andy16 = font.Font("fonts/HW ANDY.ttf", 16)
 
 clock = time.Clock()
@@ -21,16 +27,16 @@ clock = time.Clock()
 worldSize = (780, 85)
 
 blocksSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
-blocksSurface.fill((0, 0, 0, 0))
+blocksSurface.fill((0, 0, 0, 0)) #transparent
 playerSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
-playerSurface.fill((0, 0, 0, 0))
-uiSurface = Surface((1280, 720), SRCALPHA)
+playerSurface.fill((0, 0, 0, 0)) #transparent
+uiSurface = Surface((1280, 720), SRCALPHA) #inventory and stuff
 mainSurface = Surface((1280, 720), SRCALPHA)
-###########################################################################
-background = image.load("background.png").convert()
+########################IMAGES AND SPRITE ORGANIZATION########################
+background = image.load("background.png").convert() #no src alpha for day/night
 background = transform.scale(background, (1280, 720))
 
-pics = []
+pics = [] #player sprites
 sprite = image.load("player\Sprite0.png")
 
 for i in range(6, 1126, 56):
@@ -47,15 +53,25 @@ for i in range(6, 1126, 56):
 
 pics = [pics[0:5], [pics[5], pics[5]], pics[6:19], pics[19:24], [pics[24], pics[24]], pics[25:]]
 
-slimePics=[]
+slimePics=[] #slime sprite
 for i in range(4):
-    name="slime/slime_"+str(i)+".png"
+    name = "slime/slime_"+str(i)+".png"
     slimePics.append(image.load(name))
 
-purpleSlimePics = []
+purpleSlimePics = [] #purple slime sprite
 for i in range(4):
-    name="slime/slime2_"+str(i)+".png"
+    name = "slime/slime2_"+str(i)+".png"
     purpleSlimePics.append(image.load(name))
+
+wizardPics = [[],[]] #wizard sprite
+for i in range(2):
+    name = "wizard/skeleton_"+str(i)+".png"
+    wizardPics[0].append(image.load(name))
+
+for i in range(2):
+    name = "wizard/skeleton_B_"+str(i)+".png"
+    wizardPics[1].append(image.load(name))
+
 #/////////////////////////////////////////////////////////////////////////    
 tile_crack_1 = image.load("tile_cracks/tile_crack_2.png").convert(32, SRCALPHA)
 tile_crack_2 = image.load("tile_cracks/tile_crack_8.png").convert(32, SRCALPHA)
@@ -133,6 +149,96 @@ items = [False, item1, item2, item1, item4]
 toolSpeeds = [5, 5, 5, 5, 15]
 effTools = [0.5, 0.5, 4, 0.5]
 dropsList = []
+
+###################################MUSIC LOADING###########################
+file1="Audio/02-Day.mp3"
+file2="Audio/03-Night.mp3"
+
+music = []
+music.append(file1)
+music.append(file2)
+
+shuffle(music)
+
+
+END_MUSIC_EVENT=pygame.USEREVENT+0
+pygame.mixer.music.set_endevent(END_MUSIC_EVENT)
+###################################ALL CLASSES#############################
+"""Variable names explain themselves. Each entity in the game has it's on class.
+We simply declare a variable inside the event loop to call the classes and
+their functions"""
+class Wizard:
+    def __init__(self,x,y,w,h):
+        self.rect = Rect(x,y,w,h)
+        self.blitPos = [x - 8, y - 7]
+        self.vx = 0
+        self.vy = 0
+        self.frame = 0
+        self.attack = 0
+        self.health = 100
+        self.status = "Alive"
+        self.stuck = False
+        self.move = 0
+        self.newMove = -1
+#/////////////////////////////////////////////////////////////////////////////       
+    def moveWizard(self):
+        x = randint(1,60)
+        y = randint(1,2)
+        if x==60:
+            if y==1:
+                self.stuck = False
+                self.vx = 5
+                self.newMove = 1
+            if y==2:
+                self.stuck = False
+                self.vx = -5
+                self.newMove = 0
+
+        if self.move == self.newMove and not self.stuck:  # 0 is a standing pose, so we want to skip over it when we are moving
+            self.frame = self.frame + 0.2  # adding 0.2 allows us to slow down the animation
+            if self.frame >= len(wizardPics[self.move]):
+                self.frame = 0
+
+        elif self.newMove != -1 and not self.stuck:  # a move was selected
+            self.move = self.newMove  # make that our current move
+            self.frame = 0
+        if self.stuck:
+            self.frame = 0
+#/////////////////////////////////////////////////////////////////////////////            
+    def collide(self):
+        self.rect.x += self.vx #scans through blocks and checks for collisions
+        for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
+            for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
+                if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
+                    if self.vx > 0:
+                        self.rect.right = blocks[y][x].rect.left
+                        vx = 0
+                        self.stuck = True
+                    elif self.vx < 0:
+                        self.rect.left = blocks[y][x].rect.right
+                        vx = 0
+                        self.stuck = True
+                        
+        self.rect.y += self.vy #scans through blocks and checks for collisions
+        for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
+            for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
+                if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
+                    if self.vy > 0:
+                        self.rect.bottom = blocks[y][x].rect.top
+                    elif self.vy < 0:
+                        self.rect.top = blocks[y][x].rect.bottom
+                    self.vy = 5
+                    
+        self.blitPos = [self.rect.x - 8, self.rect.y - 7]
+        self.attack = randint(1,25)
+#/////////////////////////////////////////////////////////////////////////
+    def clear(self):
+        draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
+#/////////////////////////////////////////////////////////////////////////        
+    def draw(self):
+        pic = wizardPics[self.move][int(self.frame)]
+        playerSurface.blit(pic,self.blitPos)
+
 #########################################################################
 class PurpleSlime:
     def __init__(self,x,y,w,h):
@@ -232,6 +338,7 @@ class Slime:
         self.attack = 0
         self.health = 100
         self.status = "Alive"
+#//////////////////////////////////////////////////////////////////////////
     def moveSlime(self):
         distance = abs(player.rect.x - slime.rect.x)
         x = randint(1,60)
@@ -247,6 +354,7 @@ class Slime:
                     self.vy= -7
                     self.jumping = True
                     self.left = True
+#/////////////////////////////////////////////////////////////////////////
     def collide(self):
         self.rect.x += self.vx
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
@@ -288,13 +396,13 @@ class Slime:
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
         self.attack = randint(1,25)
-        
+#///////////////////////////////////////////////////////////////////////////      
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
-        
+#///////////////////////////////////////////////////////////////////////////     
     def draw(self):
         x=randint(1,5)
-        if x==5:
+        if x==5: #slowly cycles through 
             if self.frame<3:
                 self.frame+=1
             else:
@@ -314,7 +422,7 @@ class Player:
         self.frame = 0
         self.health = 100
         self.status = "Alive"
-
+#///////////////////////////////////////////////////////////////////////
     def movePlayer(self):
         keys = key.get_pressed()
 
@@ -359,7 +467,7 @@ class Player:
         elif self.newMove != -1:  # a move was selected
             self.move = self.newMove  # make that our current move
             self.frame = 1
-
+#///////////////////////////////////////////////////////////////////////
     def collide(self):
         self.rect.y += self.vy
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
@@ -398,9 +506,10 @@ class Player:
             else:
                 self.heatlh = 0
                 self.status = "Dead"
+#////////////////////////////////////////////////////////////////////////////
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
-
+#////////////////////////////////////////////////////////////////////////////
     def draw(self):
         pic = pics[self.move][int(self.frame)]
         playerSurface.blit(pic, self.blitPos)
@@ -469,7 +578,7 @@ class Block:
                         self.surround = 14
                 else:
                     self.surround = 15
-
+#///////////////////////////////////////////////////////////////////////
     def draw(self):
         draw.rect(blocksSurface, (0, 0, 0, 0), self.rect)
         if self.id != 0:
@@ -477,7 +586,7 @@ class Block:
             if self.condition < blockConditions[self.id] * 4 / 5:
                 blocksSurface.blit(tile_cracks[self.condition // int(blockConditions[self.id] / 5)],
                                    (self.x * 16, self.y * 16))
-
+#///////////////////////////////////////////////////////////////////////
     def update(self):
         top = True
         down = True
@@ -535,7 +644,7 @@ class Block:
                         self.surround = 14
                 else:
                     self.surround = 15
-
+#///////////////////////////////////////////////////////////////////////
     def breakBlock(self):
         if self.id != 0:
             if inventoryList[inventory.selected].id == effTools[self.id]:
@@ -547,10 +656,7 @@ class Block:
                     self.condition -= inventoryList[inventory.selected].speed
             else:
                 if self.condition - 5 <= 0:
-                    if self.id == 3:
-                        dropsList.append(Drop(self.x, self.y, 1))
-                    else:
-                        dropsList.append(Drop(self.x, self.y, self.id))
+                    dropsList.append(Drop(self.x, self.y, self.id))
                     self.id = 0
                     self.condition = 0
                 else:
@@ -564,7 +670,7 @@ class inventory:
         self.type = type
         self.pos = pos
         self.speed = toolSpeeds[self.id]
-
+#///////////////////////////////////////////////////////////////////////
     def draw(self):
         if self.pos == inventory.selected:
             uiSurface.blit(inventoryBackSelected, (20 + 56 * self.pos, 20))
@@ -578,61 +684,36 @@ class inventory:
             uiSurface.blit(andy18.render(str(self.pos + 1), 1, (255, 255, 255)), (28 + 56 * self.pos, 22))
         if self.quantity > 1:
             uiSurface.blit(andy16.render(str(self.quantity), 1, (255, 255, 255)), (32 + 56 * self.pos, 47))
-
+###############################################################################
 class Drop:
     def __init__(self, x, y, id):
         self.rect = Rect(x * 16, y * 16, 16, 16)
         self.id = id
         self.delete = False
-        self.dist = False
-
-    def collidePlayer1(self):
-        self.dist = False
-
-        for item in inventoryList:
-            if item.id == self.id and item.quantity < 64:
-                if 5 < math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery) < 35:
-                    self.rect.x += (player.rect.centerx - self.rect.centerx) / 2
-                    self.rect.y += (player.rect.centery - self.rect.centery) / 2
-                    self.dist = True
-                    break
-                elif 5 > math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery):
-                    item.quantity += 1
-                    self.delete = True
-                    self.dist = True
-                    break
-
-    def collidePlayer2(self):
-        for item in inventoryList:
-            if item.id == 0:
-                if 5 < math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery) < 35:
-                    self.rect.x += (player.rect.centerx - self.rect.centerx) / 2
-                    self.rect.y += (player.rect.centery - self.rect.centery) / 2
-                    self.dist = True
-                    break
-                elif 5 > math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery):
-                    item.id = self.id
-                    item.type = BLOCK
-                    item.quantity = 1
-                    self.delete = True
-                    self.dist = True
-                    break
-
+#///////////////////////////////////////////////////////////////////////
     def collide(self):
-        self.dist = False
-        self.rect.y += 15
-        for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
-            for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
-                if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
-                    self.rect.bottom = blocks[y][x].rect.top
-                    self.falling = False
-
+        if 5 < math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery) < 35:
+            self.rect.x += (player.rect.centerx - self.rect.centerx) / 2
+            self.rect.y += (player.rect.centery - self.rect.centery) / 2
+        elif 5 > math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery):
+            for item in inventoryList:
+                if item.id == self.id:
+                    self.delete = True
+                    item.quantity += 1
+        else:
+            self.rect.y += 15
+            for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
+                for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
+                    if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
+                        self.rect.bottom = blocks[y][x].rect.top
+                        self.falling = False
+#///////////////////////////////////////////////////////////////////////
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.rect.x, self.rect.y - 20, 20, 20))
-
+#///////////////////////////////////////////////////////////////////////
     def draw(self):
         playerSurface.blit(items[self.id], (self.rect.x, self.rect.y))
-###########################################################################
+##########################PRE-LAUNCH ADJUSMENTS################################
 
 def drawBlocks(x1, x2, y1, y2):
     for x in range(x1, x2 + 1):
@@ -652,17 +733,19 @@ for i in range(10):
     inventoryList.append(inventory(i, inventoryPickleList[i][0], 1, inventoryPickleList[i][1]))
 
 drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
-###########################################################################
+##############################SETTING NPC SPAWNS################################
 player = Player(629, 339, 24, 40)
+
+wizard = Wizard(780, 319, 20, 37)
 
 slimeList=[]
 for i in range(5):
-    slime= Slime(randint(700,1100),339,14,14)
+    slime= Slime(randint(700,2800),339,14,14)
     slimeList.append(slime)
 
 purpleSlimeList=[]
 for i in range(3):
-    purpleSlime = PurpleSlime(randint(700,1000),339,28,28)
+    purpleSlime = PurpleSlime(randint(700,2400),339,28,28)
     purpleSlimeList.append(purpleSlime)
 
 
@@ -671,6 +754,11 @@ BLOCK = 1
 TOOL = 2
 deleteList = []
 ##########################################################################
+import menu #menu.py is in the same directory
+
+pygame.mixer.music.load(music[0])
+pygame.mixer.music.play()
+
 running = True
 positive = True
 time = 0
@@ -679,7 +767,7 @@ while running:
     rightClick = False
     mx, my = mouse.get_pos()
     mb = mouse.get_pressed()
-
+#//////////////////////////////////////////////////////////////////////////
     for evt in event.get():
         if evt.type == QUIT:
             running = False
@@ -698,6 +786,7 @@ while running:
                     inventory.selected = 9
                 else:
                     inventory.selected -= 1
+#////////////////////////////////////////////////////////////////////////////
         if evt.type == KEYDOWN:
             if evt.key == K_1:
                 inventory.selected = 0
@@ -721,11 +810,11 @@ while running:
                 inventory.selected = 9
 #///////////////////////////////////////////////////////////////////////////
     if time <= 5184000 and positive:
-        time+=5000
+        time+= 1
     else:
         positive = False
     if time >= 0 and not positive:
-        time-=5000
+        time-= 1
     else:
         positive = True
 
@@ -733,6 +822,8 @@ while running:
     screen.fill((0, 0, 0))
     background.set_alpha(alphaCount)
     screen.blit(background,(0,0))
+
+      
 #///////////////////////////////////////////////////////////////////////////
     if mb[0] == 1:
         blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
@@ -744,33 +835,18 @@ while running:
                 blocks[y][x].draw()
 
     if mb[2] == 1:
-        if inventoryList[inventory.selected].type == BLOCK and blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id == 0:
-            blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id = inventoryList[inventory.selected].id
-            blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].condition = blockConditions[inventoryList[inventory.selected].id]
-            for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
-                for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
-                    blocks[y][x].update()
-            for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
-                for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
-                    blocks[y][x].draw()
-            if inventoryList[inventory.selected].quantity > 1:
-                inventoryList[inventory.selected].quantity -= 1
-            else:
-                inventoryList[inventory.selected].id = 0
-                inventoryList[inventory.selected].type = EMPTY
-                inventoryList[inventory.selected].quantity = 0
+        blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id = inventoryList[inventory.selected].id
+        blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].condition = blockConditions[inventoryList[inventory.selected].id]
+        for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
+            for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
+                blocks[y][x].update()
+        for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
+            for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
+                blocks[y][x].draw()
 
     if len(dropsList) != 0:
         for drop in dropsList:
-            drop.collidePlayer1()
-        dropsList = [drop for drop in dropsList if not drop.delete]
-        for drop in dropsList:
-            if not drop.dist:
-                drop.collidePlayer2()
-        dropsList = [drop for drop in dropsList if not drop.delete]
-        for drop in dropsList:
-            if not drop.dist:
-                drop.collide()
+            drop.collide()
             drop.clear()
 
     for slime in slimeList:
@@ -782,6 +858,10 @@ while running:
         purpSlime.moveSlime()
         purpSlime.collide()
         purpSlime.clear()
+
+    wizard.moveWizard()
+    wizard.collide()
+    wizard.clear()
         
     player.movePlayer()
     player.collide()
@@ -790,18 +870,21 @@ while running:
     if len(dropsList) != 0:
         for drop in dropsList:
             drop.draw()
+        dropsList = [drop for drop in dropsList if not drop.delete]
 
     for slime in slimeList:
         slime.draw()
 
     for purpSlime in purpleSlimeList:
         purpSlime.draw()
-
+        
+    wizard.draw()
     player.draw()
 
     for item in inventoryList:
         item.draw()
 
+#////////////////////////////////////////////////////////////////////////////
 
     if player.rect.y >= 339:
         screen.blit(blocksSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
