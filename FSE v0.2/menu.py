@@ -16,7 +16,7 @@ options=image.load("menuImages/titleOptions.png")
 #////////////////////////////////////////////////////////////////
 background=transform.scale(background,(1248,704))
 #////////////////////////////////////////////////////////////////
-file1="Audio/02-Menu.mp3"
+file1="Audio/01-Menu.mp3"
 
 pygame.mixer.music.load(file1)
 pygame.mixer.music.play()
@@ -64,6 +64,7 @@ while screening:
             screen.fill(0)
             menu=False
             screening=False
+            pygame.mixer.music.pause()
         if buttonRectTitle.collidepoint((mx,my)) and leftClick:
             screen.fill(0)
             menu=False
