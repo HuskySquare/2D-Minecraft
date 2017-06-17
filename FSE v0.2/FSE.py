@@ -547,7 +547,10 @@ class Block:
                     self.condition -= inventoryList[inventory.selected].speed
             else:
                 if self.condition - 5 <= 0:
-                    dropsList.append(Drop(self.x, self.y, self.id))
+                    if self.id == 3:
+                        dropsList.append(Drop(self.x, self.y, 1))
+                    else:
+                        dropsList.append(Drop(self.x, self.y, self.id))
                     self.id = 0
                     self.condition = 0
                 else:
@@ -581,23 +584,48 @@ class Drop:
         self.rect = Rect(x * 16, y * 16, 16, 16)
         self.id = id
         self.delete = False
+        self.dist = False
+
+    def collidePlayer1(self):
+        self.dist = False
+
+        for item in inventoryList:
+            if item.id == self.id:
+                if 5 < math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery) < 35:
+                    self.rect.x += (player.rect.centerx - self.rect.centerx) / 2
+                    self.rect.y += (player.rect.centery - self.rect.centery) / 2
+                    self.dist = True
+                    break
+                elif 5 > math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery):
+                    item.quantity += 1
+                    self.delete = True
+                    self.dist = True
+                    break
+
+    def collidePlayer2(self):
+        for item in inventoryList:
+            if item.id == 0:
+                if 5 < math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery) < 35:
+                    self.rect.x += (player.rect.centerx - self.rect.centerx) / 2
+                    self.rect.y += (player.rect.centery - self.rect.centery) / 2
+                    self.dist = True
+                    break
+                elif 5 > math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery):
+                    item.id = self.id
+                    item.type = BLOCK
+                    item.quantity = 1
+                    self.delete = True
+                    self.dist = True
+                    break
 
     def collide(self):
-        if 5 < math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery) < 35:
-            self.rect.x += (player.rect.centerx - self.rect.centerx) / 2
-            self.rect.y += (player.rect.centery - self.rect.centery) / 2
-        elif 5 > math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery):
-            for item in inventoryList:
-                if item.id == self.id:
-                    self.delete = True
-                    item.quantity += 1
-        else:
-            self.rect.y += 15
-            for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
-                for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
-                    if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
-                        self.rect.bottom = blocks[y][x].rect.top
-                        self.falling = False
+        self.dist = False
+        self.rect.y += 15
+        for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
+            for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
+                if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
+                    self.rect.bottom = blocks[y][x].rect.top
+                    self.falling = False
 
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.rect.x, self.rect.y - 20, 20, 20))
@@ -716,18 +744,33 @@ while running:
                 blocks[y][x].draw()
 
     if mb[2] == 1:
-        blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id = inventoryList[inventory.selected].id
-        blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].condition = blockConditions[inventoryList[inventory.selected].id]
-        for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
-            for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
-                blocks[y][x].update()
-        for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
-            for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
-                blocks[y][x].draw()
+        if inventoryList[inventory.selected].type == BLOCK and blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id == 0:
+            blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id = inventoryList[inventory.selected].id
+            blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].condition = blockConditions[inventoryList[inventory.selected].id]
+            for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
+                for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
+                    blocks[y][x].update()
+            for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
+                for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
+                    blocks[y][x].draw()
+            if inventoryList[inventory.selected].quantity > 1:
+                inventoryList[inventory.selected].quantity -= 1
+            else:
+                inventoryList[inventory.selected].id = 0
+                inventoryList[inventory.selected].type = EMPTY
+                inventoryList[inventory.selected].quantity = 0
 
     if len(dropsList) != 0:
         for drop in dropsList:
-            drop.collide()
+            drop.collidePlayer1()
+        dropsList = [drop for drop in dropsList if not drop.delete]
+        for drop in dropsList:
+            if not drop.dist:
+                drop.collidePlayer2()
+        dropsList = [drop for drop in dropsList if not drop.delete]
+        for drop in dropsList:
+            if not drop.dist:
+                drop.collide()
             drop.clear()
 
     for slime in slimeList:
@@ -747,7 +790,6 @@ while running:
     if len(dropsList) != 0:
         for drop in dropsList:
             drop.draw()
-        dropsList = [drop for drop in dropsList if not drop.delete]
 
     for slime in slimeList:
         slime.draw()
