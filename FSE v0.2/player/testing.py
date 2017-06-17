@@ -278,8 +278,9 @@ class pants():
     def check():
         global colour,anchor
         if Rect(rect["clothes"]["bar"]).collidepoint(mx,my) and mb[0]==1:
-            print("YA")
+            # print("YA")
             colour["pants"]=screen.get_at((mx,my))
+            pants.menu()
         elif Rect(rect["pants"]["back"]).collidepoint(mx,my) and mb[0]==1:
             anchor="clothes"
             clothes.menu()
