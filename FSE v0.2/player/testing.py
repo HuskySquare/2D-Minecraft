@@ -11,7 +11,10 @@ img={"hair":[],
 colour={"hair":Color(171,181,198),
         "skin":Color(171,181,198),
         "pants":Color(171,181,198),
-        "shoes":Color(171,181,198)}
+        "shoes":Color(171,181,198),
+        "shirt":Color(171,181,198),
+        "undershirt":Color(171,181,198)
+        }
 names=[]    #Used for hair number.
 
 anchor="intro"
@@ -35,12 +38,19 @@ counter=0  #Used to control what hair to use
 # h=transform.scale(hair[counter],(400,7840))
 # h=img["hair"][counter].copy()
 # h.fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
-rect={"intro":{"hair":(440,121,78,61),"skin":(440,186,83,61),"clothes":(440,251,138,61)},
+rect={"intro":{"body":(447,22,40,56),"hair":(440,121,78,61),"skin":(440,186,83,61),"clothes":(440,251,138,61)},
       "hair":{"hair":(499,208,40,56),"bar":(478,298,178,16),"back":(511,491,93,61)},
-      "clothes":{"back":(478,474,93,61)},
-      "skin":{"bar":(478,298,178,16),"back":(478,474,93,61)}}  #Two dimensional dictionary
+      "clothes":{"bar":(428,182,178,16),"back":(478,549,93,61),"shirt":(485,140,94,61),"undershirt":(485,215,203,61),"pants":(485,290,104,61),"shoes":(485,365,105,61)},
+      "skin":{"bar":(478,298,178,16),"back":(478,474,93,61)},
+      "shirt":{"back":(511,491,93,61)},
+      "undershirt":{"back":(511,491,93,61)},
+      "pants":{"back":(511,491,93,61)},
+      "shoes":{"back":(511,491,93,61)}
+      }  #Two dimensional dictionary
 options={"hair":andy.render("Hair",1,(0,0,0)),"skin":andy.render("Skin",1,(0,0,0)),"clothes":andy.render("Clothes",1,(0,0,0)),
-         "back":andy.render("Back",1,(0,0,0)),"create":andy.render("Create",1,(0,0,0))}
+         "back":andy.render("Back",1,(0,0,0)),"create":andy.render("Create",1,(0,0,0)),"shirt":andy.render("Shirt",1,(0,0,0)),
+         "undershirt":andy.render("Undershirt",1,(0,0,0)),"pants":andy.render("Pants",1,(0,0,0)),
+         "shoes":andy.render("Shoes",1,(0,0,0))}
 
 #--------------------------RECT---------------------------------
 # textRect=Rect((499,208),text.get_size())
@@ -85,6 +95,7 @@ class intro():  #A class used for bliting the entire body
 
     def menu():
         screen.fill((255,255,255))
+        current.draw(default,rect["intro"]["body"][:2])
         screen.blit(options["hair"],rect["intro"]["hair"][:2])
         screen.blit(options["skin"], rect["intro"]["skin"][:2])
         screen.blit(options["clothes"], rect["intro"]["clothes"][:2])
@@ -188,20 +199,107 @@ class hair():
 class clothes():
     def menu():
         screen.fill((255,255,255))
-
-        screen.blit(bar,rect["clothes"]["bar"][:2])
+        screen.blit(options["shirt"], rect["clothes"]["shirt"][:2])
+        screen.blit(options["undershirt"], rect["clothes"]["undershirt"][:2])
+        screen.blit(options["pants"], rect["clothes"]["pants"][:2])
+        screen.blit(options["shoes"],rect["clothes"]["shoes"][:2])
+        #screen.blit(bar,rect["clothes"]["bar"][:2])
         screen.blit(options["back"],rect["clothes"]["back"][:2])
+        current.draw(default,(480,18))
         # screen.blit(bar,)
     def check():
-        global anchor,colour
-        if Rect(rect["clothes"]["bar"]).collidepoint(mx,my):
-            colour= screen.get_at((mx, my))
-            clothes.menu()
-        elif Rect(rect["clothes"]["back"]).collidepoint(mx,my):
+        global anchor
+        # if Rect(rect["clothes"]["bar"]).collidepoint(mx,my):
+        #     colour= screen.get_at((mx, my))
+        #     clothes.menu()
+        if Rect(rect["clothes"]["back"]).collidepoint(mx,my) and mb[0]==1:
             anchor="intro"
             intro.menu()
+        elif Rect(rect["clothes"]["shirt"]).collidepoint(mx,my) and mb[0]==1 :
+            anchor="shirt"
+            shirt.menu()
+        elif Rect(rect["clothes"]["undershirt"]).collidepoint(mx, my) and mb[0]==1:
+            anchor = "undershirt"
+            undershirt.menu()
+        elif Rect(rect["clothes"]["pants"]).collidepoint(mx, my) and mb[0]==1:
+            anchor = "pants"
+            pants.menu()
+        elif Rect(rect["clothes"]["shoes"]).collidepoint(mx, my) and mb[0]==1:
+            anchor = "shoes"
+            shoes.menu()
 
 
+
+class shirt():
+    def menu():
+        screen.fill((255,255,255))
+        screen.blit(bar,rect["clothes"]["bar"][:2])
+        screen.blit(options["back"],rect["shirt"]["back"][:2])
+        temp = img["shirt"].copy()
+        temp.fill(Color(255, 255, 255) - colour["shirt"], special_flags=BLEND_SUB)
+        default.shirt = temp
+        current.draw(default, (530, 65))
+
+    def check():
+        global anchor
+        if Rect(rect["shirt"]["back"]).collidepoint(mx,my) and mb[0]==1:
+            anchor="clothes"
+            clothes.menu()
+        elif Rect(rect["clothes"]["bar"]).collidepoint(mx,my) and mb[0]==1:
+            colour["shirt"]=screen.get_at((mx,my))
+            shirt.menu()
+class undershirt():
+    def menu():
+        screen.fill((255, 255, 255))
+        screen.blit(bar, rect["clothes"]["bar"][:2])
+        screen.blit(options["back"], rect["undershirt"]["back"][:2])
+        temp = img["undershirt"].copy()
+        temp.fill(Color(255, 255, 255) - colour["undershirt"], special_flags=BLEND_SUB)
+        default.undershirt = temp
+        current.draw(default, (530, 65))
+    def check():
+        global colour,anchor
+        if Rect(rect["clothes"]["bar"]).collidepoint(mx,my) and mb[0]==1:
+            colour["undershirt"]=screen.get_at((mx,my))
+            undershirt.menu()
+        elif Rect(rect["undershirt"]["back"]).collidepoint(mx,my) and mb[0]==1:
+            anchor="clothes"
+            clothes.menu()
+
+class pants():
+    def menu():
+        screen.fill((255,255,255))
+        screen.blit(bar, rect["clothes"]["bar"][:2])
+        screen.blit(options["back"], rect["pants"]["back"][:2])
+        temp = img["pants"].copy()
+        temp.fill(Color(255, 255, 255) - colour["pants"], special_flags=BLEND_SUB)
+        default.pants = temp
+        current.draw(default, (530, 65))
+    def check():
+        global colour,anchor
+        if Rect(rect["clothes"]["bar"]).collidepoint(mx,my) and mb[0]==1:
+            print("YA")
+            colour["pants"]=screen.get_at((mx,my))
+        elif Rect(rect["pants"]["back"]).collidepoint(mx,my) and mb[0]==1:
+            anchor="clothes"
+            clothes.menu()
+class shoes():
+    def menu():
+        screen.fill((255, 255, 255))
+        screen.blit(bar, rect["clothes"]["bar"][:2])
+        screen.blit(options["back"], rect["shoes"]["back"][:2])
+        temp = img["shoes"].copy()
+        temp.fill(Color(255, 255, 255) - colour["shoes"], special_flags=BLEND_SUB)
+        default.shoes = temp
+        current.draw(default, (530, 65))
+    def check():
+        global colour,anchor
+        if Rect(rect["clothes"]["bar"]).collidepoint(mx,my) and mb[0]==1:
+            colour["shoes"]=screen.get_at((mx,my))
+            shoes.menu()
+        elif Rect(rect["pants"]["back"]).collidepoint(mx,my) and mb[0]==1:
+            anchor="clothes"
+            clothes.menu()
 
 running= True
 
@@ -215,7 +313,7 @@ while running:
     rightClick=False
     mx, my = mouse.get_pos()
     mb = mouse.get_pressed()
-
+    # print(mx,my)
     if anchor=="intro":
         intro.menu()
         intro.check()
@@ -225,6 +323,14 @@ while running:
         skin.check()
     elif anchor=="clothes":
         clothes.check()
+    elif anchor=="shirt":
+        shirt.check()
+    elif anchor=="undershirt":
+        undershirt.check()
+    elif anchor=="pants":
+        pants.check()
+    elif anchor=="shoes":
+        shoes.check()
     # print(mx,my)
     # if barRect.collidepoint(mx,my) and mb[0]==1:
     #     updatecolour()
