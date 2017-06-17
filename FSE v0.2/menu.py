@@ -11,8 +11,6 @@ screen=display.set_mode((1248,704))
 #////////////////////////////////////////////////////////////////
 background=image.load("background.png")
 title=image.load("menuImages/title.png")
-start=image.load("menuImages/titleStart.png")
-options=image.load("menuImages/titleOptions.png")
 #////////////////////////////////////////////////////////////////
 background=transform.scale(background,(1248,704))
 #/////////////////////////////////////////////////////////////////

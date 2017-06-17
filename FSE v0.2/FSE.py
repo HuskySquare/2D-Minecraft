@@ -20,6 +20,7 @@ with open("inventory.pickle", "rb") as f:
 screen = display.set_mode((1280, 720))
 andy18 = font.Font("fonts/HW ANDY.ttf", 18)
 andy16 = font.Font("fonts/HW ANDY.ttf", 16)
+andy22 = font.Font("fonts/HW ANDY.ttf", 22)
 
 clock = time.Clock()
 
@@ -132,6 +133,7 @@ block3_12 = image.load("grass/grass_block_56.png").convert(32, SRCALPHA)
 block3_13 = image.load("grass/grass_block_8.png").convert(32, SRCALPHA)
 block3_14 = image.load("grass/grass_block_12.png").convert(32, SRCALPHA)
 block3_15 = image.load("grass/grass_block_9.png").convert(32, SRCALPHA)
+
 #//////////////////////////////////////////////////////////////////////
 block3 = [block3_0, block3_1, block3_2, block3_3, block3_4, block3_5, block3_6, block3_7, block3_8, block3_9, block3_10,
           block3_11, block3_12, block3_13, block3_14, block3_15]
@@ -143,6 +145,7 @@ item2 = image.load("items/item_2.png").convert(32, SRCALPHA)
 item4 = image.load("items/item_4.png").convert(32, SRCALPHA)
 inventoryBack = image.load("images/Inventory_Back.png")
 inventoryBackSelected = image.load("images/Inventory_Back14.png")
+heart = image.load("images/Heart.png").convert(32, SRCALPHA)
 items = [False, item1, item2, item1, item4]
 toolSpeeds = [5, 5, 5, 5, 15]
 effTools = [0.5, 0.5, 4, 0.5]
@@ -416,29 +419,28 @@ class Player:
         self.newMove = -1
         self.frame = 0
         self.health = 100
-        self.status = "Alive"
 
     def movePlayer(self):
         keys = key.get_pressed()
 
         self.newMove = -1
 
-        if keys[K_RIGHT] and keys[K_LEFT]:
+        if keys[K_d] and keys[K_a]:
             self.frame = 0
 
         else:
-            if keys[K_RIGHT] and self.rect.x < worldSize[0] * 16 - 629:
+            if keys[K_d] and self.rect.x < worldSize[0] * 16 - 629:
                 if not self.jumping:
                     self.newMove = 2
                 self.vx = 3
-            elif keys[K_LEFT] and self.rect.x > 629:
+            elif keys[K_a] and self.rect.x > 629:
                 if not self.jumping:
                     self.newMove = 5
                 self.vx = -3
             else:
                 self.frame = 0
 
-        if keys[K_UP] and not self.jumping:
+        if keys[K_w] and not self.jumping:
             self.vy = -15
             self.jumping = True
             if self.move == 2 or self.move == 1:
@@ -447,9 +449,9 @@ class Player:
                 self.newMove = 4
 
         elif self.jumping:
-            if keys[K_RIGHT]:
+            if keys[K_d]:
                 self.newMove = 1
-            elif keys[K_LEFT]:
+            elif keys[K_a]:
                 self.newMove = 4
 
         if not self.jumping and self.move == 1:
@@ -507,6 +509,11 @@ class Player:
     def draw(self):
         pic = pics[self.move][int(self.frame)]
         playerSurface.blit(pic, self.blitPos)
+        uiSurface.fill((0, 0, 0, 0))
+        uiSurface.blit(andy22.render(str(self.health) + " / " + "100", 1, (255, 255, 255)), (1120, 10))
+        for i in range(0, self.health, 20):
+            uiSurface.blit(heart, (1095 + 27 * i/20, 40))
+
 
 #############################################################################
 class Block:
@@ -580,6 +587,7 @@ class Block:
             if self.condition < blockConditions[self.id] * 4 / 5:
                 blocksSurface.blit(tile_cracks[self.condition // int(blockConditions[self.id] / 5)],
                                    (self.x * 16, self.y * 16))
+
 
     def update(self):
         top = True
@@ -798,12 +806,12 @@ while running:
                 leftClick = True
             if evt.button == 3:
                 rightClick = True
-            if evt.button == 4:
+            if evt.button == 5:
                 if inventory.selected == 9:
                     inventory.selected = 0
                 else:
                     inventory.selected += 1
-            if evt.button == 5:
+            if evt.button == 4:
                 if inventory.selected == 0:
                     inventory.selected = 9
                 else:
@@ -911,6 +919,7 @@ while running:
     for purpSlime in purpleSlimeList:
         purpSlime.draw()
 
+    wizard.draw()
     player.draw()
 
     for item in inventoryList:
