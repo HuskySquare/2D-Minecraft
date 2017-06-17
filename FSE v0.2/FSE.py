@@ -590,7 +590,7 @@ class Drop:
         self.dist = False
 
         for item in inventoryList:
-            if item.id == self.id:
+            if item.id == self.id and item.quantity < 64:
                 if 5 < math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery) < 35:
                     self.rect.x += (player.rect.centerx - self.rect.centerx) / 2
                     self.rect.y += (player.rect.centery - self.rect.centery) / 2
