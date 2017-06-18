@@ -346,6 +346,7 @@ def create():
     for i in range(0,1121,56):
         save=[]
 
+
         save.append(img["hair"][counter].copy())
         save.append(image.load("Player_Head.png").subsurface(0, i, 40, 56).copy())
         save.append(image.load("Player_Undershirt.png").subsurface(0, i, 40, 56).copy())
