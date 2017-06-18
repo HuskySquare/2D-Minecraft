@@ -76,7 +76,7 @@ for i in range(randint(15,30)):
     temp = np.random.normal(size=(width, height))
     temp = np.fabs(temp)
     temp = temp.astype(int)
-    x,y=randint(30,84-height),randint(0,780-width)
+    x,y=randint(30,84-width),randint(0,780-height)
     blocks[x:x+width,y:y+height]=temp
 
         
