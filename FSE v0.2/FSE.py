@@ -22,6 +22,8 @@ screen = display.set_mode((1280, 720))
 andy18 = font.Font("fonts/HW ANDY.ttf", 18)
 andy16 = font.Font("fonts/HW ANDY.ttf", 16)
 andy22 = font.Font("fonts/HW ANDY.ttf", 22)
+andy44 = font.Font("fonts/HW ANDY.ttf", 44)
+andy58 = font.Font("fonts/HW ANDY.ttf", 58)
 
 clock = time.Clock()
 
@@ -157,7 +159,6 @@ block6 = [block6_0, block6_1, block6_2, block6_3, block6_4, block6_5, block6_6, 
 block6_1 = image.load("tree/trunks/tree_trunk_49.png").convert(32, SRCALPHA)
 block6_2 = image.load("tree/trunks/tree_trunk_50.png").convert(32, SRCALPHA)
 block6_3 = image.load("tree/trunks/tree_trunk_0.png").convert(32, SRCALPHA)
-
 block7_0 = image.load("tree/tree_trunk_0.png").convert(32, SRCALPHA)"""
 
 #//////////////////////////////////////////////////////////////////////
@@ -902,7 +903,7 @@ import menu
 
 pygame.mixer.music.load(music[0])
 pygame.mixer.music.play()
-
+paused = False
 running = True
 positive = True
 time = 0
@@ -951,120 +952,142 @@ while running:
                 inventory.selected = 8
             elif evt.key == K_0:
                 inventory.selected = 9
+            elif evt.key == K_ESCAPE:
+                if paused:
+                    paused =False
+                elif not paused:
+                    paused = True
 #///////////////////////////////////////////////////////////////////////////
-    if time <= 5184000 and positive:
-        time+=5000
-    else:
-        positive = False
-    if time >= 0 and not positive:
-        time-=5000
-    else:
-        positive = True
+    if not paused:
+        if time <= 5184000 and positive:
+            time+=5000
+        else:
+            positive = False
+        if time >= 0 and not positive:
+            time-=5000
+        else:
+            positive = True
 
-    alphaCount=time//20330
-#///////////////////////////////////////////////////////////////////////////
-    if mb[0] == 1:
-        blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
-        player.attack()
-        for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
-            for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
-                blocks[y][x].update()
-        for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
-            for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
-                blocks[y][x].draw()
-
-    elif player.breaking == True:
-        player.breaking = False
-        if player.move == 0:
-            player.move = 1
-        elif player.move == 3:
-            player.move = 4
-
-    if mb[2] == 1:
-        if inventoryList[inventory.selected].type == BLOCK and blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id == 0:
-            blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id = inventoryList[inventory.selected].id
-            blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].condition = blockConditions[inventoryList[inventory.selected].id]
+        alphaCount=time//20330
+    #///////////////////////////////////////////////////////////////////////////
+        if mb[0] == 1:
+            blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
+            player.attack()
             for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
                 for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
                     blocks[y][x].update()
             for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
                 for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
                     blocks[y][x].draw()
-            if inventoryList[inventory.selected].quantity > 1:
-                inventoryList[inventory.selected].quantity -= 1
-            else:
-                inventoryList[inventory.selected].id = 0
-                inventoryList[inventory.selected].type = EMPTY
-                inventoryList[inventory.selected].quantity = 0
 
-    if len(dropsList) != 0:
-        for drop in dropsList:
-            drop.collidePlayer1()
-        dropsList = [drop for drop in dropsList if not drop.delete]
-    if len(dropsList) != 0:
-        for drop in dropsList:
-            if not drop.dist:
-                drop.collidePlayer2()
-        dropsList = [drop for drop in dropsList if not drop.delete]
-    if len(dropsList) != 0:
-        for drop in dropsList:
-            if not drop.dist:
-                drop.collide()
-            drop.clear()
+        elif player.breaking == True:
+            player.breaking = False
+            if player.move == 0:
+                player.move = 1
+            elif player.move == 3:
+                player.move = 4
 
-    for slime in slimeList:
-        slime.moveSlime()
-        slime.collide()
-        slime.clear()
+        if mb[2] == 1:
+            if inventoryList[inventory.selected].type == BLOCK and blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id == 0:
+                blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id = inventoryList[inventory.selected].id
+                blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].condition = blockConditions[inventoryList[inventory.selected].id]
+                for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
+                    for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
+                        blocks[y][x].update()
+                for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
+                    for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
+                        blocks[y][x].draw()
+                if inventoryList[inventory.selected].quantity > 1:
+                    inventoryList[inventory.selected].quantity -= 1
+                else:
+                    inventoryList[inventory.selected].id = 0
+                    inventoryList[inventory.selected].type = EMPTY
+                    inventoryList[inventory.selected].quantity = 0
 
-    slimeList = [slime for slime in slimeList if not slime.delete]
+        if len(dropsList) != 0:
+            for drop in dropsList:
+                drop.collidePlayer1()
+            dropsList = [drop for drop in dropsList if not drop.delete]
+        if len(dropsList) != 0:
+            for drop in dropsList:
+                if not drop.dist:
+                    drop.collidePlayer2()
+            dropsList = [drop for drop in dropsList if not drop.delete]
+        if len(dropsList) != 0:
+            for drop in dropsList:
+                if not drop.dist:
+                    drop.collide()
+                drop.clear()
 
-    for purpSlime in purpleSlimeList:
-        purpSlime.moveSlime()
-        purpSlime.collide()
-        purpSlime.clear()
+        for slime in slimeList:
+            slime.moveSlime()
+            slime.collide()
+            slime.clear()
 
-    wizard.moveWizard()
-    wizard.collide()
-    wizard.clear()
+        slimeList = [slime for slime in slimeList if not slime.delete]
+
+        for purpSlime in purpleSlimeList:
+            purpSlime.moveSlime()
+            purpSlime.collide()
+            purpSlime.clear()
+
+        wizard.moveWizard()
+        wizard.collide()
+        wizard.clear()
+            
+        player.movePlayer()
+        player.collide()
+        player.clear()
+
+        drawBackground()
+
+        if len(dropsList) != 0:
+            for drop in dropsList:
+                drop.draw()
+
+        for slime in slimeList:
+            slime.draw()
+
+        for purpSlime in purpleSlimeList:
+            purpSlime.draw()
+            
+        wizard.draw()
+        player.draw()
+        for item in inventoryList:
+            item.draw()
+
+
+        if player.rect.y >= 339:
+            screen.blit(blocksSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
+            screen.blit(playerSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
+            # screen.blit(playerSurface.subsurface(player.blitPos[0], player.blitPos[1], 650, 320), (621, 339))
+        else:
+            screen.blit(blocksSurface.subsurface(player.rect.x - 629, 0, 1280, 720), (0, abs(player.rect.y - 339)))
+            screen.blit(playerSurface.subsurface(player.rect.x - 629, 0, 1280, 720), (0, abs(player.rect.y - 339)))
+            # screen.blit(playerSurface.subsurface(player.rect.x, 0, 650, 320), (612, abs(player.rect.y - 283)))
+
+        screen.blit(uiSurface, (0, 0))
+
+        display.flip()
+        clock.tick(60)
+        display.set_caption("FSE FPS = {0:.0f}".format(clock.get_fps()))
         
-    player.movePlayer()
-    player.collide()
-    player.clear()
-
-    drawBackground()
-
-    if len(dropsList) != 0:
-        for drop in dropsList:
-            drop.draw()
-
-    for slime in slimeList:
-        slime.draw()
-
-    for purpSlime in purpleSlimeList:
-        purpSlime.draw()
+    if paused:
+        screenRect= Rect(0,0,1280,720)
+        draw.rect(screen,(0,0,0,250),screenRect)
+        close = andy44.render("Exit",True,(200,200,200))
+        close2 = andy58.render("Exit", True,(255,255,0))
+        infoText = andy44.render("Press Esc. to Resume",True,(200,200,200))
+        screen.blit(infoText,(480,300))
+        closeRect = Rect(630,600,60,50)
+        if closeRect.collidepoint(mx,my):
+            screen.blit(close2,(620,590))
+            if leftClick:
+                quit()
+        else:
+            screen.blit(close,(630,600))
         
-    wizard.draw()
-    player.draw()
-    for item in inventoryList:
-        item.draw()
-
-
-    if player.rect.y >= 339:
-        screen.blit(blocksSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
-        screen.blit(playerSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
-        # screen.blit(playerSurface.subsurface(player.blitPos[0], player.blitPos[1], 650, 320), (621, 339))
-    else:
-        screen.blit(blocksSurface.subsurface(player.rect.x - 629, 0, 1280, 720), (0, abs(player.rect.y - 339)))
-        screen.blit(playerSurface.subsurface(player.rect.x - 629, 0, 1280, 720), (0, abs(player.rect.y - 339)))
-        # screen.blit(playerSurface.subsurface(player.rect.x, 0, 650, 320), (612, abs(player.rect.y - 283)))
-
-    screen.blit(uiSurface, (0, 0))
-
-    display.flip()
-    clock.tick(60)
-    display.set_caption("FSE FPS = {0:.0f}".format(clock.get_fps()))
-
+        display.flip()
 with open('blockspickle.pickle', 'wb') as f:
     pickle.dump(blockList, f)
 
