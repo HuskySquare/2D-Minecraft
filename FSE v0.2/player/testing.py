@@ -382,9 +382,9 @@ def create():
 
         sprite=current(save[0],save[1],save[2],save[3],save[4],save[5],save[6],save[7])
         current.drawBody(bg,sprite,(0,i))
-        current.drawHands(bg,sprite,(0,i))
+        current.drawHands(bg2,sprite,(0,i))
     image.save(bg,"body.png")
-    image.save(bg,"hands.png")
+    image.save(bg2,"hands.png")
 running= True
 
 # screen.blit(bar,(478,298))
