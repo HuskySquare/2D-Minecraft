@@ -58,6 +58,8 @@ blocks=np.concatenate(pieces,axis=1)
 
 blocks[60:,:]=2
 for i in range(780):
+    if randint(0,1)==0:
+        blocks[:,i][randint(60,84)]=6
     temp=blocks[:,i]
     anchor=np.where(temp==3)[0][0]
 
@@ -68,7 +70,7 @@ for i in range(780):
             continue
 
 #Making caves-----------------------------------------
-for i in range(randint(0,10)):
+for i in range(randint(15,30)):
     
     width, height = randint(2, 10), randint(2, 10)
     temp = np.random.normal(size=(width, height))
