@@ -159,7 +159,6 @@ block6 = [block6_0, block6_1, block6_2, block6_3, block6_4, block6_5, block6_6, 
 block6_1 = image.load("tree/trunks/tree_trunk_49.png").convert(32, SRCALPHA)
 block6_2 = image.load("tree/trunks/tree_trunk_50.png").convert(32, SRCALPHA)
 block6_3 = image.load("tree/trunks/tree_trunk_0.png").convert(32, SRCALPHA)
-
 block7_0 = image.load("tree/tree_trunk_0.png").convert(32, SRCALPHA)"""
 
 #//////////////////////////////////////////////////////////////////////
@@ -322,6 +321,8 @@ class Wizard:
                 player.hit = False
         pic = wizardPics[self.move][int(self.frame)]
         playerSurface.blit(pic,self.blitPos)
+        self.healthRect = Rect(self.rect.x-20,self.rect.y-20,int(self.health/2),10)
+        draw.rect(playerSurface,(255,0,0),self.healthRect)
 #############################################################################
 class PurpleSlime:
     def __init__(self,x,y,w,h):
@@ -413,6 +414,8 @@ class PurpleSlime:
                 self.frame=0
         pic = purpleSlimePics[int(self.frame)]
         playerSurface.blit(pic,self.blitPos)
+        self.healthRect = Rect(self.rect.x-20,self.rect.y-20,int(self.health/2),10)
+        draw.rect(playerSurface,(255,0,0),self.healthRect)
 ############################################################################          
 class Slime:
     def __init__(self, x, y, w, h):
@@ -501,6 +504,8 @@ class Slime:
                 self.frame=0
         pic = slimePics[int(self.frame)]
         playerSurface.blit(pic,self.blitPos)
+        self.healthRect = Rect(self.rect.x-20,self.rect.y-20,int(self.health/2),10)
+        draw.rect(playerSurface,(255,0,0),self.healthRect)
 #########################################################################
 class Player:
     def __init__(self, x, y, w, h):
