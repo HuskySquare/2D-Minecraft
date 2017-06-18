@@ -67,19 +67,20 @@ def genTree(x,y,h):
 
     global trees
     temp=np.zeros((h,3),dtype='int')
-    temp[h-1]=7
+
     temp[:,1]=8
+    temp[h - 1] = 7
     for i in range(randint(1,3)): #Left branch
-        temp[randint(2,h-1),0]=9
+        temp[randint(2,h-3),0]=9
     for i in range(randint(1,3)): #Right branch
-        temp[randint(2,h-1),1]=9
-    trees[y-h+1:y+1][:,:3]=temp
+        temp[randint(2,h-3),2]=9
+    # print(temp)
+    trees[y-h+1:y+1][:,x:x+3]=temp
 
 
 for i in range(780):
 
     temp=blocks[:,i]
-    # weighted_choice=[()]
     anchor=np.where(temp!=0)[0][0]
     if not dist:
         try:
