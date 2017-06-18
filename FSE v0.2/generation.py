@@ -21,8 +21,8 @@ for i in range(780):
     if i!=0:
         if not length:
 
-            length = randint(0, 10)
-            #weighted_choice=[(1,)
+            length = randint(3, 10)
+            # weighted_choice=[(1,)
             x=choice([84,0])
             temp=np.delete(pieces[i-1],[x])
             if x:
@@ -61,16 +61,21 @@ blocks=np.concatenate(pieces,axis=1)
 
 blocks[60:,:]=2
 for i in range(780):
-    if randint(0,1):
-        blocks[:,i][randint(30,84)]=6
+
     temp=blocks[:,i]
 
-    anchor=np.where(temp==3)[0][0]
+    anchor=np.where(temp!=0)[0][0]
 
-
-    for j in range(randint(5,10)):
+    for j in range(randint(1,3)):
+        if randint(0,1):
+            try:
+                temp[anchor+randint(30,84)]=6
+            except IndexError:
+                continue
+    for k in range(randint(5,10)):
         try:
             temp[anchor+randint(5,35)]=2
+            temp[anchor+randint(30,60)]=6
         except IndexError:
             continue
 
@@ -86,6 +91,7 @@ for i in range(randint(15,30)):
 
 with open('blockspickle.pickle', 'wb') as f:
     pickle.dump(blocks, f)
+
 
 
 
