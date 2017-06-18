@@ -1,4 +1,4 @@
-
+#{0:"Air, 1:"Dirt",2:"Stone",3:"Grass",5:"Pickaxe",6:"Iron",7:"Tree Trunk".8:"Tree Main Branch",9:"Gel"}
 import numpy as np
 from random import *
 pieces=[]
@@ -61,7 +61,7 @@ blocks=np.concatenate(pieces,axis=1)
 blocks[60:,:]=2
 for i in range(780):
     if randint(0,1):
-        blocks[:,i][randint(60,84)]=6
+        blocks[:,i][randint(30,84)]=6
     temp=blocks[:,i]
 
     anchor=np.where(temp==3)[0][0]
