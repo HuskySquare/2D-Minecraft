@@ -22,7 +22,7 @@ for i in range(780):
         if not length:
 
             length = randint(0, 10)
-            weighted_choice=[(1,)
+            #weighted_choice=[(1,)
             x=choice([84,0])
             temp=np.delete(pieces[i-1],[x])
             if x:

@@ -40,19 +40,13 @@ background = transform.scale(background, (1280, 720))
 pics = []
 sprite = image.load("player\Sprite0.png")
 
-for i in range(6, 1126, 56):
-    try:
-        pics.append(sprite.subsurface((0, i, 40, 56)))
-    except:
-        pass
+for i in range(0, 1120, 56):
+    pics.append(sprite.subsurface((0, i, 40, 56)))
 
-for i in range(6, 1126, 56):
-    try:
-        pics.append(transform.flip(sprite.subsurface((0, i, 40, 56)), True, False))
-    except:
-        pass
+for i in range(0, 1120, 56):
+    pics.append(transform.flip(sprite.subsurface((0, i, 40, 56)), True, False))
 
-pics = [pics[0:5], [pics[5], pics[5]], pics[6:19], pics[19:24], [pics[24], pics[24]], pics[25:]]
+pics = [pics[0:5], [pics[5], pics[5]], pics[6:20], pics[20:25], [pics[25], pics[25]], pics[26:]]
 
 slimePics=[]
 for i in range(4):
@@ -174,13 +168,22 @@ blockConditions = [False, 150, 500, 150, False, False, 575]
 item1 = image.load("items/item_1.png").convert(32, SRCALPHA)
 item2 = image.load("items/item_2.png").convert(32, SRCALPHA)
 item4 = image.load("items/item_4.png").convert(32, SRCALPHA)
+item6 = image.load("items/item_6.png").convert(32, SRCALPHA)
 item9 = image.load("items/item_9.png").convert(32, SRCALPHA)
 inventoryBack = image.load("images/Inventory_Back.png")
 inventoryBackSelected = image.load("images/Inventory_Back14.png")
 heart = image.load("images/Heart.png").convert(32, SRCALPHA)
-items = [False, item1, item2, item1, item4, False, False, False, False, item9]
-toolSpeeds = [5, 5, 5, 5, 15]
-effTools = [0.5, 0.5, 4, 0.5]
+items = [False, item1, item2, item1, item4, False, item6, False, False, item9]
+item4_sprite = image.load("player/item_4.png").convert(32, SRCALPHA)
+item4_sprites = []
+for i in range(0, 280, 56):
+    item4_sprites.append(item4_sprite.subsurface((0, i, 80, 56)))
+for i in range(0, 280, 56):
+    item4_sprites.append(transform.flip(item4_sprite.subsurface((0, i, 80, 56)), True, False))
+itemSprites = [False, False, False, False, item4_sprites, False, False, False, False, False]
+
+toolSpeeds = [5, 5, 5, 5, 15, 5, 5, 5, 5, 5]
+effTools = [0.5, 0.5, 4, 0.5, 0.5, 0.5, 4]
 dropsList = []
 ############################MUSIC LOADING###############################
 file1="Audio/02-Day.mp3"
@@ -480,7 +483,7 @@ class Player:
         self.vy = 0
         self.jumping = False
         self.hit = False
-        self.move = 0
+        self.move = 1
         self.newMove = -1
         self.frame = 0
         self.health = 100
@@ -609,6 +612,8 @@ class Player:
     def draw(self):
         pic = pics[self.move][int(self.frame)]
         playerSurface.blit(pic, self.blitPos)
+        if self.move == 0 and inventoryList[inventory.selected].type == TOOL:
+            playerSurface.blit(itemSprites[inventoryList[inventory.selected].id][int(self.frame)], (self.blitPos[0] - 20, self.blitPos[1]))
         uiSurface.fill((0, 0, 0, 0))
         uiSurface.blit(andy22.render(str(self.health) + " / " + "100", 1, (255, 255, 255)), (1120, 10))
         for i in range(0, self.health, 20):
@@ -964,6 +969,10 @@ while running:
 
     elif player.breaking == True:
         player.breaking = False
+        if player.move == 0:
+            player.move = 1
+        elif player.move == 3:
+            player.move = 4
 
     if mb[2] == 1:
         if inventoryList[inventory.selected].type == BLOCK and blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id == 0:

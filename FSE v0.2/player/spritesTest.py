@@ -33,8 +33,8 @@ init()
 ##    time.wait(200)
 ##    screen.fill((0, 0, 0))
 
-surface = Surface((40, 1140), SRCALPHA, 32)
-screen = display.set_mode((40, 1140))
+surface = Surface((80, 1120), SRCALPHA, 32)
+screen = display.set_mode((80, 1120))
 #surface = surface.convert_alpha()
 playerFileList = ["Player_Head", "Player_Hair_15", "Player_Undershirt", "Player_Shirt", "Player_Hands", "Player_Pants", "Player_Shoes"]
 
@@ -50,7 +50,7 @@ rot = 0
 pos = [0, 0]
 sprite = image.load("Sprite0.png")
 
-'''running = True
+running = True
 
 while running:
     for evt in event.get():
@@ -77,16 +77,16 @@ while running:
     for player in playerList:
         screen.blit(player, (20, 0))
 
-    #screen.blit(transform.rotate(item_1, rot), pos)
-    screen.blit(item_1, (0, 0))
+    screen.blit(transform.rotate(item_1, rot), pos)
+    #screen.blit(item_1, (0, 0))
 
     screen.blit(player_hands2, (20, 0))
 
-    display.flip()'''
+    display.flip()
             
-for i in range(6, 1126, 56):
+"""for i in range(6, 1126, 56):
     image.save(sprite.subsurface((0, i, 40, 56)), "sprite_" + str(i) + ".png")
 
 surface.blit(sprite, (0, 0))
 for y in range(1140):
-    print(surface.get_at((20, y)))
+    print(surface.get_at((20, y)))"""
