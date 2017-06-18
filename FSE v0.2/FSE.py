@@ -138,6 +138,26 @@ block3_13 = image.load("grass/grass_block_8.png").convert(32, SRCALPHA)
 block3_14 = image.load("grass/grass_block_12.png").convert(32, SRCALPHA)
 block3_15 = image.load("grass/grass_block_9.png").convert(32, SRCALPHA)
 
+block6_0 = image.load("ironore/ironore_block_19.png").convert(32, SRCALPHA)
+block6_1 = image.load("ironore/ironore_block_1.png").convert(32, SRCALPHA)
+block6_2 = image.load("ironore/ironore_block_0.png").convert(32, SRCALPHA)
+block6_3 = image.load("ironore/ironore_block_4.png").convert(32, SRCALPHA)
+block6_4 = image.load("ironore/ironore_block_33.png").convert(32, SRCALPHA)
+block6_5 = image.load("ironore/ironore_block_69.png").convert(32, SRCALPHA)
+block6_6 = image.load("ironore/ironore_block_68.png").convert(32, SRCALPHA)
+block6_7 = image.load("ironore/ironore_block_37.png").convert(32, SRCALPHA)
+block6_8 = image.load("ironore/ironore_block_51.png").convert(32, SRCALPHA)
+block6_9 = image.load("ironore/ironore_block_50.png").convert(32, SRCALPHA)
+block6_10 = image.load("ironore/ironore_block_70.png").convert(32, SRCALPHA)
+block6_11 = image.load("ironore/ironore_block_59.png").convert(32, SRCALPHA)
+block6_12 = image.load("ironore/ironore_block_56.png").convert(32, SRCALPHA)
+block6_13 = image.load("ironore/ironore_block_8.png").convert(32, SRCALPHA)
+block6_14 = image.load("ironore/ironore_block_12.png").convert(32, SRCALPHA)
+block6_15 = image.load("ironore/ironore_block_9.png").convert(32, SRCALPHA)
+
+block6 = [block6_0, block6_1, block6_2, block6_3, block6_4, block6_5, block6_6, block6_7, block6_8, block6_9, block6_10,
+          block6_11, block6_12, block6_13, block6_14, block6_15]
+
 """block6_0 = image.load("tree/trunks/tree_trunk_0.png").convert(32, SRCALPHA)
 block6_1 = image.load("tree/trunks/tree_trunk_49.png").convert(32, SRCALPHA)
 block6_2 = image.load("tree/trunks/tree_trunk_50.png").convert(32, SRCALPHA)
@@ -148,8 +168,8 @@ block7_0 = image.load("tree/tree_trunk_0.png").convert(32, SRCALPHA)"""
 #//////////////////////////////////////////////////////////////////////
 block3 = [block3_0, block3_1, block3_2, block3_3, block3_4, block3_5, block3_6, block3_7, block3_8, block3_9, block3_10,
           block3_11, block3_12, block3_13, block3_14, block3_15]
-blockImg = [False, block1, block2, block3]
-blockConditions = [False, 150, 500, 150]
+blockImg = [False, block1, block2, block3, False, False, block6]
+blockConditions = [False, 150, 500, 150, False, False, 575]
 #/////////////////////////////////////////////////////////////////////
 item1 = image.load("items/item_1.png").convert(32, SRCALPHA)
 item2 = image.load("items/item_2.png").convert(32, SRCALPHA)
