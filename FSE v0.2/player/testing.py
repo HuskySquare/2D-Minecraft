@@ -83,19 +83,19 @@ class current():
         bg.blit(self.shoes,pos)
         bg.blit(self.hands,pos)
 
-    def drawBody(bg,self,pos):
-        bg.blit(self.head, pos)
-        bg.blit(self.eye1, pos)
-        bg.blit(self.eye2, pos)
-        bg.blit(self.hair, pos)
-        bg.blit(self.undershirt, pos)
-        bg.blit(self.shirt, pos)
-        bg.blit(self.pants, pos)
-        bg.blit(self.shoes, pos)
-    def drawHands(bg,self,pos):
-
-
-        bg.blit(self.hands, pos)
+    # def drawBody(bg,self,pos):
+    #     bg.blit(self.head, pos)
+    #     bg.blit(self.eye1, pos)
+    #     bg.blit(self.eye2, pos)
+    #     bg.blit(self.hair, pos)
+    #     bg.blit(self.undershirt, pos)
+    #     bg.blit(self.shirt, pos)
+    #     bg.blit(self.pants, pos)
+    #     bg.blit(self.shoes, pos)
+    # def drawHands(bg,self,pos):
+    #
+    #
+    #     bg.blit(self.hands, pos)
 
 # img["head"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
 # img["undershirt"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
@@ -160,6 +160,7 @@ class eye():
             colour["eye"]=screen.get_at((mx,my))
             eye.menu()
         elif Rect(rect["eye"]["back"]).collidepoint(mx,my) and mb[0]==1:
+            print("YA")
             anchor="intro"
             intro.menu()
 
@@ -354,53 +355,81 @@ class shoes():
             anchor="clothes"
             clothes.menu()
 def create():
-    bg=Surface((40,1120))
-    bg2=Surface((40,1120))
+    global temp
+    bg=Surface((40,1120), SRCALPHA)
+    bg2=Surface((40,1120),SRCALPHA)
 
-    save=[]
     for i in range(0,1120,56):
-        save=[]
+        save = []
 
-        save.append(img["hair"][counter].copy())
-        save.append(image.load("Player_Head.png").subsurface(0, 0, 40, 56).copy())
-        save.append(image.load("Player_Undershirt.png").subsurface(0, 0, 40, 56).copy())
-        print(i)
-        save.append(image.load("Player_Shirt.png").subsurface(0, i, 40, 56).copy())
-        save.append( image.load("Player_Pants.png").subsurface(0, i, 40, 56).copy())
-        save.append(image.load("Player_Shoes.png").subsurface(0, i, 40, 56).copy())
-        save.append(image.load("Player_Hands.png").subsurface(0, i, 40, 56).copy())
-        save.append(image.load("Player_Eye2.png").subsurface(0, 0, 40, 56).copy())
+        if i!=1064:
 
-        save[0].fill(Color(255, 255, 255) - colour["hair"], special_flags=BLEND_SUB)
-        save[1].fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
-        save[2].fill(Color(255, 255, 255) - colour["undershirt"], special_flags=BLEND_SUB)
-        save[3].fill(Color(255, 255, 255) - colour["shirt"], special_flags=BLEND_SUB)
-        save[4].fill(Color(255, 255, 255) - colour["pants"], special_flags=BLEND_SUB)
-        save[5].fill(Color(255, 255, 255) - colour["shoes"], special_flags=BLEND_SUB)
-        save[6].fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
-        save[7].fill(Color(255, 255, 255) - colour["eye"], special_flags=BLEND_SUB)
+            save.append(image.load("Player_Head.png").subsurface(0, i, 40, 56).copy())
+            save.append(img["hair"][counter].copy())
 
-        sprite=current(save[0],save[1],save[2],save[3],save[4],save[5],save[6],save[7])
-        current.drawBody(bg,sprite,(0,i))
-        current.drawHands(bg2,sprite,(0,i))
-    image.save(bg,"body.png")
-    image.save(bg2,"hands.png")
+            save.append(image.load("Player_Undershirt.png").subsurface(0, i, 40, 56).copy())
+            save.append(image.load("Player_Shirt.png").subsurface(0, i, 40, 56).copy())
+            save.append( image.load("Player_Pants.png").subsurface(0, i, 40, 56).copy())
+            save.append(image.load("Player_Shoes.png").subsurface(0, i, 40, 56).copy())
+            save.append(image.load("Player_Hands.png").subsurface(0, i, 40, 56).copy())
+            save.append(image.load("Player_Eye2.png").subsurface(0, i, 40, 56).copy())
+            hand2= image.load("Player_Hands2.png").subsurface(0,i,40,56).copy()
+
+            save[0].fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
+            save[1].fill(Color(255, 255, 255) - colour["hair"], special_flags=BLEND_SUB)
+            save[2].fill(Color(255, 255, 255) - colour["undershirt"], special_flags=BLEND_SUB)
+            save[3].fill(Color(255, 255, 255) - colour["shirt"], special_flags=BLEND_SUB)
+            save[4].fill(Color(255, 255, 255) - colour["pants"], special_flags=BLEND_SUB)
+            save[5].fill(Color(255, 255, 255) - colour["shoes"], special_flags=BLEND_SUB)
+            save[6].fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
+            save[7].fill(Color(255, 255, 255) - colour["eye"], special_flags=BLEND_SUB)
+            hand2.fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
+
+
+        else:
+            save.append(image.load("Player_Head.png").subsurface(0, i, 40, 54).copy())
+            save.append(img["hair"][counter].copy())
+
+            save.append(image.load("Player_Undershirt.png").subsurface(0, i, 40, 54).copy())
+            save.append(image.load("Player_Shirt.png").subsurface(0, i, 40, 54).copy())
+            save.append(image.load("Player_Pants.png").subsurface(0, i, 40, 56).copy())
+            save.append(image.load("Player_Shoes.png").subsurface(0, i, 40, 54).copy())
+            save.append(image.load("Player_Hands.png").subsurface(0, i, 40, 54).copy())
+            save.append(image.load("Player_Eye2.png").subsurface(0, i, 40, 54).copy())
+            hand2=image.load("Player_Hands2.png").subsurface(0, i, 40, 54).copy()
+
+            save[0].fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
+            save[1].fill(Color(255, 255, 255) - colour["hair"], special_flags=BLEND_SUB)
+            save[2].fill(Color(255, 255, 255) - colour["undershirt"], special_flags=BLEND_SUB)
+            save[3].fill(Color(255, 255, 255) - colour["shirt"], special_flags=BLEND_SUB)
+            save[4].fill(Color(255, 255, 255) - colour["pants"], special_flags=BLEND_SUB)
+            save[5].fill(Color(255, 255, 255) - colour["shoes"], special_flags=BLEND_SUB)
+            save[6].fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
+            save[7].fill(Color(255, 255, 255) - colour["eye"], special_flags=BLEND_SUB)
+            hand2.fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
+
+        temp = current(save[0],save[1],save[2],save[3],save[4],save[5],save[6],save[7])
+        current.draw(bg,temp,(0,i))
+
+        bg2.blit(hand2,(0,i))
+    image.save(bg,"everything.png")
+    image.save(bg2,"hands2.png")
 running= True
 
-# screen.blit(bar,(478,298))
-# screen.blit(andy.render(names[counter],1,(0,0,0)),(499,208))
-# screen.blit(h,(530,65))
+
 intro()
-# screen.blit()
+
 while running:
     leftClick=False
     rightClick=False
     mx, my = mouse.get_pos()
     mb = mouse.get_pressed()
-    print(mx,my)
+     print(mx,my)
     if anchor=="intro":
         intro.menu()
         intro.check()
+    elif anchor=="eye":
+        eye.check()
     elif anchor=="hair":
         hair.check()
     elif anchor=="skin":
@@ -416,11 +445,6 @@ while running:
     elif anchor=="shoes":
         shoes.check()
     # print(mx,my)
-    # if barRect.collidepoint(mx,my) and mb[0]==1:
-    #     updatecolour()
-    #
-    # if textRect.collidepoint(mx,my) and mb[0]==1:
-    #     hair.updatehair()
 
     for evt in event.get():
         if evt.type == QUIT:
