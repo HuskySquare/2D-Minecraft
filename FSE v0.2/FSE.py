@@ -34,8 +34,9 @@ playerSurface.fill((0, 0, 0, 0))
 uiSurface = Surface((1280, 720), SRCALPHA)
 mainSurface = Surface((1280, 720), SRCALPHA)
 ###########################################################################
-background = image.load("background.png").convert()
-background = transform.scale(background, (1280, 720))
+background1 = transform.scale(image.load("Background_1.png").convert(32, SRCALPHA), (1280, 720))
+background2 = transform.scale(image.load("Background_2.png").convert(32, SRCALPHA), (1280, 720))
+background3 = transform.scale(image.load("Background_3.png").convert(32, SRCALPHA), (1280, 720))
 
 pics = []
 sprite = image.load("player\Sprite0.png")
@@ -855,6 +856,14 @@ def drawBlocks(x1, x2, y1, y2):
         for y in range(y1, y2 + 1):
             blocks[y][x].draw()
 
+def drawBackground():
+    screen.fill((15, 80, 220))
+    screen.blit(background1.subsurface(0, 0, 1280 - int(player.rect.x - 629) / 15, 720), (int(player.rect.x - 629) / 15, -50))
+    screen.blit(background1.subsurface(1280 - int(player.rect.x - 629) / 15, 0, int(player.rect.x - 629) / 15, 720),(0, -50))
+    #screen.blit(background1, (0, -50))
+    screen.blit(background2, (0, 150))
+    screen.blit(background3.subsurface(0, 0, 1280 - int(player.rect.x - 629)/5, 495), (int(player.rect.x - 629)/5, 225))
+    screen.blit(background3.subsurface(1280 - int(player.rect.x - 629)/5, 0, int(player.rect.x - 629)/5, 495), (0, 225))
 
 blocks = []
 for y in range(len(blockList)):
@@ -953,9 +962,6 @@ while running:
         positive = True
 
     alphaCount=time//20330
-    screen.fill((0, 0, 0))
-    background.set_alpha(alphaCount)
-    screen.blit(background,(0,0))
 #///////////////////////////////////////////////////////////////////////////
     if mb[0] == 1:
         blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
@@ -1025,6 +1031,8 @@ while running:
     player.movePlayer()
     player.collide()
     player.clear()
+
+    drawBackground()
 
     if len(dropsList) != 0:
         for drop in dropsList:
