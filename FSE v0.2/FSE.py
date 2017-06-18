@@ -21,6 +21,7 @@ screen = display.set_mode((1280, 720))
 
 andy18 = font.Font("fonts/HW ANDY.ttf", 18)
 andy16 = font.Font("fonts/HW ANDY.ttf", 16)
+andy22 = font.Font("fonts/HW ANDY.ttf", 22)
 
 clock = time.Clock()
 
@@ -136,6 +137,14 @@ block3_12 = image.load("grass/grass_block_56.png").convert(32, SRCALPHA)
 block3_13 = image.load("grass/grass_block_8.png").convert(32, SRCALPHA)
 block3_14 = image.load("grass/grass_block_12.png").convert(32, SRCALPHA)
 block3_15 = image.load("grass/grass_block_9.png").convert(32, SRCALPHA)
+
+"""block6_0 = image.load("tree/trunks/tree_trunk_0.png").convert(32, SRCALPHA)
+block6_1 = image.load("tree/trunks/tree_trunk_49.png").convert(32, SRCALPHA)
+block6_2 = image.load("tree/trunks/tree_trunk_50.png").convert(32, SRCALPHA)
+block6_3 = image.load("tree/trunks/tree_trunk_0.png").convert(32, SRCALPHA)
+
+block7_0 = image.load("tree/tree_trunk_0.png").convert(32, SRCALPHA)"""
+
 #//////////////////////////////////////////////////////////////////////
 block3 = [block3_0, block3_1, block3_2, block3_3, block3_4, block3_5, block3_6, block3_7, block3_8, block3_9, block3_10,
           block3_11, block3_12, block3_13, block3_14, block3_15]
@@ -145,9 +154,11 @@ blockConditions = [False, 150, 500, 150]
 item1 = image.load("items/item_1.png").convert(32, SRCALPHA)
 item2 = image.load("items/item_2.png").convert(32, SRCALPHA)
 item4 = image.load("items/item_4.png").convert(32, SRCALPHA)
+item9 = image.load("items/item_9.png").convert(32, SRCALPHA)
 inventoryBack = image.load("images/Inventory_Back.png")
 inventoryBackSelected = image.load("images/Inventory_Back14.png")
-items = [False, item1, item2, item1, item4]
+heart = image.load("images/Heart.png").convert(32, SRCALPHA)
+items = [False, item1, item2, item1, item4, False, False, False, False, item9]
 toolSpeeds = [5, 5, 5, 5, 15]
 effTools = [0.5, 0.5, 4, 0.5]
 dropsList = []
@@ -178,6 +189,7 @@ class Wizard:
         self.attack = 0
         self.fire = False
         self.health = 100
+        self.fireRect = Rect(x,y,w,h)
         self.stuck = False
         self.move = 0
         self.newMove = -1
@@ -241,26 +253,34 @@ class Wizard:
 #/////////////////////////////////////////////////////////////////////////        
     def draw(self):
         self.attack = randint(1,50)
+        if player.hit:
+            self.fire = False
         if self.fire:
             if self.move == 1:
                 playerSurface.blit(wizardPics[2][0],(self.rect.x -4 + self.firePos, self.rect.y - 7))
                 self.firePos += 5
+                self.fireRect = Rect (self.rect.x - 4 + self.firePos, self.rect.y - 7, wizardPics[2][0].get_width(),wizardPics[2][0].get_height())
             elif self.move == 0:
                 playerSurface.blit(wizardPics[2][1],(self.rect.x - 60 + self.firePos, self.rect.y - 7))
                 self.firePos -= 5
+                self.fireRect = Rect (self.rect.x - 60 + self.firePos, self.rect.y - 7, wizardPics[2][1].get_width(),wizardPics[2][1].get_height())
             if abs(self.firePos) > 150:
                 self.fire = False
+                player.hit = False
         if self.attack == 50:
             if not self.fire:
                 if self.move == 1:
                     playerSurface.blit(wizardPics[2][0],(self.rect.x -4, self.rect.y - 7))
                     self.fire = True
+                    player.hit = False
                 if self.move == 0:
                     playerSurface.blit(wizardPics[2][1],(self.rect.x - 60, self.rect.y - 7))
                     self.fire = True
+                    player.hit = False
                 self.firePos = 0
             elif self.firePos > 50:
                 self.fire = False
+                player.hit = False
         pic = wizardPics[self.move][int(self.frame)]
         playerSurface.blit(pic,self.blitPos)
 #############################################################################
@@ -361,7 +381,7 @@ class Slime:
         self.frame = 0
         self.attack = 0
         self.health = 100
-        self.status = "Alive"
+        self.delete= False
     def moveSlime(self):
         distance = abs(player.rect.x - slime.rect.x)
         x = randint(1,60)
@@ -439,51 +459,61 @@ class Player:
         self.vx = 0
         self.vy = 0
         self.jumping = False
+        self.hit = False
         self.move = 0
         self.newMove = -1
         self.frame = 0
         self.health = 100
-        self.status = "Alive"
+        self.breaking = False
 
     def movePlayer(self):
         keys = key.get_pressed()
 
         self.newMove = -1
 
-        if keys[K_RIGHT] and keys[K_LEFT]:
-            self.frame = 0
-
-        else:
-            if keys[K_RIGHT] and self.rect.x < worldSize[0] * 16 - 629:
-                if not self.jumping:
-                    self.newMove = 2
-                self.vx = 3
-            elif keys[K_LEFT] and self.rect.x > 629:
-                if not self.jumping:
-                    self.newMove = 5
-                self.vx = -3
+        if self.breaking:
+            if self.move == 2 or self.move == 0:
+                self.newMove = 0
             else:
+                self.newMove = 3
+        else:
+            if keys[K_d] and keys[K_a]:
                 self.frame = 0
 
-        if keys[K_UP] and not self.jumping:
-            self.vy = -15
-            self.jumping = True
-            if self.move == 2 or self.move == 1:
-                self.newMove = 1
             else:
-                self.newMove = 4
+                if keys[K_d] and self.rect.x < worldSize[0] * 16 - 629:
+                    if not self.jumping:
+                        self.newMove = 2
+                    self.vx = 3
+                elif keys[K_a] and self.rect.x > 629:
+                    if not self.jumping:
+                        self.newMove = 5
+                    self.vx = -3
+                else:
+                    self.frame = 0
 
-        elif self.jumping:
-            if keys[K_RIGHT]:
-                self.newMove = 1
-            elif keys[K_LEFT]:
-                self.newMove = 4
+            if keys[K_w] and not self.jumping:
+                self.vy = -15
+                self.jumping = True
+                if self.move == 2 or self.move == 1:
+                    self.newMove = 1
+                else:
+                    self.newMove = 4
 
-        if not self.jumping and self.move == 1:
-            self.move = 2
+            elif self.jumping:
+                if keys[K_d]:
+                    self.newMove = 1
+                elif keys[K_a]:
+                    self.newMove = 4
+
+            if not self.jumping and self.move == 1:
+                self.move = 2
 
         if self.move == self.newMove:  # 0 is a standing pose, so we want to skip over it when we are moving
-            self.frame = self.frame + 0.6  # adding 0.2 allows us to slow down the animation
+            if self.move == 0 or self.move == 3:
+                self.frame = self.frame + 0.15
+            else:
+                self.frame = self.frame + 0.6  # adding 0.2 allows us to slow down the animation
             if self.frame >= len(pics[self.move]):
                 self.frame = 1
         elif self.newMove != -1:  # a move was selected
@@ -521,19 +551,49 @@ class Player:
         self.vx = 0
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
-
         for slime in slimeList:
             if slime.rect.colliderect(self.rect) and self.health>=10 and slime.attack==25:
                 self.health -= 10
-            else:
+            elif slime.rect.colliderect(self.rect) and slime.attack==25:
                 self.heatlh = 0
-                self.status = "Dead"
+
+    def attack(self):
+        for slime in slimeList:
+            if slime.rect.colliderect(self.rect) and slime.health >= 2:
+                slime.health -= 2
+                self.breaking = True
+            elif slime.rect.colliderect(self.rect):
+                slime.heatlh = 0
+                slime.delete = True
+                dropsList.append(Drop(slime.rect.x//16, slime.rect.y//16, 9))
+                self.breaking = False
+
+
+
+        for purpSlime in purpleSlimeList:
+            if purpSlime.rect.colliderect(self.rect) and self.health>=15 and purpSlime.attack==25:
+                self.health -= 15
+            elif slime.rect.colliderect(self.rect):
+                self.health = 0
+
+        if wizard.fireRect.colliderect(self.rect) and self.health >=15:
+            self.hit = True
+            self.health -= 15
+        elif wizard.fireRect.colliderect(self.rect):
+            self.hit = True
+            self.health = 0
+
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
 
     def draw(self):
         pic = pics[self.move][int(self.frame)]
         playerSurface.blit(pic, self.blitPos)
+        uiSurface.fill((0, 0, 0, 0))
+        uiSurface.blit(andy22.render(str(self.health) + " / " + "100", 1, (255, 255, 255)), (1120, 10))
+        for i in range(0, self.health, 20):
+            uiSurface.blit(heart, (1095 + 27 * i/20, 40))
+
 
 #############################################################################
 class Block:
@@ -668,6 +728,7 @@ class Block:
 
     def breakBlock(self):
         if self.id != 0:
+            player.breaking = True
             if inventoryList[inventory.selected].id == effTools[self.id]:
                 if self.condition - inventoryList[inventory.selected].speed <= 0:
                     dropsList.append(Drop(self.x, self.y, self.id))
@@ -785,16 +846,16 @@ drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
 ###########################################################################
 player = Player(629, 339, 24, 40)
 
-wizard = Wizard(780,319,20,37)
+wizard = Wizard(700,319,20,37)
 
 slimeList=[]
 for i in range(5):
-    slime= Slime(randint(700,1100),339,14,14)
+    slime= Slime(randint(900,1800),339,14,14)
     slimeList.append(slime)
 
 purpleSlimeList=[]
 for i in range(3):
-    purpleSlime = PurpleSlime(randint(700,1000),339,28,28)
+    purpleSlime = PurpleSlime(randint(900,1800),339,28,28)
     purpleSlimeList.append(purpleSlime)
 
 
@@ -825,12 +886,12 @@ while running:
                 leftClick = True
             if evt.button == 3:
                 rightClick = True
-            if evt.button == 4:
+            if evt.button == 5:
                 if inventory.selected == 9:
                     inventory.selected = 0
                 else:
                     inventory.selected += 1
-            if evt.button == 5:
+            if evt.button == 4:
                 if inventory.selected == 0:
                     inventory.selected = 9
                 else:
@@ -873,12 +934,16 @@ while running:
 #///////////////////////////////////////////////////////////////////////////
     if mb[0] == 1:
         blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
+        player.attack()
         for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
             for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
                 blocks[y][x].update()
         for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
             for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
                 blocks[y][x].draw()
+
+    elif player.breaking == True:
+        player.breaking = False
 
     if mb[2] == 1:
         if inventoryList[inventory.selected].type == BLOCK and blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id == 0:
@@ -901,10 +966,12 @@ while running:
         for drop in dropsList:
             drop.collidePlayer1()
         dropsList = [drop for drop in dropsList if not drop.delete]
+    if len(dropsList) != 0:
         for drop in dropsList:
             if not drop.dist:
                 drop.collidePlayer2()
         dropsList = [drop for drop in dropsList if not drop.delete]
+    if len(dropsList) != 0:
         for drop in dropsList:
             if not drop.dist:
                 drop.collide()
@@ -914,6 +981,8 @@ while running:
         slime.moveSlime()
         slime.collide()
         slime.clear()
+
+    slimeList = [slime for slime in slimeList if not slime.delete]
 
     for purpSlime in purpleSlimeList:
         purpSlime.moveSlime()
@@ -940,7 +1009,6 @@ while running:
         
     wizard.draw()
     player.draw()
-
     for item in inventoryList:
         item.draw()
 
