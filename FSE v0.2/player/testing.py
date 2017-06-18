@@ -82,7 +82,20 @@ class current():
         bg.blit(self.pants,pos)
         bg.blit(self.shoes,pos)
         bg.blit(self.hands,pos)
-        #print("Finish drawing")
+
+    def drawBody(bg,self,pos):
+        bg.blit(self.head, pos)
+        bg.blit(self.eye1, pos)
+        bg.blit(self.eye2, pos)
+        bg.blit(self.hair, pos)
+        bg.blit(self.undershirt, pos)
+        bg.blit(self.shirt, pos)
+        bg.blit(self.pants, pos)
+        bg.blit(self.shoes, pos)
+    def drawHands(bg,self,pos):
+
+
+        bg.blit(self.hands, pos)
 
 # img["head"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
 # img["undershirt"].fill(Color(255,255,255)-colour, special_flags=BLEND_SUB)
@@ -342,34 +355,36 @@ class shoes():
             clothes.menu()
 def create():
     bg=Surface((40,1120))
+    bg2=Surface((40,1120))
+
     save=[]
-    for i in range(0,1121,56):
+    for i in range(0,1120,56):
         save=[]
 
-
         save.append(img["hair"][counter].copy())
-        save.append(image.load("Player_Head.png").subsurface(0, i, 40, 56).copy())
-        save.append(image.load("Player_Undershirt.png").subsurface(0, i, 40, 56).copy())
+        save.append(image.load("Player_Head.png").subsurface(0, 0, 40, 56).copy())
+        save.append(image.load("Player_Undershirt.png").subsurface(0, 0, 40, 56).copy())
+        print(i)
         save.append(image.load("Player_Shirt.png").subsurface(0, i, 40, 56).copy())
         save.append( image.load("Player_Pants.png").subsurface(0, i, 40, 56).copy())
         save.append(image.load("Player_Shoes.png").subsurface(0, i, 40, 56).copy())
         save.append(image.load("Player_Hands.png").subsurface(0, i, 40, 56).copy())
-        save.append(image.load("Player_Eye2.png").subsurface(0, i, 40, 56).copy())
-        print(i)
+        save.append(image.load("Player_Eye2.png").subsurface(0, 0, 40, 56).copy())
+
+        save[0].fill(Color(255, 255, 255) - colour["hair"], special_flags=BLEND_SUB)
+        save[1].fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
+        save[2].fill(Color(255, 255, 255) - colour["undershirt"], special_flags=BLEND_SUB)
+        save[3].fill(Color(255, 255, 255) - colour["shirt"], special_flags=BLEND_SUB)
+        save[4].fill(Color(255, 255, 255) - colour["pants"], special_flags=BLEND_SUB)
+        save[5].fill(Color(255, 255, 255) - colour["shoes"], special_flags=BLEND_SUB)
+        save[6].fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
+        save[7].fill(Color(255, 255, 255) - colour["eye"], special_flags=BLEND_SUB)
+
         sprite=current(save[0],save[1],save[2],save[3],save[4],save[5],save[6],save[7])
-        current.draw(bg,sprite,(0,i))
-
-
-
-
-
-
-
-
-    # for i in range(0,1121,56):
-    #     current.draw(bg,default,(0,i))
-    image.save(bg,"Sprite.png")
-
+        current.drawBody(bg,sprite,(0,i))
+        current.drawHands(bg,sprite,(0,i))
+    image.save(bg,"body.png")
+    image.save(bg,"hands.png")
 running= True
 
 # screen.blit(bar,(478,298))
