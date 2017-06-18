@@ -21,7 +21,7 @@ for i in range(780):
         if not length:
 
             length = randint(0, 10)
-            # weighted_choice=[
+            weighted_choice=[(1,)
             x=choice([84,0])
             temp=np.delete(pieces[i-1],[x])
             if x:
@@ -76,13 +76,17 @@ for i in range(780):
 #Making caves-----------------------------------------
 for i in range(randint(15,30)):
 
-    width, height = randint(2, 10), randint(2, 10)
+    width, height = randint(5, 20), randint(5, 20)
     temp = np.random.normal(size=(width, height))
     temp = np.fabs(temp)
     temp = temp.astype(int)
     x,y=randint(30,84-width),randint(0,780-height)
     blocks[x:x+width,y:y+height]=temp
 
+
+
+
+# for i in blocks():
 
 def genTree(x,y,h):
     blocks[x-1,y]=7
