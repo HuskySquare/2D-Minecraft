@@ -178,6 +178,7 @@ class Wizard:
         self.attack = 0
         self.fire = False
         self.health = 100
+        self.fireRect = Rect(x,y,w,h)
         self.stuck = False
         self.move = 0
         self.newMove = -1
@@ -241,26 +242,34 @@ class Wizard:
 #/////////////////////////////////////////////////////////////////////////        
     def draw(self):
         self.attack = randint(1,50)
+        if player.hit:
+            self.fire = False
         if self.fire:
             if self.move == 1:
                 playerSurface.blit(wizardPics[2][0],(self.rect.x -4 + self.firePos, self.rect.y - 7))
                 self.firePos += 5
+                self.fireRect = Rect (self.rect.x - 4 + self.firePos, self.rect.y - 7, wizardPics[2][0].get_width(),wizardPics[2][0].get_height())
             elif self.move == 0:
                 playerSurface.blit(wizardPics[2][1],(self.rect.x - 60 + self.firePos, self.rect.y - 7))
                 self.firePos -= 5
+                self.fireRect = Rect (self.rect.x - 60 + self.firePos, self.rect.y - 7, wizardPics[2][1].get_width(),wizardPics[2][1].get_height())
             if abs(self.firePos) > 150:
                 self.fire = False
+                player.hit = False
         if self.attack == 50:
             if not self.fire:
                 if self.move == 1:
                     playerSurface.blit(wizardPics[2][0],(self.rect.x -4, self.rect.y - 7))
                     self.fire = True
+                    player.hit = False
                 if self.move == 0:
                     playerSurface.blit(wizardPics[2][1],(self.rect.x - 60, self.rect.y - 7))
                     self.fire = True
+                    player.hit = False
                 self.firePos = 0
             elif self.firePos > 50:
                 self.fire = False
+                player.hit = False
         pic = wizardPics[self.move][int(self.frame)]
         playerSurface.blit(pic,self.blitPos)
 #############################################################################
@@ -334,7 +343,7 @@ class PurpleSlime:
         
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
-        self.attack = randint(1,25)
+        self.attack = randint(1,26)
 #////////////////////////////////////////////////////////////////////////////
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
@@ -417,7 +426,7 @@ class Slime:
         
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
-        self.attack = randint(1,25)
+        self.attack = randint(1,26)
         
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
@@ -439,6 +448,7 @@ class Player:
         self.vx = 0
         self.vy = 0
         self.jumping = False
+        self.hit = False
         self.move = 0
         self.newMove = -1
         self.frame = 0
@@ -521,13 +531,26 @@ class Player:
         self.vx = 0
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
-
         for slime in slimeList:
             if slime.rect.colliderect(self.rect) and self.health>=10 and slime.attack==25:
                 self.health -= 10
-            else:
+            elif slime.rect.colliderect(self.rect):
                 self.heatlh = 0
-                self.status = "Dead"
+
+
+        for purpSlime in purpleSlimeList:
+            if purpSlime.rect.colliderect(self.rect) and self.health>=15 and purpSlime.attack==25:
+                self.health -= 15
+            elif slime.rect.colliderect(self.rect):
+                self.health = 0
+
+        if wizard.fireRect.colliderect(self.rect) and self.health >=15:
+            self.hit = True
+            self.health -= 15
+        elif wizard.fireRect.colliderect(self.rect):
+            self.hit = True
+            self.health = 0
+            
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
 
@@ -785,16 +808,16 @@ drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
 ###########################################################################
 player = Player(629, 339, 24, 40)
 
-wizard = Wizard(780,319,20,37)
+wizard = Wizard(700,319,20,37)
 
 slimeList=[]
 for i in range(5):
-    slime= Slime(randint(700,1100),339,14,14)
+    slime= Slime(randint(900,1800),339,14,14)
     slimeList.append(slime)
 
 purpleSlimeList=[]
 for i in range(3):
-    purpleSlime = PurpleSlime(randint(700,1000),339,28,28)
+    purpleSlime = PurpleSlime(randint(900,1800),339,28,28)
     purpleSlimeList.append(purpleSlime)
 
 
@@ -940,7 +963,6 @@ while running:
         
     wizard.draw()
     player.draw()
-
     for item in inventoryList:
         item.draw()
 
