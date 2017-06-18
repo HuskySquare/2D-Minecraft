@@ -1,6 +1,7 @@
 #{0:"Air, 1:"Dirt",2:"Stone",3:"Grass",5:"Pickaxe",6:"Iron",7:"Tree Trunk".8:"Tree Main Branch",9:"Gel"}
 import numpy as np
 from random import *
+import pickle
 pieces=[]
 anchor=20
 length=0
@@ -83,6 +84,8 @@ for i in range(randint(15,30)):
     x,y=randint(30,84-width),randint(0,780-height)
     blocks[x:x+width,y:y+height]=temp
 
+with open('blockspickle.pickle', 'wb') as f:
+    pickle.dump(blocks, f)
 
 
 
