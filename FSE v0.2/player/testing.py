@@ -342,8 +342,31 @@ class shoes():
             clothes.menu()
 def create():
     bg=Surface((40,1120))
+    save=[]
     for i in range(0,1121,56):
-        current.draw(bg,default,(0,i))
+        save=[]
+
+        save.append(img["hair"][counter].copy())
+        save.append(image.load("Player_Head.png").subsurface(0, i, 40, 56).copy())
+        save.append(image.load("Player_Undershirt.png").subsurface(0, i, 40, 56).copy())
+        save.append(image.load("Player_Shirt.png").subsurface(0, i, 40, 56).copy())
+        save.append( image.load("Player_Pants.png").subsurface(0, i, 40, 56).copy())
+        save.append(image.load("Player_Shoes.png").subsurface(0, i, 40, 56).copy())
+        save.append(image.load("Player_Hands.png").subsurface(0, i, 40, 56).copy())
+        save.append(image.load("Player_Eye2.png").subsurface(0, i, 40, 56).copy())
+        print(i)
+        sprite=current(save[0],save[1],save[2],save[3],save[4],save[5],save[6],save[7])
+        current.draw(bg,sprite,(0,i))
+
+
+
+
+
+
+
+
+    # for i in range(0,1121,56):
+    #     current.draw(bg,default,(0,i))
     image.save(bg,"Sprite.png")
 
 running= True
