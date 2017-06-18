@@ -36,9 +36,9 @@ playerSurface.fill((0, 0, 0, 0))
 uiSurface = Surface((1280, 720), SRCALPHA)
 mainSurface = Surface((1280, 720), SRCALPHA)
 ###########################################################################
-background1 = transform.scale(image.load("Background_1.png").convert(32, SRCALPHA), (1280, 720))
-background2 = transform.scale(image.load("Background_2.png").convert(32, SRCALPHA), (1280, 720))
-background3 = transform.scale(image.load("Background_3.png").convert(32, SRCALPHA), (1280, 720))
+background1 = transform.scale(image.load("images/Background_1.png").convert(32, SRCALPHA), (1280, 720))
+background2 = transform.scale(image.load("images/Background_2.png").convert(32, SRCALPHA), (1280, 720))
+background3 = transform.scale(image.load("images/Background_3.png").convert(32, SRCALPHA), (1280, 720))
 
 pics = []
 sprite = image.load("player\Sprite0.png")
