@@ -1,10 +1,12 @@
-#{0:"Air, 1:"Dirt",2:"Stone",3:"Grass",5:"Pickaxe",6:"Iron",7:"Tree Trunk".8:"Tree Main Branch",9:"Gel"}
+#{0:"Air, 1:"Dirt",2:"Stone",3:"Grass",4:"Pickaxe",6:"Iron",7:"Tree Trunk".8:"Tree Main Branch",9:"Gel"}
 import numpy as np
 from random import *
 import pickle
 pieces=[]
 anchor=20
 length=0
+trees=np.zeros((85,780),dtype="int")
+
 
 for i in range(780):
     x=randint(-3,3)
@@ -58,14 +60,35 @@ for i in range(780):
     pieces.append(temp)
 
 blocks=np.concatenate(pieces,axis=1)
-
+dist=6
 blocks[60:,:]=2
+
+def genTree(x,y,h):
+
+    global trees
+    temp=np.zeros((h,3),dtype='int')
+    temp[h-1]=7
+    temp[:,1]=8
+    for i in range(randint(1,3)): #Left branch
+        temp[randint(2,h-1),0]=9
+    for i in range(randint(1,3)): #Right branch
+        temp[randint(2,h-1),1]=9
+    trees[y-h+1:y+1][:,:3]=temp
+
+
 for i in range(780):
 
     temp=blocks[:,i]
-
+    # weighted_choice=[()]
     anchor=np.where(temp!=0)[0][0]
-
+    if not dist:
+        try:
+            genTree(i,anchor,randint(5,10))
+        except ValueError:
+            pass
+        dist=randint(7,15)
+    else:
+        dist-=1
     for j in range(randint(1,3)):
         if randint(0,1):
             try:
@@ -97,7 +120,3 @@ with open('blockspickle.pickle', 'wb') as f:
 
 # for i in blocks():
 
-def genTree(x,y,h):
-    blocks[x-1,y]=7
-    blocks[x+1,y]=7
-    blocks[:,x][y-h:y+1]=8
