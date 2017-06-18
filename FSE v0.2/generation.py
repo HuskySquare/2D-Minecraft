@@ -1,3 +1,4 @@
+
 import numpy as np
 from random import *
 pieces=[]
@@ -20,6 +21,7 @@ for i in range(780):
         if not length:
 
             length = randint(0, 10)
+            # weighted_choice=[
             x=choice([84,0])
             temp=np.delete(pieces[i-1],[x])
             if x:
@@ -58,10 +60,12 @@ blocks=np.concatenate(pieces,axis=1)
 
 blocks[60:,:]=2
 for i in range(780):
-    if randint(0,1)==0:
+    if randint(0,1):
         blocks[:,i][randint(60,84)]=6
     temp=blocks[:,i]
+
     anchor=np.where(temp==3)[0][0]
+
 
     for j in range(randint(5,10)):
         try:
@@ -71,7 +75,7 @@ for i in range(780):
 
 #Making caves-----------------------------------------
 for i in range(randint(15,30)):
-    
+
     width, height = randint(2, 10), randint(2, 10)
     temp = np.random.normal(size=(width, height))
     temp = np.fabs(temp)
@@ -79,4 +83,8 @@ for i in range(randint(15,30)):
     x,y=randint(30,84-width),randint(0,780-height)
     blocks[x:x+width,y:y+height]=temp
 
-        
+
+def genTree(x,y,h):
+    blocks[x-1,y]=7
+    blocks[x+1,y]=7
+    blocks[:,x][y-h:y+1]=8
