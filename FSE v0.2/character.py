@@ -111,7 +111,7 @@ x[4].fill(Color(255, 255, 255) - colour["pants"], special_flags=BLEND_SUB)
 x[5].fill(Color(255, 255, 255) - colour["shoes"], special_flags=BLEND_SUB)
 x[6].fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
 x[7].fill(Color(255, 255, 255) - colour["eye"], special_flags=BLEND_SUB)
-
+#Setting the default color for each body part or clothes
 default = current(x[0], x[1], x[2], x[3], x[4], x[5], x[6], x[7])  # default is an instance of the class. It is a representation of the person the user is manipulating
 '''
 The classes used below work similarly.

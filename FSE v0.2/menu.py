@@ -263,3 +263,6 @@ while screening: # if this is false, the game is playing
 
         display.flip()
                 
+out=open("flag.txt","w")
+out.write("0")
+out.close()
