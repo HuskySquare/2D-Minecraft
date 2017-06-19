@@ -32,6 +32,8 @@ del x
 screen=display.set_mode((1248,704))
 screen.fill((255,255,255))
 
+background = transform.scale(image.load("images/background.png"),(1248,704))
+background.set_alpha(100)
 bar=image.load("Hue.png")
 andy=font.Font("player/HW ANDY.ttf",50)
 clock=time.Clock()
@@ -101,7 +103,8 @@ default=current(x[0],x[1],x[2],x[3],x[4],x[5],x[6],x[7])
 class intro():  #A class used for bliting the entire body
 
     def menu():
-        screen.fill((255,255,255))
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
         current.draw(screen,default,rect["intro"]["body"][:2])
         screen.blit(options["hair"],rect["intro"]["hair"][:2])
         screen.blit(options["eye"],rect["intro"]["eye"][:2])
@@ -130,7 +133,8 @@ class intro():  #A class used for bliting the entire body
 class eye():
     def menu():
         global colour
-        screen.fill((255,255,255))
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
         screen.blit(bar,rect["eye"]["bar"][:2])
         screen.blit(options["back"],rect["eye"]["back"][:2])
         temp = img["eye2"].copy()
@@ -154,7 +158,8 @@ class skin():
     def menu():
 
         global colour
-        screen.fill((255,255,255))
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
         screen.blit(bar,rect["skin"]["bar"][:2])
         screen.blit(options["back"],rect["skin"]["back"][:2])
 
@@ -177,7 +182,8 @@ class skin():
 class hair():
     def menu():
        # global counter
-        screen.fill((255,255,255))
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
         screen.blit(bar,rect["hair"]["bar"][:2])
         screen.blit(andy.render(names[counter], 1, (0, 0, 0)), (499, 208))
 
@@ -209,7 +215,8 @@ class hair():
         global counter,colour,h
         counter += 1
         try:
-            screen.fill((255, 255, 255))
+            screen.fill((0,0,0))
+            screen.blit(background,(0,0))
             screen.blit(bar, (478,298))
             screen.blit(andy.render(names[counter], 1, (0, 0, 0)), (499,208))
             h = hair[counter].copy()
@@ -223,7 +230,8 @@ class hair():
     def updatecolour():
         global counter, colour, text
         colour = screen.get_at((mx, my))
-        screen.fill((255, 255, 255))
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
         screen.blit(bar, (478, 298))
         screen.blit(andy.render(names[counter], 1, (0, 0, 0)), (499, 208))
         h = img["hair"][counter].subsurface(0, 0, 40, 56).copy()
@@ -231,7 +239,8 @@ class hair():
         # screen.blit(h, (530, 65))
 class clothes():
     def menu():
-        screen.fill((255,255,255))
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
         screen.blit(options["shirt"], rect["clothes"]["shirt"][:2])
         screen.blit(options["undershirt"], rect["clothes"]["undershirt"][:2])
         screen.blit(options["pants"], rect["clothes"]["pants"][:2])
@@ -265,7 +274,8 @@ class clothes():
 
 class shirt():
     def menu():
-        screen.fill((255,255,255))
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
         screen.blit(bar,rect["clothes"]["bar"][:2])
         screen.blit(options["back"],rect["shirt"]["back"][:2])
         temp = img["shirt"].copy()
@@ -283,7 +293,8 @@ class shirt():
             shirt.menu()
 class undershirt():
     def menu():
-        screen.fill((255, 255, 255))
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
         screen.blit(bar, rect["clothes"]["bar"][:2])
         screen.blit(options["back"], rect["undershirt"]["back"][:2])
         temp = img["undershirt"].copy()
@@ -301,7 +312,8 @@ class undershirt():
 
 class pants():
     def menu():
-        screen.fill((255,255,255))
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
         screen.blit(bar, rect["clothes"]["bar"][:2])
         screen.blit(options["back"], rect["pants"]["back"][:2])
         temp = img["pants"].copy()
@@ -319,7 +331,8 @@ class pants():
             clothes.menu()
 class shoes():
     def menu():
-        screen.fill((255, 255, 255))
+        screen.fill((0,0,0))
+        screen.blit(background,(0,0))
         screen.blit(bar, rect["clothes"]["bar"][:2])
         screen.blit(options["back"], rect["shoes"]["back"][:2])
         temp = img["shoes"].copy()
@@ -395,8 +408,6 @@ def create():
     image.save(bg,"player/Characters/everything{0}.png".format("".join(os.listdir("player/Characters")).count("everything")+1))
     image.save(bg2,"player/Characters/hands2_{0}.png".format("".join(os.listdir("player/Characters")).count("hands")+1))
 running= True
-
-
 intro()
 
 while running:
@@ -404,6 +415,7 @@ while running:
     rightClick=False
     mx, my = mouse.get_pos()
     mb = mouse.get_pressed()
+    
     # print(mx,my)
     if anchor=="intro":
         intro.menu()
