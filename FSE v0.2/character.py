@@ -432,13 +432,13 @@ def create():
         current.draw(bg, temp, (0, i))
 
         bg2.blit(hand2, (0, i))
-    image.save(bg, "player/Characters/everything{0}.png".format(
-        "".join(os.listdir("player/Characters")).count("everything") + 1))
-    image.save(bg2,
-               "player/Characters/hands2_{0}.png".format("".join(os.listdir("player/Characters")).count("hands") + 1))
+    image.save(bg, "player/Characters/everything.png")
+    image.save(bg2, "player/Characters/hands2.png")
     import FSE
-
-
+# everything{0}.png".format(
+#         "".join(os.listdir("player/Characters")).count("everything") + 1))
+#         .format
+#     ("".join(os.listdir("player/Characters")).count("hands") + 1))
 running = True
 intro()
 
