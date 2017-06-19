@@ -46,7 +46,7 @@ clock = time.Clock()
 
 worldSize = (780, 85) #(700x 85 blocks is default)
  
-blocksSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
+blocksSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA) #different surfaces for blocks, trees, player and the user interface
 blocksSurface.fill((0, 0, 0, 0)) #transparent
 treesSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
 treesSurface.fill((0, 0, 0, 0)) #transparent
@@ -55,24 +55,23 @@ playerSurface.fill((0, 0, 0, 0))#transparent
 uiSurface = Surface((1280, 720), SRCALPHA)
 mainSurface = Surface((1280, 720), SRCALPHA)
 ###########################################################################
-"""For some weird reason loading images as SRCALPHA makes stuff faster.
-We loaded as many images as possible in SRC ALPHA form to economize"""
-background1 = transform.scale(image.load("images/Background_1.png").convert(32, SRCALPHA), (1280, 720))
+
+background1 = transform.scale(image.load("images/Background_1.png").convert(32, SRCALPHA), (1280, 720)) #loding three different backgrounds to create moving 3d effect
 background2 = transform.scale(image.load("images/Background_2.png").convert(32, SRCALPHA), (1280, 720))
 background3 = transform.scale(image.load("images/Background_3.png").convert(32, SRCALPHA), (1280, 720))
 
-pics = []
-sprite = image.load("player/Characters/everything1.png")
+pics = [] #list for player sprites
+sprite = image.load("player/Characters/everything1.png") #loading image for player
 
-for i in range(0, 1120, 56): #player sprites
+for i in range(0, 1120, 56): #one image for all the sprites that is cut into individual images
     pics.append(sprite.subsurface((0, i, 40, 56)))
 
-for i in range(0, 1120, 56):
+for i in range(0, 1120, 56): #each image is reflected
     pics.append(transform.flip(sprite.subsurface((0, i, 40, 56)), True, False))
 
-pics = [pics[0:5], [pics[5], pics[5]], pics[6:20], pics[20:25], [pics[25], pics[25]], pics[26:]]
+pics = [pics[0:5], [pics[5], pics[5]], pics[6:20], pics[20:25], [pics[25], pics[25]], pics[26:]] #all images put into a list
 
-slimePics=[]
+slimePics=[] #list for all teh slimes
 for i in range(4): #slime sprites
     name="slime/slime_"+str(i)+".png"
     slimePics.append(image.load(name))
@@ -95,8 +94,8 @@ wizardPics[2].append(image.load("wizard/fire.png")) #wizard fire
 wizardPics[2].append(image.load("wizard/fire2.png"))
 
 """ Bunch of boring block sprites below here, very boring to set up, even more
-boring to read. Each block has 12 different states, dependig on how many
-blocks are next to them, and whether theyre breaking or not"""
+boring to read. Each block has 16 different states, depending on how many
+blocks are next to them. The tile cracks are blitted on top of the blocks"""
 #/////////////////////////////////////////////////////////////////////////    
 tile_crack_1 = image.load("tile_cracks/tile_crack_2.png").convert(32, SRCALPHA)
 tile_crack_2 = image.load("tile_cracks/tile_crack_8.png").convert(32, SRCALPHA)
@@ -196,15 +195,15 @@ block8 = [block8_0, block8_1]
 #//////////////////////////////////////////////////////////////////////
 block3 = [block3_0, block3_1, block3_2, block3_3, block3_4, block3_5, block3_6, block3_7, block3_8, block3_9, block3_10,
           block3_11, block3_12, block3_13, block3_14, block3_15]
-blockImg = [False, block1, block2, block3, False, False, block6, block7, block8]
-blockConditions = [False, 150, 500, 150, False, False, 575, 450, 450]
+blockImg = [False, block1, block2, block3, False, False, block6, block7, block8] #list with all the lists with all the blocks
+blockConditions = [False, 150, 500, 150, False, False, 575, 450, 450] #list of health for each block
 #/////////////////////////////////////////////////////////////////////
-""" Inventory sprite load in. All of these were found on the Terraria wiki.
-Again, we used SRCALPHA to speed things up. We have two lists in action here.
+""" Inventory sprite load in. All of these were found on the Terraria wiki
+. We have two lists in action here.
 Inventory.pickle keeps track of the player's inventory, and drops list
 keeps track of items on the ground"""
 
-item1 = image.load("items/item_1.png").convert(32, SRCALPHA)
+item1 = image.load("items/item_1.png").convert(32, SRCALPHA) #images for items/blocks in the inventory
 item2 = image.load("items/item_2.png").convert(32, SRCALPHA)
 item4 = image.load("items/item_4.png").convert(32, SRCALPHA)
 item5 = image.load("items/item_5.png").convert(32, SRCALPHA)
@@ -228,16 +227,16 @@ for i in range(0, 280, 56):
     item5_sprites[3].append(transform.flip(item5_sprite.subsurface((0, i, 80, 56)), True, False))
 itemSprites = [False, False, False, False, item4_sprites, item5_sprites, False, False, False, False]
 
-toolSpeeds = [5, 5, 5, 5, 15, 5, 5, 5, 5, 5]
-effTools = [0.5, 0.5, 4, 0.5, 0.5, 0.5, 4]
-dropsList = []
+toolSpeeds = [5, 5, 5, 5, 15, 5, 5, 5, 5, 5] #different tools are faster at breaking blocks than others
+effTools = [0.5, 0.5, 4, 0.5, 0.5, 0.5, 4] #some blocks can be broken faster with certain tools
+dropsList = [] #empty list where drops are stored
 ############################MUSIC LOADING###############################
 """Endless ambient music from the Terraria Wiki. We used the pygame wiki
 to learn how to use pygame.mixer"""
 file1="Audio/02-Day.mp3"
 file2="Audio/03-Night.mp3"
 
-player_hit_sound = mixer.Sound("sounds/player_hit_0.wav")
+player_hit_sound = mixer.Sound("sounds/player_hit_0.wav") #sound when player is hit
 
 music = []
 music.append(file1)
@@ -745,11 +744,12 @@ class Player:
 #############################################################################
 class Block:
     def __init__(self, id, x, y):
-        self.id = id
-        self.x = x
-        self.y = y
-        self.rect = Rect(x * 16, y * 16, 16, 16)
-        self.condition = blockConditions[self.id]
+        self.id = id # id defines which block it is
+        self.x = x # x position
+        self.y = y # y position
+        self.rect = Rect(x * 16, y * 16, 16, 16) # block position (each block is 16p x 16p wide)
+        self.condition = blockConditions[self.id] #condition, or health, of the block
+        """The following code checks if the block is surrounded by other blocks or not. Depending on if it is, a different image is used"""
         top = True
         down = True
         left = True
@@ -808,14 +808,16 @@ class Block:
                     self.surround = 15
 
     def draw(self):
+        """draws block on blockSurface and clears previous block"""
         draw.rect(blocksSurface, (0, 0, 0, 0), self.rect)
         if self.id != 0:
             blocksSurface.blit(blockImg[self.id][self.surround], (self.x * 16, self.y * 16))
-            if self.condition < blockConditions[self.id] * 4 / 5:
-                blocksSurface.blit(tile_cracks[self.condition // int(blockConditions[self.id] / 5)],
+            if self.condition < blockConditions[self.id] * 4 / 5: # if block has been hit then condition is decreased
+                blocksSurface.blit(tile_cracks[self.condition // int(blockConditions[self.id] / 5)], # tile cracks are drawn if block is damaged
                                    (self.x * 16, self.y * 16))
 
     def update(self):
+        """Checks surrounding blocks to change self.surrounding so that correct image is blitted when block is drawn"""
         top = True
         down = True
         left = True
@@ -895,6 +897,7 @@ class Block:
                     self.condition -= 5
 
 class treesBlock:
+    """The following class is the exact same as the Block class but it is for trees instead so no explanation needed"""
     def __init__(self, id, x, y):
         self.id = id
         self.x = x
@@ -946,23 +949,6 @@ class treesBlock:
 
     def breakBlock(self):
         player.breaking = True
-        """if inventoryList[inventory.selected].id == effTools[self.id]:
-            if self.condition - inventoryList[inventory.selected].speed <= 0:
-                dropsList.append(Drop(self.x, self.y, self.id))
-                self.id = 0
-                self.condition = 0
-            else:
-                self.condition -= inventoryList[inventory.selected].speed
-        else:
-            if self.condition - 5 <= 0:
-                if self.id == 3:
-                    dropsList.append(Drop(self.x, self.y, 1))
-                else:
-                    dropsList.append(Drop(self.x, self.y, self.id))
-                self.id = 0
-                self.condition = 0
-            else:
-                self.condition -= 5"""
         if self.condition - 20 <= 0:
             self.id = 0
             self.condition = 0
@@ -970,52 +956,55 @@ class treesBlock:
             self.condition -= 20
 ##############################################################################
 class inventory:
-    selected = 0
+    """class for all the objects in the player's inventory"""
+    selected = 0 # variable represents which object in the inventory is selected
     def __init__(self, pos, id, quantity, type):
-        self.id = id
-        self.quantity = quantity
-        self.type = type
-        self.pos = pos
-        self.speed = toolSpeeds[self.id]
+        self.id = id # object id
+        self.quantity = quantity # quantity of blocks
+        self.type = type #is it block or tool?
+        self.pos = pos #1st, 2nd, 3rd, 4th ...
+        self.speed = toolSpeeds[self.id] #if object is a tool then toolSpeeds stores how fast it can break blocks
 
     def draw(self):
-        if self.pos == inventory.selected:
+        if self.pos == inventory.selected: # drawing the back square for the inventory if it's selected (yellow square)
             uiSurface.blit(inventoryBackSelected, (20 + 56 * self.pos, 20))
         else:
-            uiSurface.blit(inventoryBack, (20 + 56 * self.pos, 20))
-        if items[self.id] != EMPTY:
+            uiSurface.blit(inventoryBack, (20 + 56 * self.pos, 20)) # drawing square if it's not selected (bllue square)
+        if items[self.id] != EMPTY: # blitting image of block/tool
             uiSurface.blit(items[self.id], (20 + 56 * self.pos + int((52 - items[self.id].get_width())/2), 20 + int((52 - items[self.id].get_height())/2)))
-        if self.pos == 9:
+        if self.pos == 9: # blitting numbers for inventory
             uiSurface.blit(andy18.render("0", 1, (255, 255, 255)), (28 + 56 * self.pos, 22))
         else:
             uiSurface.blit(andy18.render(str(self.pos + 1), 1, (255, 255, 255)), (28 + 56 * self.pos, 22))
-        if self.quantity > 1:
+        if self.quantity > 1: # blitting quantity of object if there is more than 1
             uiSurface.blit(andy16.render(str(self.quantity), 1, (255, 255, 255)), (32 + 56 * self.pos, 47))
 
 class Drop:
+    """class for all drops in the game (mob drops, block drops)"""
     def __init__(self, x, y, id):
-        self.rect = Rect(x * 16, y * 16, 16, 16)
+        self.rect = Rect(x * 16, y * 16, 16, 16) # block rect
         self.id = id
         self.delete = False
-        self.dist = False
+        self.dist = False #checking if drop is near player
 
     def collidePlayer1(self):
         self.dist = False
-
+        #this function adds drops to players inventory if they already have it, so it adds 1 to quantity
         for item in inventoryList:
             if item.id == self.id and item.quantity < 64:
-                if 5 < math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery) < 35:
+                if 5 < math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery) < 35: # if drop is close to player is flies towards them
                     self.rect.x += (player.rect.centerx - self.rect.centerx) / 2
                     self.rect.y += (player.rect.centery - self.rect.centery) / 2
                     self.dist = True
                     break
-                elif 5 > math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery):
+                elif 5 > math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery): # if drop is close enough, player picks it up
                     item.quantity += 1
                     self.delete = True
                     self.dist = True
                     break
 
     def collidePlayer2(self):
+        # this function does the exact same thing as collidePlayer1 but only if the player doesnt have the drop in their inventory already, so it creates a new
         for item in inventoryList:
             if item.id == 0:
                 if 5 < math.hypot(player.rect.centerx - self.rect.centerx, player.rect.centery - self.rect.centery) < 35:
@@ -1032,6 +1021,7 @@ class Drop:
                     break
 
     def collide(self):
+        # drops still have gravity so this function takes care of that along with collision
         self.dist = False
         self.rect.y += 15
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
@@ -1041,19 +1031,23 @@ class Drop:
                     self.falling = False
 
     def clear(self):
+        #clears images of the previous drop positions
         draw.rect(playerSurface, (0, 0, 0, 0), (self.rect.x, self.rect.y - 20, 20, 20))
 
     def draw(self):
+        #drawing the drop
         playerSurface.blit(items[self.id], (self.rect.x, self.rect.y))
 ###########################################################################
 
 def drawBlocks(x1, x2, y1, y2):
+    #draws blocks in a certain range
     for x in range(x1, x2 + 1):
         for y in range(y1, y2 + 1):
             blocks[y][x].draw()
             trees[y][x].draw()
 
 def drawBackground():
+    # function to draw the moving background, as player moves so does the backgorund to create 3d effect
     screen.fill((15, 80, 220))
     screen.blit(background1, (int(player.rect.x - 629) / -15, -50))
     screen.blit(background1, (1280 - int(player.rect.x - 629) / 15, -50))
@@ -1063,6 +1057,7 @@ def drawBackground():
     screen.blit(background3, (1280 - int(player.rect.x - 629) / 5, 225))
 
 blocks = []
+#empty list where all the blocks will be stored as block class
 for y in range(len(blockList)):
     row = []
     for x in range(len(blockList[0])):
@@ -1070,6 +1065,7 @@ for y in range(len(blockList)):
     blocks.append(row)
 
 trees = []
+#empty list where all the tree blocks will be stored
 for y in range(len(treesList)):
     row = []
     for x in range(len(treesList[0])):
@@ -1077,36 +1073,36 @@ for y in range(len(treesList)):
     trees.append(row)
 
 inventoryList = []
+#empty list for each item in the inventory
 for i in range(10):
     inventoryList.append(inventory(i, inventoryPickleList[i][0], 1, inventoryPickleList[i][1]))
 
-drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
+drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1) # drawing all the blocks on the screen
 ###########################################################################
-player = Player(629, 339, 24, 45)
-wizardList = []
+player = Player(629, 339, 24, 45) #creating player class
+wizardList = [] #empty list for the wizard mob
 for i in range(3):
     wizard = Wizard(randint(700,1800),319,20,37)
     wizardList.append(wizard)
 
 
-slimeList=[]
+slimeList=[] #list for slimes
 for i in range(5):
     slime= Slime(randint(900,1800),339,14,14)
     slimeList.append(slime)
 
-purpleSlimeList=[]
+purpleSlimeList=[] #list for purpleSlimes
 for i in range(3):
     purpleSlime = PurpleSlime(randint(900,1800),339,28,28)
     purpleSlimeList.append(purpleSlime)
 
 
-EMPTY = 0
+EMPTY = 0 #types for blocks
 BLOCK = 1
 TOOL = 2
-deleteList = []
 ##########################################################################
 
-pygame.mixer.music.load(music[0])
+pygame.mixer.music.load(music[0]) # plays music for the game
 pygame.mixer.music.play()
 paused = False
 running = True
@@ -1179,28 +1175,30 @@ while running:
         if player.hit > 0:
             player.hit -= 0.1
     #///////////////////////////////////////////////////////////////////////////
-        if mb[0] == 1:
-            if abs((player.rect.y - 339 + my) // 16 - player.rect.y // 16) < 5 and abs((player.rect.x - 629 + mx) // 16 - player.rect.x // 16) < 5:
-                trees[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
+        if mb[0] == 1: #if player left clicks
+            if abs((player.rect.y - 339 + my) // 16 - player.rect.y // 16) < 5 and abs((player.rect.x - 629 + mx) // 16 - player.rect.x // 16) < 5: # checking if block is in range of the player
+                trees[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock() # if block is close enough, player begins to break it
                 blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
-                player.attack()
+                player.attack() # attack function for player
                 for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
                     for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
-                        blocks[y][x].update()
+                        blocks[y][x].update() #updates the 8 blocks surrounding the block and the block itself
                 for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
                     for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
-                        blocks[y][x].draw()
+                        blocks[y][x].draw() #draws the 8 blocks surrounding the block and the block itself
                         trees[y][x].draw()
 
         elif player.breaking == True:
+            #following checks if player is using a tool and will assign the correct sprite
             player.breaking = False
             if player.move == 0:
                 player.move = 1
             elif player.move == 3:
                 player.move = 4
 
-        if mb[2] == 1:
-            if inventoryList[inventory.selected].type == BLOCK and blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id == 0:
+        if mb[2] == 1: #if player right clicks
+            # following code will check if player has a block in their inventory that is currently selected and places it if its close enough
+            if inventoryList[inventory.selected].type == BLOCK and blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id == 0 and abs((player.rect.y - 339 + my) // 16 - player.rect.y // 16) < 5 and abs((player.rect.x - 629 + mx) // 16 - player.rect.x // 16) < 5:
                 blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].id = inventoryList[inventory.selected].id
                 blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].condition = blockConditions[inventoryList[inventory.selected].id]
                 for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
@@ -1284,7 +1282,7 @@ while running:
         for item in inventoryList:#calling the class functions
             item.draw()
 
-
+        #following blits all the surfaces onto the screen
         if player.rect.y >= 339:
             screen.blit(treesSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
             screen.blit(blocksSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
