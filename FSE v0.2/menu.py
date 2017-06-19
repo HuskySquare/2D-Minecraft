@@ -10,7 +10,7 @@ pygame.mixer.pre_init(22050,-16,2,2048)
 
 screen=display.set_mode((1280,720))
 #////////////////////////////////////////////////////////////////
-background=image.load("background.png")
+background=image.load("Images/background.png")
 title=image.load("menuImages/title.png")
 #////////////////////////////////////////////////////////////////
 background=transform.scale(background,(1280,720))
@@ -20,8 +20,12 @@ andy44 = font.Font("fonts/HW ANDY.ttf",44)
 andy18 = font.Font("fonts/HW ANDY.ttf", 18)
 andy16 = font.Font("fonts/HW ANDY.ttf", 16)
 
-play = andy44.render("Play",True,(200,200,200))
-play2 = andy58.render("Play",True,(255,255,0))
+play = andy44.render("Play", True,(200,200,200))
+play2 = andy58.render("Play", True,(255,255,0))
+world = andy44.render("World", True,(200,200,200))
+world2 = andy58.render("World", True,(255,255,0))
+player = andy44.render("Player" , True,(200,200,200))
+player2 = andy58.render("Player",True,(255,255,0))
 settings = andy44.render("Settings", True, (200,200,200))
 settings2 = andy58.render("Settings", True, (255,255,0))
 leave = andy44.render("Exit",True,(200,200,200))
@@ -45,8 +49,8 @@ tempClock=time.Clock()
 tempCount=0
 positive=True
 optionsMenu=False
-infoMenu=False
 screening=True
+playSelect = False
 ###################################################################
 while screening:
     menu=True
@@ -79,8 +83,7 @@ while screening:
             if leftClick:
                 screen.fill(0)
                 menu=False
-                screening=False
-                pygame.mixer.music.pause()
+                playSelect = True
         else:
             screen.blit(play,(613,312))
 #/////////////////////////////////////////////////////////////////
@@ -154,6 +157,35 @@ while screening:
             
 ################################################################
 
+    while playSelect:
+        leftClick = False
+        for evt in event.get():
+            if evt.type == MOUSEBUTTONDOWN:
+                if evt.button == 1:
+                    leftClick = True
+        mx,my = mouse.get_pos()
+        screen.fill(0)
+        background.set_alpha(100)
+        screen.blit(background,(0,0))
+        playerRect = Rect(600,200,80,50)
+        worldRect = Rect(600,400,80,50)
+        if playerRect.collidepoint(mx,my):
+            screen.blit(player2,(585,190))
+            if leftClick:
+                playSelect = False
+                screening = False
+                
+        else:
+            screen.blit(player,(600,200))
+
+        if worldRect.collidepoint(mx,my):
+            screen.blit(world2,(585,390))
+            if leftClick:
+                playSelect = False
+                screening = False
+        else:
+            screen.blit(world,(600,400))
+        display.flip()
 
         
     
