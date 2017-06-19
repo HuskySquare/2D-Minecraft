@@ -26,6 +26,8 @@ world = andy44.render("World", True,(200,200,200))
 world2 = andy58.render("World", True,(255,255,0))
 generate = andy44.render("Generate", True,(200,200,200))
 generate2 = andy58.render("Generate", True,(255,255,0))
+genback = andy44.render("Back", True,(200,200,200))
+genback2 = andy58.render("Back", True,(255,255,0))
 Player = andy44.render("Player" , True,(200,200,200))
 player2 = andy58.render("Player",True,(255,255,0))
 playworld = andy44.render("Play World" , True,(200,200,200))
@@ -56,9 +58,9 @@ optionsMenu=False
 screening=True
 playSelect = False
 worldSelect = False
+menu=True
 ###################################################################
 while screening:
-    menu=True
 ###################################################################
     while menu:
         leftClick=False
@@ -205,22 +207,32 @@ while screening:
         screen.fill(0)
         background.set_alpha(100)
         screen.blit(background,(0,0))
-        playworldRect = Rect(600,200,80,50)
-        generateRect = Rect(600,400,80,50)
+        playworldRect = Rect(550,225,200,50)
+        generateRect = Rect(600,300,150,50)
+        genbackRect = Rect(625,385,75,50)
         if playworldRect.collidepoint(mx,my):
-            screen.blit(playworld2,(585,190))
+            screen.blit(playworld2,(555,190))
             if leftClick:
                 worldSelect = False
                 screening = False
         else:
-            screen.blit(playworld,(600,200))
+            screen.blit(playworld,(580,200))
 
         if generateRect.collidepoint(mx,my):
-            screen.blit(generate2,(585,390))
+            screen.blit(generate2,(580,290))
             if leftClick:
                 import generation
+                screen.blit(andy18.render("World has been generated!", True, (200, 200, 200)), (400, 600))
         else:
-            screen.blit(generate,(600,400))
+            screen.blit(generate,(600,300))
+
+        if genbackRect.collidepoint(mx,my):
+            screen.blit(genback2,(610,375))
+            if leftClick:
+                worldSelect = False
+                playSelect = True
+        else:
+            screen.blit(genback,(625,385))
 
         display.flip()
                 
