@@ -626,7 +626,8 @@ class Player:
             self.frame = 1
 
     def collide(self):
-        self.rect.y += self.vy #adding y first 
+        if self.rect.y < 1015:
+            self.rect.y += self.vy #adding y first
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
             for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
                 if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
