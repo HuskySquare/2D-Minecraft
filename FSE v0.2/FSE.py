@@ -17,6 +17,9 @@ with open("blockspickle.pickle", "rb") as f:
 with open("inventory.pickle", "rb") as f:
     inventoryPickleList = pickle.load(f)
 
+with open("trees.pickle", "rb") as f:
+    treesList = pickle.load(f)
+
 screen = display.set_mode((1280, 720))
 
 andy18 = font.Font("fonts/HW ANDY.ttf", 18)
@@ -31,6 +34,8 @@ worldSize = (780, 85)
 
 blocksSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
 blocksSurface.fill((0, 0, 0, 0))
+treesSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
+treesSurface.fill((0, 0, 0, 0))
 playerSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
 playerSurface.fill((0, 0, 0, 0))
 uiSurface = Surface((1280, 720), SRCALPHA)
@@ -155,17 +160,22 @@ block6_15 = image.load("ironore/ironore_block_9.png").convert(32, SRCALPHA)
 block6 = [block6_0, block6_1, block6_2, block6_3, block6_4, block6_5, block6_6, block6_7, block6_8, block6_9, block6_10,
           block6_11, block6_12, block6_13, block6_14, block6_15]
 
-"""block6_0 = image.load("tree/trunks/tree_trunk_0.png").convert(32, SRCALPHA)
-block6_1 = image.load("tree/trunks/tree_trunk_49.png").convert(32, SRCALPHA)
-block6_2 = image.load("tree/trunks/tree_trunk_50.png").convert(32, SRCALPHA)
-block6_3 = image.load("tree/trunks/tree_trunk_0.png").convert(32, SRCALPHA)
-block7_0 = image.load("tree/tree_trunk_0.png").convert(32, SRCALPHA)"""
+block7_0 = image.load("tree/trunks/tree_trunk_0.png").convert(32, SRCALPHA)
+block7_1 = image.load("tree/trunks/tree_trunk_49.png").convert(32, SRCALPHA)
+block7_2 = image.load("tree/trunks/tree_trunk_50.png").convert(32, SRCALPHA)
+block7_3 = image.load("tree/trunks/tree_trunk_60.png").convert(32, SRCALPHA)
+
+block8_0 = image.load("tree/tree_branch_3.png").convert(32, SRCALPHA)
+block8_1 = image.load("tree/tree_branch_4.png").convert(32, SRCALPHA)
+
+block7 = [block7_0, block7_1, block7_2, block7_3]
+block8 = [block8_0, block8_1]
 
 #//////////////////////////////////////////////////////////////////////
 block3 = [block3_0, block3_1, block3_2, block3_3, block3_4, block3_5, block3_6, block3_7, block3_8, block3_9, block3_10,
           block3_11, block3_12, block3_13, block3_14, block3_15]
-blockImg = [False, block1, block2, block3, False, False, block6]
-blockConditions = [False, 150, 500, 150, False, False, 575]
+blockImg = [False, block1, block2, block3, False, False, block6, block7, block8]
+blockConditions = [False, 150, 500, 150, False, False, 575, 450, 450]
 #/////////////////////////////////////////////////////////////////////
 item1 = image.load("items/item_1.png").convert(32, SRCALPHA)
 item2 = image.load("items/item_2.png").convert(32, SRCALPHA)
@@ -335,7 +345,7 @@ class PurpleSlime:
         self.left = False
         self.frame = 0
         self.attack = 0
-        self.health = 500
+        self.health = 100
         self.delete = False
 #////////////////////////////////////////////////////////////////////////////
     def moveSlime(self):
@@ -841,6 +851,78 @@ class Block:
                     self.condition = 0
                 else:
                     self.condition -= 5
+
+class treesBlock:
+    def __init__(self, id, x, y):
+        self.id = id
+        self.x = x
+        self.y = y
+        self.rect = Rect(x * 16, y * 16, 16, 16)
+        self.condition = blockConditions[self.id]
+        top = True
+        down = True
+        left = True
+        right = True
+        if y != 0 and treesList[y - 1][x] == 0:
+            top = False
+        if y != worldSize[1] - 1 and treesList[y + 1][x] == 0:
+            down = False
+        if x != 0 and treesList[y][x - 1] == 0:
+            left = False
+        if x != worldSize[0] - 1 and treesList[y][x + 1] == 0:
+            right = False
+
+        if id == 7:
+            if top and left and right:
+                self.surround = 3
+            elif top and left and down:
+                self.surround = 0
+            elif top and right and down:
+                self.surround = 0
+            elif right:
+                self.surround = 2
+            elif left:
+                self.surround = 1
+            else:
+                self.surround = 0
+
+        elif id == 8:
+            if left:
+                self.surround = 0
+            else:
+                self.surround = 1
+
+    def draw(self):
+        if self.id != 0:
+            draw.rect(treesSurface, (0, 0, 0, 0), self.rect)
+            treesSurface.blit(blockImg[self.id][self.surround], (self.x * 16, self.y * 16))
+            if self.condition < blockConditions[self.id] * 4 / 5 and self.id != 8:
+                treesSurface.blit(tile_cracks[self.condition // int(blockConditions[self.id] / 5)],(self.x * 16, self.y * 16))
+
+    def breakBlock(self):
+        player.breaking = True
+        """if inventoryList[inventory.selected].id == effTools[self.id]:
+            if self.condition - inventoryList[inventory.selected].speed <= 0:
+                dropsList.append(Drop(self.x, self.y, self.id))
+                self.id = 0
+                self.condition = 0
+            else:
+                self.condition -= inventoryList[inventory.selected].speed
+        else:
+            if self.condition - 5 <= 0:
+                if self.id == 3:
+                    dropsList.append(Drop(self.x, self.y, 1))
+                else:
+                    dropsList.append(Drop(self.x, self.y, self.id))
+                self.id = 0
+                self.condition = 0
+            else:
+                self.condition -= 5"""
+        if self.condition - 20 <= 0:
+            self.id = 0
+            self.condition = 0
+        else:
+            self.condition -= 20
 ##############################################################################
 class inventory:
     selected = 0
@@ -924,6 +1006,7 @@ def drawBlocks(x1, x2, y1, y2):
     for x in range(x1, x2 + 1):
         for y in range(y1, y2 + 1):
             blocks[y][x].draw()
+            trees[y][x].draw()
 
 def drawBackground():
     screen.fill((15, 80, 220))
@@ -940,6 +1023,13 @@ for y in range(len(blockList)):
     for x in range(len(blockList[0])):
         row.append(Block(blockList[y][x], x, y))
     blocks.append(row)
+
+trees = []
+for y in range(len(treesList)):
+    row = []
+    for x in range(len(treesList[0])):
+        row.append(treesBlock(treesList[y][x], x, y))
+    trees.append(row)
 
 inventoryList = []
 for i in range(10):
@@ -1039,6 +1129,7 @@ while running:
         alphaCount=time//20330
     #///////////////////////////////////////////////////////////////////////////
         if mb[0] == 1:
+            trees[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
             blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
             player.attack()
             for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
@@ -1047,6 +1138,7 @@ while running:
             for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
                 for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
                     blocks[y][x].draw()
+                    trees[y][x].draw()
 
         elif player.breaking == True:
             player.breaking = False
@@ -1065,6 +1157,7 @@ while running:
                 for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
                     for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
                         blocks[y][x].draw()
+                        trees[y][x].draw()
                 if inventoryList[inventory.selected].quantity > 1:
                     inventoryList[inventory.selected].quantity -= 1
                 else:
@@ -1136,10 +1229,12 @@ while running:
 
 
         if player.rect.y >= 339:
+            screen.blit(treesSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
             screen.blit(blocksSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
             screen.blit(playerSurface.subsurface(player.rect.x - 629, player.rect.y - 339, 1280, 720), (0, 0))
             # screen.blit(playerSurface.subsurface(player.blitPos[0], player.blitPos[1], 650, 320), (621, 339))
         else:
+            screen.blit(treesSurface.subsurface(player.rect.x - 629, 0, 1280, 720), (0, abs(player.rect.y - 339)))
             screen.blit(blocksSurface.subsurface(player.rect.x - 629, 0, 1280, 720), (0, abs(player.rect.y - 339)))
             screen.blit(playerSurface.subsurface(player.rect.x - 629, 0, 1280, 720), (0, abs(player.rect.y - 339)))
             # screen.blit(playerSurface.subsurface(player.rect.x, 0, 650, 320), (612, abs(player.rect.y - 283)))
@@ -1171,5 +1266,8 @@ with open('blockspickle.pickle', 'wb') as f:
 
 with open("inventory.pickle", "wb") as f:
     pickle.dump(inventoryPickleList, f)
+
+with open("trees.pickle", "wb") as f:
+    pickle.dump(treesList, f)
 
 quit()

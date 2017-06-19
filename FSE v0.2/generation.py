@@ -68,12 +68,12 @@ def genTree(x,y,h):
     global trees
     temp=np.zeros((h,3),dtype='int')
 
-    temp[:,1]=8
+    temp[:,1]=7
     temp[h - 1] = 7
     for i in range(randint(1,3)): #Left branch
-        temp[randint(2,h-3),0]=9
+        temp[randint(2,h-3),0]=8
     for i in range(randint(1,3)): #Right branch
-        temp[randint(2,h-3),2]=9
+        temp[randint(2,h-3),2]=8
     # print(temp)
     trees[y-h+1:y+1][:,x:x+3]=temp
 
@@ -84,7 +84,7 @@ for i in range(780):
     anchor=np.where(temp!=0)[0][0]
     if not dist:
         try:
-            genTree(i,anchor,randint(5,10))
+            genTree(i,anchor - 1,randint(5,10))
         except ValueError:
             pass
         dist=randint(7,15)
@@ -115,6 +115,9 @@ for i in range(randint(15,30)):
 
 with open('blockspickle.pickle', 'wb') as f:
     pickle.dump(blocks, f)
+
+with open('trees.pickle', 'wb') as f:
+    pickle.dump(trees, f)
 
 
 
