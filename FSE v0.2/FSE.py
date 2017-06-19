@@ -586,11 +586,11 @@ class Player:
                 self.frame = 0
 
             else: 
-                if keys[K_d] and self.rect.x < worldSize[0] * 16 - 629:
+                if keys[K_d] and self.rect.x < worldSize[0] * 16 - 625:
                     if not self.jumping: #right movement
                         self.newMove = 2
                     self.vx = 3
-                elif keys[K_a] and self.rect.x > 629:
+                elif keys[K_a] and self.rect.x > 633:
                     if not self.jumping: #left movement
                         self.newMove = 5
                     self.vx = -3
@@ -1082,7 +1082,7 @@ for i in range(10):
 
 drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
 ###########################################################################
-player = Player(629, 339, 24, 45)
+player = Player(1000, 339, 24, 45)
 wizardList = []
 for i in range(3):
     wizard = Wizard(randint(700,1800),319,20,37)
