@@ -1,5 +1,5 @@
 #{0:"Air, 1:"Dirt",2:"Stone",3:"Grass",4:"Pickaxe",6:"Iron",7:"Tree Trunk".8:"Tree Main Branch",9:"Gel"}
-import numpy as np
+import numpy as np  #Use numpy module for better array manipulation
 from random import *
 import pickle
 pieces=[]

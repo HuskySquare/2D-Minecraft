@@ -8,6 +8,7 @@ pygame.mixer.init()
 pygame.mixer.pre_init(22050,-16,2,2048)
 
 
+playerflag=bool(open("flag.txt","r").read())
 screen=display.set_mode((1280,720))
 #////////////////////////////////////////////////////////////////
 background=image.load("Images/background.png")
@@ -62,6 +63,39 @@ menu=True
 ###################################################################
 while screening:
 ###################################################################
+    while playSelect or playerflag:
+        leftClick = False
+        for evt in event.get():
+            if evt.type == MOUSEBUTTONDOWN:
+                if evt.button == 1:
+                    leftClick = True
+        mx, my = mouse.get_pos()
+        screen.fill(0)
+        background.set_alpha(100)
+        screen.blit(background, (0, 0))
+        playerRect = Rect(600, 200, 80, 50)
+        worldRect = Rect(600, 400, 80, 50)
+        if playerRect.collidepoint(mx, my):
+            screen.blit(player2, (585, 190))
+            if leftClick:
+                playSelect = False
+                screening = False
+                playerSelect = True
+                import character
+        else:
+            screen.blit(Player, (600, 200))
+
+        if worldRect.collidepoint(mx, my):
+            screen.blit(world2, (585, 390))
+            if leftClick:
+                playSelect = False
+                worldSelect = True
+                ##screening = False
+        else:
+            screen.blit(world, (600, 400))
+
+        display.flip()
+
     while menu:
         leftClick=False
         for evt in event.get():
@@ -113,6 +147,9 @@ while screening:
         if buttonRectQuit.collidepoint((mx,my)):
             screen.blit(leave2,(603,470))
             if leftClick:
+                out=open("falg.txt","w")
+                out.write("0")
+                out.close()
                 quit()
         else:
             screen.blit(leave,(613,480))
@@ -164,38 +201,7 @@ while screening:
             
 ################################################################
 
-    while playSelect:
-        leftClick = False
-        for evt in event.get():
-            if evt.type == MOUSEBUTTONDOWN:
-                if evt.button == 1:
-                    leftClick = True
-        mx,my = mouse.get_pos()
-        screen.fill(0)
-        background.set_alpha(100)
-        screen.blit(background,(0,0))
-        playerRect = Rect(600,200,80,50)
-        worldRect = Rect(600,400,80,50)
-        if playerRect.collidepoint(mx,my):
-            screen.blit(player2,(585,190))
-            if leftClick:
-                playSelect = False
-                screening = False
-                playerSelect=True
-                import character
-        else:
-            screen.blit(Player,(600,200))
 
-        if worldRect.collidepoint(mx,my):
-            screen.blit(world2,(585,390))
-            if leftClick:
-                playSelect = False
-                worldSelect = True
-                ##screening = False
-        else:
-            screen.blit(world,(600,400))
-
-        display.flip()
 
     while worldSelect:
         leftClick = False
@@ -215,6 +221,10 @@ while screening:
             if leftClick:
                 worldSelect = False
                 screening = False
+                out = open("flag.txt", "w")
+                out.write("0")
+                out.close()
+                import FSE
         else:
             screen.blit(playworld,(580,200))
 
@@ -231,8 +241,10 @@ while screening:
             if leftClick:
                 worldSelect = False
                 playSelect = True
+
         else:
             screen.blit(genback,(625,385))
+
 
         display.flip()
                 

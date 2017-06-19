@@ -1339,5 +1339,7 @@ with open("inventory.pickle", "wb") as f:
 
 with open("trees.pickle", "wb") as f:
     pickle.dump(treesList, f)
-
+out=open("flag.txt","w")
+out.write("")
+out.close()
 quit()

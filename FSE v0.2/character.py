@@ -432,7 +432,9 @@ def create():
 
         bg2.blit(hand2, (0, i))
     image.save(bg, "player/Characters/everything1.png")
-    playerflag=True
+    out=open("flag.txt","w")
+    out.write("1")
+    out.close()
     import menu
 # everything{0}.png".format(
 #         "".join(os.listdir("player/Characters")).count("everything") + 1))
