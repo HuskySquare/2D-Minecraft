@@ -35,12 +35,7 @@ back2 = andy58.render("Back",True,(255,255,0))
 
 volume = andy44.render("Volume",True,(200,200,200))
 
-players=[file for file in os.listdir("player/Characters")]
-num="".join(players).count("everything")
-text={}
-for i in range(1,num+1):
-    text["player{0}".format(i)]=andy44.render("Player {0}".format(i),True,(200,200,200))
-    text["player{0}_2".format(i)]=andy58.render("Player {0}".format(i),True,(255,255,200))
+text={"smaller"}
 
 #////////////////////////////////////////////////////////////////
 file1="Audio/01-Menu.mp3"
@@ -180,7 +175,7 @@ while screening:
                 playSelect = False
                 screening = False
                 playerSelect=True
-                # import character
+                import character
         else:
             screen.blit(Player,(600,200))
 
@@ -193,28 +188,5 @@ while screening:
             screen.blit(world,(600,400))
 
         display.flip()
-
-    while playerSelect:
-        leftClick = False
-        for evt in event.get():
-            if evt.type == MOUSEBUTTONDOWN:
-                if evt.button == 1:
-                    leftClick = True
-        mx, my = mouse.get_pos()
-        screen.fill(0)
-        background.set_alpha(100)
-        screen.blit(background, (0, 0))
-        rect=[(585,190,127,53),(585,255,127,53),(585,320,127,53),(585,385,127,53),(585,450,127,53)]
-        for i in range(1,num+1):
-            if Rect(rect[i]).collidepoint(mx,my):
-                screen.blit(text["player{0}_2".format(i)],rect[i][:2])
-                if leftClick:
-                    selection=i
-                    playerSelect=False
-                    playSelect=True
-
-            else:
-                screen.blit(text["player{0}".format(i)],(rect[i][0]+15,rect[i][1]+10))
-
 
                 

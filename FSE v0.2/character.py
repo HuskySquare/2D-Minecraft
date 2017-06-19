@@ -36,6 +36,7 @@ background = transform.scale(image.load("images/background.png"),(1248,704))
 background.set_alpha(100)
 bar=image.load("Hue.png")
 andy=font.Font("player/HW ANDY.ttf",50)
+andy58=font.Font("player/HW ANDY.ttf",58)
 clock=time.Clock()
 counter=0  #Used to control what hair to use
 
@@ -53,7 +54,6 @@ options={"hair":andy.render("Hair",1,(0,0,0)),"skin":andy.render("Skin",1,(0,0,0
          "back":andy.render("Back",1,(0,0,0)),"create":andy.render("Create",1,(0,0,0)),"shirt":andy.render("Shirt",1,(0,0,0)),
          "undershirt":andy.render("Undershirt",1,(0,0,0)),"pants":andy.render("Pants",1,(0,0,0)),
          "shoes":andy.render("Shoes",1,(0,0,0)),"eye":andy.render("Eyes",1,(0,0,0))}
-
 #--------------------------RECT---------------------------------
 
 barRect=Rect((478,298),bar.get_size())
@@ -407,7 +407,6 @@ def create():
         bg2.blit(hand2,(0,i))
     image.save(bg,"player/Characters/everything{0}.png".format("".join(os.listdir("player/Characters")).count("everything")+1))
     image.save(bg2,"player/Characters/hands2_{0}.png".format("".join(os.listdir("player/Characters")).count("hands")+1))
-    import FSE
 running= True
 intro()
 
