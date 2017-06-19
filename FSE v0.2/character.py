@@ -6,7 +6,7 @@ It allows the player to change the eye colour,skin colour,hair style, hair colou
 from pygame import *
 
 init()  # Initialzie directly after importing to avoid module conflicts
-import os
+import os #Used similar for glob
 
 img = {"hair": [],
        "head": image.load("player/Player_Head.png").subsurface(0, 0, 40, 56).copy(),
@@ -25,8 +25,8 @@ colour = {"hair": Color(63, 37, 11),
           "shirt": Color(201, 26, 34),
           "undershirt": Color(171, 181, 198),
           "eye": Color(65, 136, 160),
-          }
-names = []  # Used for hair number.
+          }  #Set default colour for parts of the body
+names = []  # Used for hair style
 
 anchor = "intro"
 # x=glob("hair/*.png") #Temperory Variable
@@ -433,6 +433,7 @@ def create():
         bg2.blit(hand2, (0, i))
     image.save(bg, "player/Characters/everything.png")
     image.save(bg2, "player/Characters/hands2.png")
+    import FSE
     import FSE
 # everything{0}.png".format(
 #         "".join(os.listdir("player/Characters")).count("everything") + 1))

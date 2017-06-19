@@ -62,7 +62,7 @@ background2 = transform.scale(image.load("images/Background_2.png").convert(32, 
 background3 = transform.scale(image.load("images/Background_3.png").convert(32, SRCALPHA), (1280, 720))
 
 pics = []
-sprite = image.load("player\Sprite0.png")
+sprite = image.load("player/Characters/everything.png")
 
 for i in range(0, 1120, 56): #player sprites
     pics.append(sprite.subsurface((0, i, 40, 56)))
