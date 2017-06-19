@@ -356,7 +356,7 @@ def create():   #A function made for saving the entire person and used it in the
     for i in range(0, 1120, 56):
         save = []
 
-        if i != 1064:
+        if i != 1064:   #Some images have differnet height. This prevents error from subsurface out of boundary of the original surface.
             save.append(image.load("player/Player_Head.png").subsurface(0, i, 40, 56).copy())
             save.append(img["hair"][counter].copy())
 
