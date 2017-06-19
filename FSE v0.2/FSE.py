@@ -237,6 +237,8 @@ to learn how to use pygame.mixer"""
 file1="Audio/02-Day.mp3"
 file2="Audio/03-Night.mp3"
 
+player_hit_sound = mixer.Sound("sounds/player_hit_0.wav")
+
 music = []
 music.append(file1)
 music.append(file2)
@@ -323,10 +325,12 @@ class Wizard:
         if self.fireRect.colliderect(player.rect) and player.health >= 3 and self.fire and not player.hit:
             player.hit = 500 #counter that delays damage
             player.health -= 3 #subtracting damage
+            player_hit_sound.play(0)
         elif self.fireRect.colliderect(player.rect) and self.fire and not player.hit:
             player.hit = 500
             player.health = 0
-            
+            player_hit_sound.play(0)
+
 #/////////////////////////////////////////////////////////////////////////
     def clear(self): #draws tramsparent rect to clear space
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 300, self.blitPos[1] - 50, 550, 150))
@@ -438,9 +442,11 @@ class PurpleSlime:
         if self.rect.colliderect(player.rect) and player.health >= 2 and self.attack==25 and not player.hit:
             player.health -= 2
             player.hit = 500
+            player_hit_sound.play(0)
         elif slime.rect.colliderect(player.rect) and not player.hit:
             player.health = 0
             player.hit = 500
+            player_hit_sound.play(0)
 #////////////////////////////////////////////////////////////////////////////
     def clear(self): #drawing rectangle to clear surroundings
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
@@ -530,10 +536,12 @@ class Slime: #same as regular slime
         if self.rect.colliderect(player.rect) and player.health >= 1 and self.attack==25 and not player.hit:
             player.health -= 1
             player.hit = 500
+            player_hit_sound.play(0)
         elif self.rect.colliderect(player.rect) and self.attack==25 and not player.hit:
             player.health = 0
             player.hit = 500
-        
+            player_hit_sound.play(0)
+
     def clear(self): #clears area
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
         
@@ -1167,6 +1175,9 @@ while running:
             positive = True
 
         alphaCount=time//20330
+
+        if player.hit > 0:
+            player.hit -= 0.1
     #///////////////////////////////////////////////////////////////////////////
         if mb[0] == 1:
             if abs((player.rect.y - 339 + my) // 16 - player.rect.y // 16) < 5 and abs((player.rect.x - 629 + mx) // 16 - player.rect.x // 16) < 5:
@@ -1205,18 +1216,18 @@ while running:
                     inventoryList[inventory.selected].id = 0
                     inventoryList[inventory.selected].type = EMPTY
                     inventoryList[inventory.selected].quantity = 0
+        for wizard in wizardList: #calling the class functions
+            wizard.attackFunc()
 
-        wizard.attackFunc()
-
-        for purpSlime in purpleSlimeList:
+        for purpSlime in purpleSlimeList: #calling the class functions
             purpSlime.attackFunc()
 
-        for slime in slimeList:
+        for slime in slimeList: #calling the class functions
             slime.attackFunc()
 
         if len(dropsList) != 0:
             for drop in dropsList:
-                drop.collidePlayer1()
+                drop.collidePlayer1() 
             dropsList = [drop for drop in dropsList if not drop.delete]
         if len(dropsList) != 0:
             for drop in dropsList: #checking collision
@@ -1349,6 +1360,6 @@ with open("inventory.pickle", "wb") as f:
 with open("trees.pickle", "wb") as f:
     pickle.dump(treesList, f)
 out=open("flag.txt","w")
-out.write("")
+out.write("0")
 out.close()
 quit()

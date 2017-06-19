@@ -33,6 +33,8 @@ Player = andy44.render("Player" , True,(200,200,200))
 player2 = andy58.render("Player",True,(255,255,0))
 playworld = andy44.render("Play World" , True,(200,200,200))
 playworld2 = andy58.render("Play World",True,(255,255,0))
+playback = andy44.render("Back" , True,(200,200,200))
+playback2 = andy58.render("Play World",True,(255,255,0))
 settings = andy44.render("Settings", True, (200,200,200))
 settings2 = andy58.render("Settings", True, (255,255,0))
 leave = andy44.render("Exit",True,(200,200,200))
@@ -74,25 +76,37 @@ while screening:
         background.set_alpha(100)
         screen.blit(background, (0, 0))
         playerRect = Rect(600, 200, 80, 50)
-        worldRect = Rect(600, 400, 80, 50)
-        if playerRect.collidepoint(mx, my):
-            screen.blit(player2, (585, 190))
+        worldRect = Rect(600, 300, 80, 50)
+        playbackRect = Rect(625, 400, 75, 50)
+        if playerRect.collidepoint(mx,my):
+            screen.blit(player2,(585,190))
             if leftClick:
                 playSelect = False
                 screening = False
-                playerSelect = True
+                playerSelect=True
                 import character
         else:
-            screen.blit(Player, (600, 200))
+            screen.blit(Player,(600,200))
 
-        if worldRect.collidepoint(mx, my):
-            screen.blit(world2, (585, 390))
+        if worldRect.collidepoint(mx,my):
+            screen.blit(world2,(585,290))
             if leftClick:
                 playSelect = False
                 worldSelect = True
+                menu = False
+                playerflag = False
                 ##screening = False
         else:
-            screen.blit(world, (600, 400))
+            screen.blit(world,(600,300))
+
+        if playbackRect.collidepoint(mx,my):
+            screen.blit(genback2,(600,390))
+            if leftClick:
+                playerflag = False
+                playSelect = False
+                menu = True
+        else:
+            screen.blit(genback,(615,400))
 
         display.flip()
 
@@ -232,7 +246,7 @@ while screening:
             screen.blit(generate2,(580,290))
             if leftClick:
                 import generation
-                screen.blit(andy18.render("World has been generated!", True, (200, 200, 200)), (400, 600))
+                screen.blit(andy18.render("World has been generated!", True, (200, 200, 200)), (500, 600))
         else:
             screen.blit(generate,(600,300))
 
