@@ -335,7 +335,7 @@ class PurpleSlime:
         self.left = False
         self.frame = 0
         self.attack = 0
-        self.health = 500
+        self.health = 100
         self.delete = False
 #////////////////////////////////////////////////////////////////////////////
     def moveSlime(self):
@@ -974,6 +974,7 @@ pygame.mixer.music.play()
 paused = False
 running = True
 positive = True
+dead =False
 time = 0
 while running:
     leftClick = False
@@ -1026,7 +1027,7 @@ while running:
                 elif not paused:
                     paused = True
 #///////////////////////////////////////////////////////////////////////////
-    if not paused:
+    if not paused and not dead:
         if time <= 5184000 and positive:
             time+=5000
         else:
@@ -1150,8 +1151,41 @@ while running:
         clock.tick(60)
         display.set_caption("FSE FPS = {0:.0f}".format(clock.get_fps()))
 
+        if player.health == 0:
+            dead = True
+
+    if dead:
+        screenRect = Rect(0,0,1280,720)
+        draw.rect(screen,(0,0,0,250),screenRect)
+        restart = andy44.render("Restart", True, (200,200,200))
+        restart2 = andy58.render("Restart", True, (255,255,0))
+        close = andy44.render("Exit",True,(200,200,200))
+        close2 = andy58.render("Exit", True,(255,255,0))
+        deadText = andy44.render("You have been slain",True,(255,0,0))
+        screen.blit(deadText, (480,300))
+        closeRect = Rect(600,600,90,50)
+        restartRect = Rect(570,500,160,50)
+        
+        if closeRect.collidepoint(mx,my):
+            screen.blit(close2,(600,590))
+            if leftClick:
+                quit()
+        else:
+            screen.blit(close,(610,600))
+
+        if restartRect.collidepoint(mx,my):
+            screen.blit(restart2,(570,490))
+            if leftClick:
+                dead = False
+                player = Player(629, 339, 24, 45)
+                player.health = 100
+        else:
+            screen.blit(restart,(590,500))
+
+        display.flip()
+        
     if paused:
-        screenRect= Rect(0,0,1280,720)
+        screenRect = Rect(0,0,1280,720)
         draw.rect(screen,(0,0,0,250),screenRect)
         close = andy44.render("Exit",True,(200,200,200))
         close2 = andy58.render("Exit", True,(255,255,0))
