@@ -383,7 +383,6 @@ def create():
         save = []
 
         if i != 1064:
-
             save.append(image.load("player/Player_Head.png").subsurface(0, i, 40, 56).copy())
             save.append(img["hair"][counter].copy())
 
