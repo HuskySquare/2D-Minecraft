@@ -24,8 +24,12 @@ play = andy44.render("Play", True,(200,200,200))
 play2 = andy58.render("Play", True,(255,255,0))
 world = andy44.render("World", True,(200,200,200))
 world2 = andy58.render("World", True,(255,255,0))
+generate = andy44.render("Generate", True,(200,200,200))
+generate2 = andy58.render("Generate", True,(255,255,0))
 Player = andy44.render("Player" , True,(200,200,200))
 player2 = andy58.render("Player",True,(255,255,0))
+playworld = andy44.render("Play World" , True,(200,200,200))
+playworld2 = andy58.render("Play World",True,(255,255,0))
 settings = andy44.render("Settings", True, (200,200,200))
 settings2 = andy58.render("Settings", True, (255,255,0))
 leave = andy44.render("Exit",True,(200,200,200))
@@ -51,6 +55,7 @@ positive=True
 optionsMenu=False
 screening=True
 playSelect = False
+worldSelect = False
 ###################################################################
 while screening:
     menu=True
@@ -183,10 +188,39 @@ while screening:
             screen.blit(world2,(585,390))
             if leftClick:
                 playSelect = False
-                screening = False
+                worldSelect = True
+                ##screening = False
         else:
             screen.blit(world,(600,400))
 
         display.flip()
 
+    while worldSelect:
+        leftClick = False
+        for evt in event.get():
+            if evt.type == MOUSEBUTTONDOWN:
+                if evt.button == 1:
+                    leftClick = True
+        mx,my = mouse.get_pos()
+        screen.fill(0)
+        background.set_alpha(100)
+        screen.blit(background,(0,0))
+        playworldRect = Rect(600,200,80,50)
+        generateRect = Rect(600,400,80,50)
+        if playworldRect.collidepoint(mx,my):
+            screen.blit(playworld2,(585,190))
+            if leftClick:
+                worldSelect = False
+                screening = False
+        else:
+            screen.blit(playworld,(600,200))
+
+        if generateRect.collidepoint(mx,my):
+            screen.blit(generate2,(585,390))
+            if leftClick:
+                import generation
+        else:
+            screen.blit(generate,(600,400))
+
+        display.flip()
                 
