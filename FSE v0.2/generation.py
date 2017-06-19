@@ -113,10 +113,10 @@ for i in range(randint(15,30)):
     x,y=randint(30,84-width),randint(0,780-height)
     blocks[x:x+width,y:y+height]=temp
 
-with open('blockspickle.pickle', 'wb') as f:
+with open('world/blockspickle.pickle', 'wb') as f:
     pickle.dump(blocks, f)
 
-with open('trees.pickle', 'wb') as f:
+with open('world/trees.pickle', 'wb') as f:
     pickle.dump(trees, f)
 
 
