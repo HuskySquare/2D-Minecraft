@@ -8,7 +8,7 @@ pygame.mixer.init()
 pygame.mixer.pre_init(22050,-16,2,2048)
 
 
-playerflag=bool(open("flag.txt","r").read())
+playerflag=bool(int (open("flag.txt","r").read()))
 screen=display.set_mode((1280,720))
 #////////////////////////////////////////////////////////////////
 background=image.load("Images/background.png")
