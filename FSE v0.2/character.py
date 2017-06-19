@@ -1,15 +1,15 @@
 from pygame import *
 init()     #Initialzie directly after importing to avoid module conflicts
-from glob import glob
+import os
 img={"hair":[],
-     "head":image.load("Player_Head.png").subsurface(0,0,40,56).copy(),
-     "undershirt":image.load("Player_Undershirt.png").subsurface(0,0,40,56).copy(),
-     "shirt":image.load("Player_Shirt.png").subsurface(0,0,40,56).copy(),
-     "pants":image.load("Player_Pants.png").subsurface(0,0,40,56).copy(),
-     "shoes":image.load("Player_Shoes.png").subsurface(0,0,40,56).copy(),
-     "hands":image.load("Player_Hands.png").subsurface(0,0,40,56).copy(),
-     "eye1":image.load("Player_0_1.png").subsurface(0,0,40,56).copy(),
-     "eye2":image.load("Player_0_2.png").subsurface(0,0,40,56).copy(),
+     "head":image.load("player/Player_Head.png").subsurface(0,0,40,56).copy(),
+     "undershirt":image.load("player/Player_Undershirt.png").subsurface(0,0,40,56).copy(),
+     "shirt":image.load("player/Player_Shirt.png").subsurface(0,0,40,56).copy(),
+     "pants":image.load("player/Player_Pants.png").subsurface(0,0,40,56).copy(),
+     "shoes":image.load("player/Player_Shoes.png").subsurface(0,0,40,56).copy(),
+     "hands":image.load("player/Player_Hands.png").subsurface(0,0,40,56).copy(),
+     "eye1":image.load("player/Player_0_1.png").subsurface(0,0,40,56).copy(),
+     "eye2":image.load("player/Player_0_2.png").subsurface(0,0,40,56).copy(),
      }
 colour={"hair":Color(63,37,11),
         "skin":Color(232,219,136),
@@ -22,18 +22,18 @@ colour={"hair":Color(63,37,11),
 names=[]    #Used for hair number.
 
 anchor="intro"
-x=glob("hair/*.png") #Temperory Variable
+# x=glob("hair/*.png") #Temperory Variable
 
-
+x=[file for file in os.listdir("player/hair")]
 for i,j in zip(x,range(1,len(x)+1)):
     names.append("Hair {0}".format(j))
-    img["hair"].append(image.load(i).subsurface(0,0,40,56).copy())
+    img["hair"].append(image.load("player/hair/"+i).subsurface(0,0,40,56).copy())
 del x
 screen=display.set_mode((1248,704))
 screen.fill((255,255,255))
 
 bar=image.load("Hue.png")
-andy=font.Font("HW ANDY.ttf",50)
+andy=font.Font("player/HW ANDY.ttf",50)
 clock=time.Clock()
 counter=0  #Used to control what hair to use
 
