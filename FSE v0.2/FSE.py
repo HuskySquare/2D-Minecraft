@@ -168,6 +168,8 @@ block7_3 = image.load("tree/trunks/tree_trunk_60.png").convert(32, SRCALPHA)
 block8_0 = image.load("tree/tree_branch_3.png").convert(32, SRCALPHA)
 block8_1 = image.load("tree/tree_branch_4.png").convert(32, SRCALPHA)
 
+tree_top = image.load("tree/tree_top_0.png").convert(32, SRCALPHA)
+
 block7 = [block7_0, block7_1, block7_2, block7_3]
 block8 = [block8_0, block8_1]
 
@@ -288,11 +290,11 @@ class Wizard:
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
 
     def attackFunc(self):
-        if self.fireRect.colliderect(player.rect) and player.health >=7 and self.fire:
-            player.hit = True
-            player.health -= 7
-        elif self.fireRect.colliderect(player.rect) and self.fire:
-            player.hit = True
+        if self.fireRect.colliderect(player.rect) and player.health >= 3 and self.fire and not player.hit:
+            player.hit = 500
+            player.health -= 3
+        elif self.fireRect.colliderect(player.rect) and self.fire and not player.hit:
+            player.hit = 500
             player.health = 0
             
 #/////////////////////////////////////////////////////////////////////////
@@ -314,21 +316,17 @@ class Wizard:
                 self.fireRect = Rect (self.rect.x - 60 + self.firePos, self.rect.y - 7, wizardPics[2][1].get_width(),wizardPics[2][1].get_height())
             if abs(self.firePos) > 150:
                 self.fire = False
-                player.hit = False
         if self.attack == 50:
             if not self.fire:
                 if self.move == 1:
                     playerSurface.blit(wizardPics[2][0],(self.rect.x -4, self.rect.y - 7))
                     self.fire = True
-                    player.hit = False
                 if self.move == 0:
                     playerSurface.blit(wizardPics[2][1],(self.rect.x - 60, self.rect.y - 7))
                     self.fire = True
-                    player.hit = False
                 self.firePos = 0
             elif self.firePos > 50:
                 self.fire = False
-                player.hit = False
         pic = wizardPics[self.move][int(self.frame)]
         playerSurface.blit(pic,self.blitPos)
         self.healthRect = Rect(self.rect.x-20,self.rect.y-20,int(self.health/2),10)
@@ -404,13 +402,15 @@ class PurpleSlime:
         
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
-        self.attack = randint(1,25)
+        self.attack = randint(1,100)
 
     def attackFunc(self):
-        if self.rect.colliderect(player.rect) and player.health >= 5 and self.attack==25:
-            player.health -= 5
-        elif slime.rect.colliderect(player.rect):
+        if self.rect.colliderect(player.rect) and player.health >= 2 and self.attack==25 and not player.hit:
+            player.health -= 2
+            player.hit = 500
+        elif slime.rect.colliderect(player.rect) and not player.hit:
             player.health = 0
+            player.hit = 500
 #////////////////////////////////////////////////////////////////////////////
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
@@ -495,12 +495,14 @@ class Slime:
         
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
-        self.attack = randint(1,25)
+        self.attack = randint(1,120)
     def attackFunc(self):
-        if self.rect.colliderect(player.rect) and player.health >= 3 and self.attack==25:
-            player.health -= 3
-        elif slime.rect.colliderect(player.rect):
+        if self.rect.colliderect(player.rect) and player.health >= 1 and self.attack==25 and not player.hit:
+            player.health -= 1
+            player.hit = 500
+        elif self.rect.colliderect(player.rect) and self.attack==25 and not player.hit:
             player.health = 0
+            player.hit = 500
         
     def clear(self):
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
@@ -524,12 +526,12 @@ class Player:
         self.vx = 0
         self.vy = 0
         self.jumping = False
-        self.hit = False
         self.move = 1
         self.newMove = -1
         self.frame = 0
         self.health = 100
         self.breaking = False
+        self.hit = 0
 
     def movePlayer(self):
         keys = key.get_pressed()
@@ -883,6 +885,9 @@ class treesBlock:
                 self.surround = 2
             elif left:
                 self.surround = 1
+            elif down and not top and not left and not right:
+                self.surround = 0
+                treesSurface.blit(tree_top, (self.x * 16 - 30, self.y * 16 - 80))
             else:
                 self.surround = 0
 
@@ -890,7 +895,7 @@ class treesBlock:
             if left:
                 self.surround = 0
             else:
-                self.surround = 1
+                self.id = 0
 
     def draw(self):
         if self.id != 0:
