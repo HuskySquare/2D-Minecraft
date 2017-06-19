@@ -6,8 +6,8 @@ It allows the player to change the eye colour,skin colour,hair style, hair colou
 from pygame import *
 
 init()  # Initialzie directly after importing to avoid module conflicts
-import os #Used similar for glob
-playerflag=False
+import os #Used as a substitute for glob
+
 img = {"hair": [],
        "head": image.load("player/Player_Head.png").subsurface(0, 0, 40, 56).copy(),
        "undershirt": image.load("player/Player_Undershirt.png").subsurface(0, 0, 40, 56).copy(),
@@ -48,7 +48,7 @@ counter = 0  # Used to control what hair to use
 
 rect = {"intro": {"body": (604, 22, 40, 56), "hair": (585, 121, 78, 61), "eye": (580, 186, 87, 61),
                   "skin": (582.5, 251, 83, 61), "clothes": (555, 316, 138, 61), "create": (563.5, 532, 121, 61)},
-        "hair": {"hair": (499, 208, 40, 56), "bar": (535, 298, 178, 16), "back": (577.5, 491, 93, 61)},
+        "hair": {"hair": (568, 208, 40, 56), "bar": (535, 298, 178, 16), "back": (577.5, 491, 93, 61)},
         "eye": {"bar": (535, 180, 178, 16), "back": (577.5, 549, 93, 61)},
         "clothes": {"bar": (535, 182, 178, 16), "back": (577.5, 549, 93, 61), "shirt": (577, 140, 94, 61),
                     "undershirt": (522.5, 215, 203, 61), "pants": (572, 290, 104, 61), "shoes": (568, 365, 105, 61)},
