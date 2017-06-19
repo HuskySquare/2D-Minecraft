@@ -1,3 +1,8 @@
+'''
+This program allows user to customize the player in the game.
+It allows the player to change the eye colour,skin colour,hair style, hair colour and particular clothes.
+
+'''
 from pygame import *
 
 init()  # Initialzie directly after importing to avoid module conflicts
