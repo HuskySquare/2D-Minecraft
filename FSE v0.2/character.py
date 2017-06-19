@@ -344,16 +344,16 @@ def create():
 
         if i!=1064:
 
-            save.append(image.load("Player_Head.png").subsurface(0, i, 40, 56).copy())
+            save.append(image.load("player/Player_Head.png").subsurface(0, i, 40, 56).copy())
             save.append(img["hair"][counter].copy())
 
-            save.append(image.load("Player_Undershirt.png").subsurface(0, i, 40, 56).copy())
-            save.append(image.load("Player_Shirt.png").subsurface(0, i, 40, 56).copy())
-            save.append( image.load("Player_Pants.png").subsurface(0, i, 40, 56).copy())
-            save.append(image.load("Player_Shoes.png").subsurface(0, i, 40, 56).copy())
-            save.append(image.load("Player_Hands.png").subsurface(0, i, 40, 56).copy())
-            save.append(image.load("Player_Eye2.png").subsurface(0, i, 40, 56).copy())
-            hand2= image.load("Player_Hands2.png").subsurface(0,i,40,56).copy()
+            save.append(image.load("player/Player_Undershirt.png").subsurface(0, i, 40, 56).copy())
+            save.append(image.load("player/Player_Shirt.png").subsurface(0, i, 40, 56).copy())
+            save.append( image.load("player/Player_Pants.png").subsurface(0, i, 40, 56).copy())
+            save.append(image.load("player/Player_Shoes.png").subsurface(0, i, 40, 56).copy())
+            save.append(image.load("player/Player_Hands.png").subsurface(0, i, 40, 56).copy())
+            save.append(image.load("player/Player_Eye2.png").subsurface(0, i, 40, 56).copy())
+            hand2= image.load("player/Player_Hands2.png").subsurface(0,i,40,56).copy()
 
             save[0].fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
             save[1].fill(Color(255, 255, 255) - colour["hair"], special_flags=BLEND_SUB)
@@ -367,16 +367,16 @@ def create():
 
 
         else:
-            save.append(image.load("Player_Head.png").subsurface(0, i, 40, 54).copy())
+            save.append(image.load("player/Player_Head.png").subsurface(0, i, 40, 54).copy())
             save.append(img["hair"][counter].copy())
 
-            save.append(image.load("Player_Undershirt.png").subsurface(0, i, 40, 54).copy())
-            save.append(image.load("Player_Shirt.png").subsurface(0, i, 40, 54).copy())
-            save.append(image.load("Player_Pants.png").subsurface(0, i, 40, 56).copy())
-            save.append(image.load("Player_Shoes.png").subsurface(0, i, 40, 54).copy())
-            save.append(image.load("Player_Hands.png").subsurface(0, i, 40, 54).copy())
-            save.append(image.load("Player_Eye2.png").subsurface(0, i, 40, 54).copy())
-            hand2=image.load("Player_Hands2.png").subsurface(0, i, 40, 54).copy()
+            save.append(image.load("player/Player_Undershirt.png").subsurface(0, i, 40, 54).copy())
+            save.append(image.load("player/Player_Shirt.png").subsurface(0, i, 40, 54).copy())
+            save.append(image.load("player/Player_Pants.png").subsurface(0, i, 40, 56).copy())
+            save.append(image.load("player/Player_Shoes.png").subsurface(0, i, 40, 54).copy())
+            save.append(image.load("player/Player_Hands.png").subsurface(0, i, 40, 54).copy())
+            save.append(image.load("player/Player_Eye2.png").subsurface(0, i, 40, 54).copy())
+            hand2=image.load("player/Player_Hands2.png").subsurface(0, i, 40, 54).copy()
 
             save[0].fill(Color(255, 255, 255) - colour["skin"], special_flags=BLEND_SUB)
             save[1].fill(Color(255, 255, 255) - colour["hair"], special_flags=BLEND_SUB)
@@ -392,8 +392,8 @@ def create():
         current.draw(bg,temp,(0,i))
 
         bg2.blit(hand2,(0,i))
-    image.save(bg,"Characters/everything.png")
-    image.save(bg2,"Characters/hands2.png")
+    image.save(bg,"player/Characters/everything.png")
+    image.save(bg2,"player/Characters/hands2.png")
 running= True
 
 
