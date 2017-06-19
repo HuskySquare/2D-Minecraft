@@ -81,6 +81,7 @@ class current():
 
 # Space for readibility
 
+
 x=[img["head"].copy(),img["hair"][counter].copy(),img["undershirt"].copy()
 ,img["shirt"].copy()
 ,img["pants"].copy()

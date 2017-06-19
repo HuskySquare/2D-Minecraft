@@ -6,6 +6,7 @@ colour=Color(171,181,198)
 names,hair=[],[]
 x=glob("hair/*.png")
 
+
 for i,j in zip(x,range(1,len(x)+1)):
     names.append("Hair {0}".format(j))
     hair.append(image.load(i))
