@@ -2,7 +2,7 @@
 from pygame import*
 from time import time as tm
 import pygame
-
+import os
 pygame.init()
 pygame.mixer.init()
 pygame.mixer.pre_init(22050,-16,2,2048)
@@ -24,7 +24,7 @@ play = andy44.render("Play", True,(200,200,200))
 play2 = andy58.render("Play", True,(255,255,0))
 world = andy44.render("World", True,(200,200,200))
 world2 = andy58.render("World", True,(255,255,0))
-player = andy44.render("Player" , True,(200,200,200))
+Player = andy44.render("Player" , True,(200,200,200))
 player2 = andy58.render("Player",True,(255,255,0))
 settings = andy44.render("Settings", True, (200,200,200))
 settings2 = andy58.render("Settings", True, (255,255,0))
@@ -35,7 +35,8 @@ back2 = andy58.render("Back",True,(255,255,0))
 
 volume = andy44.render("Volume",True,(200,200,200))
 
-
+players=[file for file in os.listdir("player/characters")]
+text={"smaller":}
 
 #////////////////////////////////////////////////////////////////
 file1="Audio/01-Menu.mp3"
@@ -174,9 +175,10 @@ while screening:
             if leftClick:
                 playSelect = False
                 screening = False
-                
+                playerSelect=True
+                import character
         else:
-            screen.blit(player,(600,200))
+            screen.blit(Player,(600,200))
 
         if worldRect.collidepoint(mx,my):
             screen.blit(world2,(585,390))
@@ -185,8 +187,19 @@ while screening:
                 screening = False
         else:
             screen.blit(world,(600,400))
+
         display.flip()
 
-        
-    
+    while playerSelect:
+        leftClick = False
+        for evt in event.get():
+            if evt.type == MOUSEBUTTONDOWN:
+                if evt.button == 1:
+                    leftClick = True
+        mx, my = mouse.get_pos()
+        screen.fill(0)
+        background.set_alpha(100)
+        screen.blit(background, (0, 0))
+
+
                 
