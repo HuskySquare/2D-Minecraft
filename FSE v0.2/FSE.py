@@ -1,17 +1,31 @@
-from random import *
-import numpy as np
-import pickle
-from time import time as tm
-from pygame import *
+#Terraria/2D Minecraft
+#Leo Chen, Tailai Wang, Hamza Saqib
+#ICS 3U FSE 2017
+
+"""2/D Minecraft is an open world game where there is no objective whatsorver.
+Walk around and experience the world by slaying mobs, building stuff, or
+just listening to the ambient music. This program involves classes. Most of our
+entities inside the game belong to a class, so take note of the varaible names
+for more clarity"""
+
+
+from random import * #who needs timers??
+import numpy as np #numpy arrays
+import pickle #very important
+from time import time as tm #clocks 
+from pygame import * 
 import math
 import pygame
 
-pygame.init()
+pygame.init() #sound imports
 pygame.mixer.init()
 pygame.mixer.pre_init(22050,-16,2,2048)
-init()
+init() #start the enginessss....
 ######################################################################
-with open("blockspickle.pickle", "rb") as f:
+"""Pickle files preserve data in the directory:
+these are essential in our program, as everything involves reading
+these files"""
+with open("blockspickle.pickle", "rb") as f: 
     blockList = pickle.load(f)
 
 with open("inventory.pickle", "rb") as f:
@@ -22,7 +36,7 @@ with open("trees.pickle", "rb") as f:
 
 screen = display.set_mode((1280, 720))
 
-andy18 = font.Font("fonts/HW ANDY.ttf", 18)
+andy18 = font.Font("fonts/HW ANDY.ttf", 18) #Terraria fonts
 andy16 = font.Font("fonts/HW ANDY.ttf", 16)
 andy22 = font.Font("fonts/HW ANDY.ttf", 22)
 andy44 = font.Font("fonts/HW ANDY.ttf", 44)
@@ -30,17 +44,19 @@ andy58 = font.Font("fonts/HW ANDY.ttf", 58)
 
 clock = time.Clock()
 
-worldSize = (780, 85)
-
+worldSize = (780, 85) #(700x 85 blocks is default)
+ 
 blocksSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
-blocksSurface.fill((0, 0, 0, 0))
+blocksSurface.fill((0, 0, 0, 0)) #transparent
 treesSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
-treesSurface.fill((0, 0, 0, 0))
+treesSurface.fill((0, 0, 0, 0)) #transparent
 playerSurface = Surface((worldSize[0] * 16, worldSize[1] * 16), SRCALPHA)
-playerSurface.fill((0, 0, 0, 0))
+playerSurface.fill((0, 0, 0, 0))#transparent
 uiSurface = Surface((1280, 720), SRCALPHA)
 mainSurface = Surface((1280, 720), SRCALPHA)
 ###########################################################################
+"""For some weird reason loading images as SRCALPHA makes stuff faster.
+We loaded as many images as possible in SRC ALPHA form to economize"""
 background1 = transform.scale(image.load("images/Background_1.png").convert(32, SRCALPHA), (1280, 720))
 background2 = transform.scale(image.load("images/Background_2.png").convert(32, SRCALPHA), (1280, 720))
 background3 = transform.scale(image.load("images/Background_3.png").convert(32, SRCALPHA), (1280, 720))
@@ -48,7 +64,7 @@ background3 = transform.scale(image.load("images/Background_3.png").convert(32, 
 pics = []
 sprite = image.load("player\Sprite0.png")
 
-for i in range(0, 1120, 56):
+for i in range(0, 1120, 56): #player sprites
     pics.append(sprite.subsurface((0, i, 40, 56)))
 
 for i in range(0, 1120, 56):
@@ -57,12 +73,12 @@ for i in range(0, 1120, 56):
 pics = [pics[0:5], [pics[5], pics[5]], pics[6:20], pics[20:25], [pics[25], pics[25]], pics[26:]]
 
 slimePics=[]
-for i in range(4):
+for i in range(4): #slime sprites
     name="slime/slime_"+str(i)+".png"
     slimePics.append(image.load(name))
 
 purpleSlimePics = []
-for i in range(4):
+for i in range(4): #purple slime sprites
     name="slime/slime2_"+str(i)+".png"
     purpleSlimePics.append(image.load(name))
 
@@ -75,8 +91,12 @@ for i in range(2):
     name = "wizard/skeleton_B_"+str(i)+".png"
     wizardPics[1].append(image.load(name))
 
-wizardPics[2].append(image.load("wizard/fire.png"))
+wizardPics[2].append(image.load("wizard/fire.png")) #wizard fire 
 wizardPics[2].append(image.load("wizard/fire2.png"))
+
+""" Bunch of boring block sprites below here, very boring to set up, even more
+boring to read. Each block has 12 different states, dependig on how many
+blocks are next to them, and whether theyre breaking or not"""
 #/////////////////////////////////////////////////////////////////////////    
 tile_crack_1 = image.load("tile_cracks/tile_crack_2.png").convert(32, SRCALPHA)
 tile_crack_2 = image.load("tile_cracks/tile_crack_8.png").convert(32, SRCALPHA)
@@ -179,6 +199,11 @@ block3 = [block3_0, block3_1, block3_2, block3_3, block3_4, block3_5, block3_6, 
 blockImg = [False, block1, block2, block3, False, False, block6, block7, block8]
 blockConditions = [False, 150, 500, 150, False, False, 575, 450, 450]
 #/////////////////////////////////////////////////////////////////////
+""" Inventory sprite load in. All of these were found on the Terraria wiki.
+Again, we used SRCALPHA to speed things up. We have two lists in action here.
+Inventory.pickle keeps track of the player's inventory, and drops list
+keeps track of items on the ground"""
+
 item1 = image.load("items/item_1.png").convert(32, SRCALPHA)
 item2 = image.load("items/item_2.png").convert(32, SRCALPHA)
 item4 = image.load("items/item_4.png").convert(32, SRCALPHA)
@@ -207,6 +232,8 @@ toolSpeeds = [5, 5, 5, 5, 15, 5, 5, 5, 5, 5]
 effTools = [0.5, 0.5, 4, 0.5, 0.5, 0.5, 4]
 dropsList = []
 ############################MUSIC LOADING###############################
+"""Endless ambient music from the Terraria Wiki. We used the pygame wiki
+to learn how to use pygame.mixer"""
 file1="Audio/02-Day.mp3"
 file2="Audio/03-Night.mp3"
 
@@ -222,7 +249,8 @@ pygame.mixer.music.set_endevent(END_MUSIC_EVENT)
 #########################################################################
 """Variable names explain themselves. Each entity in the game has it's on class.
 We simply declare a variable inside the event loop to call the classes and
-their functions"""
+their functions. Each mob has a class, along with the player, blocks inventory,
+and items"""
 class Wizard:
     def __init__(self,x,y,w,h):
         self.rect = Rect(x,y,w,h)
@@ -231,24 +259,24 @@ class Wizard:
         self.vy = 0
         self.frame = 0
         self.attack = 0
-        self.fire = False
+        self.fire = False #attack variables
         self.health = 100
-        self.fireRect = Rect(x,y,w,h)
+        self.fireRect = Rect(x,y,w,h) #for collisions
         self.stuck = False
         self.move = 0
-        self.newMove = -1
-        self.firePos = 0
+        self.newMove = -1 #not moving
+        self.firePos = 0 #fireball x value
 #/////////////////////////////////////////////////////////////////////////////       
     def moveWizard(self):
-        x = randint(1,40)
-        y = randint(1,2)
-        if x==40 and not self.fire:
-            if y==1:
+        x = randint(1,40) #random intengers slow things down, allowing for timing
+        y = randint(1,2) #dictates left or right
+        if x==40 and not self.fire: 
+            if y==1: #Right movement
                 self.stuck = False
-                self.vx = 5
+                self.vx = 5 
                 self.newMove = 1
-            if y==2:
-                self.stuck = False
+            if y==2: #Left movement
+                self.stuck = False 
                 self.vx = -5
                 self.newMove = 0
 
@@ -260,7 +288,7 @@ class Wizard:
         elif self.newMove != -1 and not self.stuck:  # a move was selected
             self.move = self.newMove  # make that our current move
             self.frame = 0
-        if self.stuck:
+        if self.stuck: #moves back to standing frame
             self.frame = 0
 #/////////////////////////////////////////////////////////////////////////////            
     def collide(self):
@@ -270,7 +298,7 @@ class Wizard:
                 if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
                     if self.vx > 0:
                         self.rect.right = blocks[y][x].rect.left
-                        vx = 0
+                        vx = 0 #stop movment if collides with blocks
                         self.stuck = True
                     elif self.vx < 0:
                         self.rect.left = blocks[y][x].rect.right
@@ -281,28 +309,29 @@ class Wizard:
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
             for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
                 if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
-                    if self.vy > 0:
+                    if self.vy > 0: #stop movmeent if collides with blocks
                         self.rect.bottom = blocks[y][x].rect.top
                     elif self.vy < 0:
                         self.rect.top = blocks[y][x].rect.bottom
                 self.vy = 5
                     
-        self.blitPos = [self.rect.x - 8, self.rect.y - 7]
+        self.blitPos = [self.rect.x - 8, self.rect.y - 7] #chaging blit position
+        #we did -8, -7 since sprites are weird
 
     def attackFunc(self):
         if self.fireRect.colliderect(player.rect) and player.health >= 3 and self.fire and not player.hit:
-            player.hit = 500
-            player.health -= 3
+            player.hit = 500 #counter that delays damage
+            player.health -= 3 #subtracting damage
         elif self.fireRect.colliderect(player.rect) and self.fire and not player.hit:
             player.hit = 500
             player.health = 0
             
 #/////////////////////////////////////////////////////////////////////////
-    def clear(self):
+    def clear(self): #draws tramsparent rect to clear space
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 300, self.blitPos[1] - 50, 550, 150))
 #/////////////////////////////////////////////////////////////////////////        
-    def draw(self):
-        self.attack = randint(1,50)
+    def draw(self): #actual drawing function
+        self.attack = randint(1,50) #draws fireball
         if player.hit:
             self.fire = False
         if self.fire:
@@ -310,15 +339,15 @@ class Wizard:
                 playerSurface.blit(wizardPics[2][0],(self.rect.x -4 + self.firePos, self.rect.y - 7))
                 self.firePos += 5
                 self.fireRect = Rect (self.rect.x - 4 + self.firePos, self.rect.y - 7, wizardPics[2][0].get_width(),wizardPics[2][0].get_height())
-            elif self.move == 0:
+            elif self.move == 0: #making hitbox, dictation of movement
                 playerSurface.blit(wizardPics[2][1],(self.rect.x - 60 + self.firePos, self.rect.y - 7))
-                self.firePos -= 5
+                self.firePos -= 5 #moving x value
                 self.fireRect = Rect (self.rect.x - 60 + self.firePos, self.rect.y - 7, wizardPics[2][1].get_width(),wizardPics[2][1].get_height())
-            if abs(self.firePos) > 150:
+            if abs(self.firePos) > 150: #if it moves out of range
                 self.fire = False
         if self.attack == 50:
             if not self.fire:
-                if self.move == 1:
+                if self.move == 1: #choosing fire direction
                     playerSurface.blit(wizardPics[2][0],(self.rect.x -4, self.rect.y - 7))
                     self.fire = True
                 if self.move == 0:
@@ -327,29 +356,29 @@ class Wizard:
                 self.firePos = 0
             elif self.firePos > 50:
                 self.fire = False
-        pic = wizardPics[self.move][int(self.frame)]
-        playerSurface.blit(pic,self.blitPos)
+        pic = wizardPics[self.move][int(self.frame)] #from mario example
+        playerSurface.blit(pic,self.blitPos) #blitting
         self.healthRect = Rect(self.rect.x-20,self.rect.y-20,int(self.health/2),10)
-        draw.rect(playerSurface,(255,0,0),self.healthRect)
+        draw.rect(playerSurface,(255,0,0),self.healthRect) #wizard health bar
 #############################################################################
-class PurpleSlime:
+class PurpleSlime: 
     def __init__(self,x,y,w,h):
         self.rect = Rect(x,y,w,h)
         self.blitPos = [x - 8, y - 7]
         self.vx = 0
         self.vy = 0
         self.jumping = False
-        self.right = False
+        self.right = False #directional boolean
         self.left = False
         self.frame = 0
         self.attack = 0
         self.health = 100
-        self.delete = False
+        self.delete = False #if it dies, it gets deleted
 #////////////////////////////////////////////////////////////////////////////
     def moveSlime(self):
         distance = abs(player.rect.x - slime.rect.x)
         x = randint(1,60)
-        if x == 60:
+        if x == 60: #chooses direction
             if distance <400:
                 if self.rect.x <player.rect.x and not self.jumping:
                     self.vx = 10
@@ -363,46 +392,46 @@ class PurpleSlime:
                     self.left = True
 #//////////////////////////////////////////////////////////////////////////
     def collide(self):
-        self.rect.x += self.vx
+        self.rect.x += self.vx #adding x 
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
             for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
                 if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
-                    if self.vx > 0:
+                    if self.vx > 0: #cancelling if collision
                         self.rect.right = blocks[y][x].rect.left
                     elif self.vx < 0:
                         self.rect.left = blocks[y][x].rect.right
-        self.rect.y += self.vy            
+        self.rect.y += self.vy #adding y
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
             for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
                 if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
                     self.vy = 5
-                    if self.vy > 0:
+                    if self.vy > 0: #cancelling if collision
                         self.rect.bottom = blocks[y][x].rect.top
                         self.jumping = False
                     elif self.vy < 0:
                         self.rect.top = blocks[y][x].rect.bottom
 
-        if self.right and self.vx > 0:
+        if self.right and self.vx > 0: #makes things smoother
             self.vx -= 0.7
         else:
             self.vx = 0
             self.jumping = False
             self.right = False
 
-        if self.left and self.vx <0:
+        if self.left and self.vx <0: #makes motion smoother
             self.vx += 0.7
         else:
             self.vx = 0
             self.jumping = False
             self.left = False
-        if self.vy < 30:
+        if self.vy < 30: #terminal velocity
             self.vy += 0.7
         if self.vy == 0:
             self.jumping = False
         
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
-        self.attack = randint(1,100)
+        self.attack = randint(1,100) 
 
     def attackFunc(self):
         if self.rect.colliderect(player.rect) and player.health >= 2 and self.attack==25 and not player.hit:
@@ -412,10 +441,10 @@ class PurpleSlime:
             player.health = 0
             player.hit = 500
 #////////////////////////////////////////////////////////////////////////////
-    def clear(self):
+    def clear(self): #drawing rectangle to clear surroundings
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
 #///////////////////////////////////////////////////////////////////////////
-    def draw(self):
+    def draw(self): #drawing
         x=randint(1,5)
         if x==5:
             if self.frame<3:
@@ -425,26 +454,26 @@ class PurpleSlime:
         pic = purpleSlimePics[int(self.frame)]
         playerSurface.blit(pic,self.blitPos)
         self.healthRect = Rect(self.rect.x-20,self.rect.y-20,int(self.health/2),10)
-        draw.rect(playerSurface,(255,0,0),self.healthRect)
+        draw.rect(playerSurface,(255,0,0),self.healthRect) #health bar
 ############################################################################          
-class Slime:
+class Slime: #same as regular slime
     def __init__(self, x, y, w, h):
         self.rect = Rect(x, y, w, h)
         self.blitPos = [ x - 8, y - 7]
-        self.vx = 0
+        self.vx = 0 #velocity
         self.vy = 0
         self.jumping = False
-        self.right = False
+        self.right = False #directional boolean
         self.left = False
         self.frame = 0
         self.attack = 0
         self.health = 100
-        self.delete= False
+        self.delete= False #deletes after dead
     def moveSlime(self):
-        distance = abs(player.rect.x - slime.rect.x)
-        x = randint(1,60)
-        if x==60:
-            if distance < 500: 
+        distance = abs(player.rect.x - slime.rect.x) #distance between slime and player
+        x = randint(1,60) #distance variable
+        if x==60: 
+            if distance < 500:  #stops after above 500
                 if self.rect.x  <  player.rect.x and not self.jumping:
                     self.vx = 7
                     self.vy = -7
@@ -455,16 +484,16 @@ class Slime:
                     self.vy= -7
                     self.jumping = True
                     self.left = True
-    def collide(self):
-        self.rect.x += self.vx
+    def collide(self): #checks collisions
+        self.rect.x += self.vx #adding x
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
             for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
                 if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
-                    if self.vx > 0:
+                    if self.vx > 0: #cancelling if collision
                         self.rect.right = blocks[y][x].rect.left
                     elif self.vx < 0:
                         self.rect.left = blocks[y][x].rect.right
-        self.rect.y += self.vy            
+        self.rect.y += self.vy #adding y  
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
             for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
                 if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
@@ -475,20 +504,20 @@ class Slime:
                     elif self.vy < 0:
                         self.rect.top = blocks[y][x].rect.bottom
 
-        if self.right and self.vx > 0:
+        if self.right and self.vx > 0: #smoothens out bounce
             self.vx -= 0.7
         else:
             self.vx = 0
             self.jumping = False
             self.right = False
 
-        if self.left and self.vx <0:
+        if self.left and self.vx <0: #smoothes out bounce
             self.vx += 0.7
         else:
             self.vx = 0
             self.jumping = False
             self.left = False
-        if self.vy < 30:
+        if self.vy < 30: #terminal velocity
             self.vy += 0.7
         if self.vy == 0:
             self.jumping = False
@@ -496,7 +525,7 @@ class Slime:
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
         self.attack = randint(1,120)
-    def attackFunc(self):
+    def attackFunc(self): #attacks with 1 damage 
         if self.rect.colliderect(player.rect) and player.health >= 1 and self.attack==25 and not player.hit:
             player.health -= 1
             player.hit = 500
@@ -504,10 +533,10 @@ class Slime:
             player.health = 0
             player.hit = 500
         
-    def clear(self):
+    def clear(self): #clears area
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
         
-    def draw(self):
+    def draw(self): #draws images
         x=randint(1,5)
         if x==5:
             if self.frame<3:
@@ -517,7 +546,7 @@ class Slime:
         pic = slimePics[int(self.frame)]
         playerSurface.blit(pic,self.blitPos)
         self.healthRect = Rect(self.rect.x-20,self.rect.y-20,int(self.health/2),10)
-        draw.rect(playerSurface,(255,0,0),self.healthRect)
+        draw.rect(playerSurface,(255,0,0),self.healthRect) #health bar
 #########################################################################
 class Player:
     def __init__(self, x, y, w, h):
@@ -525,49 +554,49 @@ class Player:
         self.blitPos = [x - 8, y - 7]
         self.vx = 0
         self.vy = 0
-        self.jumping = False
+        self.jumping = False 
         self.move = 1
-        self.newMove = -1
+        self.newMove = -1 #not moving
         self.frame = 0
-        self.health = 100
+        self.health = 100 #player health
         self.breaking = False
-        self.hit = 0
+        self.hit = 0 #not hit
 
     def movePlayer(self):
-        keys = key.get_pressed()
+        keys = key.get_pressed() #we use keys here b/c user input
 
-        self.newMove = -1
+        self.newMove = -1 #newmove always -1 until key pessed
 
-        if self.breaking:
+        if self.breaking: #if breaking or hitting an object
             if self.move == 2 or self.move == 0:
                 self.newMove = 0
             else:
                 self.newMove = 3
-        else:
+        else: #if henning tries to spam keys
             if keys[K_d] and keys[K_a]:
                 self.frame = 0
 
-            else:
+            else: 
                 if keys[K_d] and self.rect.x < worldSize[0] * 16 - 629:
-                    if not self.jumping:
+                    if not self.jumping: #right movement
                         self.newMove = 2
                     self.vx = 3
                 elif keys[K_a] and self.rect.x > 629:
-                    if not self.jumping:
+                    if not self.jumping: #left movement
                         self.newMove = 5
                     self.vx = -3
-                else:
+                else: #returns to standing position
                     self.frame = 0
 
             if keys[K_w] and not self.jumping:
-                self.vy = -15
+                self.vy = -15 #jumps up
                 self.jumping = True
-                if self.move == 2 or self.move == 1:
+                if self.move == 2 or self.move == 1: #jumping animation
                     self.newMove = 1
                 else:
                     self.newMove = 4
 
-            elif self.jumping:
+            elif self.jumping: #doesnt return to walking sprite, stays jumping
                 if keys[K_d]:
                     self.newMove = 1
                 elif keys[K_a]:
@@ -588,22 +617,22 @@ class Player:
             self.frame = 1
 
     def collide(self):
-        self.rect.y += self.vy
+        self.rect.y += self.vy #adding y first 
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
             for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
                 if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
-                    if self.vy > 0:
+                    if self.vy > 0: #canceling if theres a collision
                         self.rect.bottom = blocks[y][x].rect.top
                         self.jumping = False
                     elif self.vy < 0:
                         self.rect.top = blocks[y][x].rect.bottom
                     self.vy = 5
 
-        self.rect.x += self.vx
+        self.rect.x += self.vx #adding x 
         for x in range(self.rect.centerx // 16 - 1, self.rect.centerx // 16 + 2):
             for y in range(self.rect.centery // 16 - 2, self.rect.centery // 16 + 3):
                 if blocks[y][x].id != 0 and self.rect.colliderect(blocks[y][x].rect):
-                    if self.vx > 0:
+                    if self.vx > 0: #cancelling if theres a collision
                         self.rect.right = blocks[y][x].rect.left
                     elif self.vx < 0:
                         self.rect.left = blocks[y][x].rect.right
@@ -612,74 +641,76 @@ class Player:
                     ##            self.vy += 2
                     ##        elif not self.jumping:
                     ##            self.vy = 5
-        if self.vy < 30:
+        if self.vy < 30: #adding until terminal velocity
             self.vy += 2
 
-        self.vx = 0
+        self.vx = 0 #stays zero once its addded
 
         self.blitPos = [self.rect.x - 8, self.rect.y - 7]
-        for slime in slimeList:
+        for slime in slimeList: #slime damage thing too lazy to move
             if slime.rect.colliderect(self.rect) and self.health>=10 and slime.attack==25:
                 self.health -= 10
             elif slime.rect.colliderect(self.rect) and slime.attack==25:
                 self.heatlh = 0
 
-    def attack(self):
-        for slime in slimeList:
+    def attack(self): #player attacks
+        """In this function we utilized a lot of colliderect. If the player was holding a weapon, swinging
+        and colliding with an enemy the appropriate damage was dealth. Mobs drop gel when killed"""
+        for slime in slimeList: #if player breaks on slime
             if slime.rect.colliderect(self.rect):
                 if inventoryList[inventory.selected].id == 5:
                     if slime.health >= 4:
                         slime.health -= 4
                         self.breaking = True
-                    elif slime.rect.colliderect(self.rect):
+                    elif slime.rect.colliderect(self.rect): #if collision
                         slime.heatlh = 0
-                        slime.delete = True
+                        slime.delete = True #deleting and dropping gell
                         dropsList.append(Drop(slime.rect.x//16, slime.rect.y//16, 9))
                         self.breaking = False
                 else:
                     if slime.health >= 1:
-                        slime.health -= 1
+                        slime.health -= 1 #taking one away
                         self.breaking = True
                     elif slime.rect.colliderect(self.rect):
                         slime.heatlh = 0
-                        slime.delete = True
+                        slime.delete = True #dropping gel and deleting slime
                         dropsList.append(Drop(slime.rect.x//16, slime.rect.y//16, 9))
                         self.breaking = False
 
-        for purpSlime in purpleSlimeList:
+        for purpSlime in purpleSlimeList: #if we attack or hit purple slime
             if purpSlime.rect.colliderect(self.rect):
                 if inventoryList[inventory.selected].id == 5:
-                    if purpSlime.health >= 3:
+                    if purpSlime.health >= 3: #hitting with sword or whatever
                         purpSlime.health -= 3
                         self.breaking = True
                     elif purpSlime.rect.colliderect(self.rect):
                         purpSlime.heatlh = 0
-                        purpSlime.delete = True
+                        purpSlime.delete = True #deleted to oblivionnn
                         dropsList.append(Drop(purpSlime.rect.x//16, purpSlime.rect.y//16, 9))
                         self.breaking = False
                 else:
                     if purpSlime.health >= 1:
                         purpSlime.health -= 1
                         self.breaking = True
-                    elif purpSlime.rect.colliderect(self.rect):
-                        purpSlime.heatlh = 0
+                    elif purpSlime.rect.colliderect(self.rect): #collisions
+                        purpSlime.heatlh = 0 #dropping gel and deleted
                         purpSlime.delete = True
                         dropsList.append(Drop(purpSlime.rect.x//16, purpSlime.rect.y//16, 9))
                         self.breaking = False
 
         if wizard.rect.colliderect(self.rect):
             if inventoryList[inventory.selected].id == 5:
-                if wizard.health >= 3:
+                if wizard.health >= 3: #same thing for wizard
                     wizard.health -= 3
                     self.breaking = True
                 elif wizard.rect.colliderect(self.rect):
-                    wizard.heatlh = 0
+                    wizard.heatlh = 0 #checking for collision and killing it
                     wizard.delete = True
                     dropsList.append(Drop(wizard.rect.x // 16, wizard.rect.y // 16, 9))
                     self.breaking = False
             else:
                 if wizard.health >= 1:
-                    wizard.health -= 1
+                    wizard.health -= 1 #deleting to oblivion after
                     self.breaking = True
                 elif wizard.rect.colliderect(self.rect):
                     wizard.heatlh = 0
@@ -688,17 +719,17 @@ class Player:
                     self.breaking = False
 
 
-    def clear(self):
+    def clear(self): #draws transparent rect to clear room
         draw.rect(playerSurface, (0, 0, 0, 0), (self.blitPos[0] - 50, self.blitPos[1] - 50, 150, 150))
 
-    def draw(self):
+    def draw(self): #blits image
         pic = pics[self.move][int(self.frame)]
         playerSurface.blit(pic, self.blitPos)
-        if (self.move == 0 or self.move == 3) and inventoryList[inventory.selected].type == TOOL:
+        if (self.move == 0 or self.move == 3) and inventoryList[inventory.selected].type == TOOL: #draws current tool being held by player
             playerSurface.blit(itemSprites[inventoryList[inventory.selected].id][self.move][int(self.frame)], (self.blitPos[0] - 20, self.blitPos[1]))
-        uiSurface.fill((0, 0, 0, 0))
+        uiSurface.fill((0, 0, 0, 0)) #health bar stuff, andy22 is the font. 
         uiSurface.blit(andy22.render(str(self.health) + " / " + "100", 1, (255, 255, 255)), (1120, 10))
-        for i in range(0, self.health, 20):
+        for i in range(0, self.health, 20): #drawing hearts
             uiSurface.blit(heart, (1095 + 27 * i/20, 40))
 
 
