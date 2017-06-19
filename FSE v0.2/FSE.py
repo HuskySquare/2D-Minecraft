@@ -1165,16 +1165,17 @@ while running:
         alphaCount=time//20330
     #///////////////////////////////////////////////////////////////////////////
         if mb[0] == 1:
-            trees[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
-            blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
-            player.attack()
-            for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
-                for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
-                    blocks[y][x].update()
-            for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
-                for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
-                    blocks[y][x].draw()
-                    trees[y][x].draw()
+            if abs((player.rect.y - 339 + my) // 16 - player.rect.y // 16) < 5 and abs((player.rect.x - 629 + mx) // 16 - player.rect.x // 16) < 5:
+                trees[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
+                blocks[(player.rect.y - 339 + my) // 16][(player.rect.x - 629 + mx) // 16].breakBlock()
+                player.attack()
+                for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
+                    for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
+                        blocks[y][x].update()
+                for x in range((player.rect.x - 629 + mx) // 16 - 1, (player.rect.x - 629 + mx) // 16 + 2):
+                    for y in range((player.rect.y - 339 + my) // 16 - 1, (player.rect.y - 339 + my) // 16 + 2):
+                        blocks[y][x].draw()
+                        trees[y][x].draw()
 
         elif player.breaking == True:
             player.breaking = False
