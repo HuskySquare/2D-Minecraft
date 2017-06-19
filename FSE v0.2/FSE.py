@@ -266,7 +266,8 @@ class Wizard:
         self.move = 0
         self.newMove = -1 #not moving
         self.firePos = 0 #fireball x value
-#/////////////////////////////////////////////////////////////////////////////       
+        self.delete = False
+#/////////////////////////////////////////////////////////////////////////////
     def moveWizard(self):
         x = randint(1,40) #random intengers slow things down, allowing for timing
         y = randint(1,2) #dictates left or right
@@ -697,26 +698,26 @@ class Player:
                         purpSlime.delete = True
                         dropsList.append(Drop(purpSlime.rect.x//16, purpSlime.rect.y//16, 9))
                         self.breaking = False
-
-        if wizard.rect.colliderect(self.rect):
-            if inventoryList[inventory.selected].id == 5:
-                if wizard.health >= 3: #same thing for wizard
-                    wizard.health -= 3
-                    self.breaking = True
-                elif wizard.rect.colliderect(self.rect):
-                    wizard.heatlh = 0 #checking for collision and killing it
-                    wizard.delete = True
-                    dropsList.append(Drop(wizard.rect.x // 16, wizard.rect.y // 16, 9))
-                    self.breaking = False
-            else:
-                if wizard.health >= 1:
-                    wizard.health -= 1 #deleting to oblivion after
-                    self.breaking = True
-                elif wizard.rect.colliderect(self.rect):
-                    wizard.heatlh = 0
-                    wizard.delete = True
-                    dropsList.append(Drop(wizard.rect.x // 16, wizard.rect.y // 16, 9))
-                    self.breaking = False
+        for wizard in wizardList:
+            if wizard.rect.colliderect(self.rect):
+                if inventoryList[inventory.selected].id == 5:
+                    if wizard.health >= 3: #same thing for wizard
+                        wizard.health -= 3
+                        self.breaking = True
+                    elif wizard.rect.colliderect(self.rect):
+                        wizard.heatlh = 0 #checking for collision and killing it
+                        wizard.delete = True
+                        dropsList.append(Drop(wizard.rect.x // 16, wizard.rect.y // 16, 9))
+                        self.breaking = False
+                else:
+                    if wizard.health >= 1:
+                        wizard.health -= 1 #deleting to oblivion after
+                        self.breaking = True
+                    elif wizard.rect.colliderect(self.rect):
+                        wizard.heatlh = 0
+                        wizard.delete = True
+                        dropsList.append(Drop(wizard.rect.x // 16, wizard.rect.y // 16, 9))
+                        self.breaking = False
 
 
     def clear(self): #draws transparent rect to clear room
@@ -1074,8 +1075,11 @@ for i in range(10):
 drawBlocks(0, len(blocks[0]) - 1, 0, len(blocks) - 1)
 ###########################################################################
 player = Player(629, 339, 24, 45)
+wizardList = []
+for i in range(3):
+    wizard = Wizard(randint(700,1800),319,20,37)
+    wizardList.append(wizard)
 
-wizard = Wizard(700,319,20,37)
 
 slimeList=[]
 for i in range(5):
@@ -1215,35 +1219,38 @@ while running:
                 drop.collidePlayer1()
             dropsList = [drop for drop in dropsList if not drop.delete]
         if len(dropsList) != 0:
-            for drop in dropsList:
+            for drop in dropsList: #checking collision
                 if not drop.dist:
                     drop.collidePlayer2()
-            dropsList = [drop for drop in dropsList if not drop.delete]
+            dropsList = [drop for drop in dropsList if not drop.delete] #if its gone, delete from list
         if len(dropsList) != 0:
             for drop in dropsList:
-                if not drop.dist:
+                if not drop.dist: #calling the class functions
                     drop.collide()
                 drop.clear()
 
-        for slime in slimeList:
+        for slime in slimeList: #calling the class functions
             slime.moveSlime()
             slime.collide()
             slime.clear()
 
         slimeList = [slime for slime in slimeList if not slime.delete]
 
-        for purpSlime in purpleSlimeList:
+        for purpSlime in purpleSlimeList: #calling the class functions
             purpSlime.moveSlime()
             purpSlime.collide()
             purpSlime.clear()
 
         purpleSlimeList = [purpSlime for purpSlime in purpleSlimeList if not purpSlime.delete]
+        #deleting dead ones
+        for wizard in wizardList: #calling the class functions
+            wizard.moveWizard()
+            wizard.collide()
+            wizard.clear()
 
-        wizard.moveWizard()
-        wizard.collide()
-        wizard.clear()
-
-        player.movePlayer()
+        wizardList = [wizard for wizard in wizardList if not wizard.delete]
+        #deleting dead ones
+        player.movePlayer() #calling the class functions
         player.collide()
         player.clear()
 
@@ -1253,15 +1260,17 @@ while running:
             for drop in dropsList:
                 drop.draw()
 
-        for slime in slimeList:
+        for slime in slimeList: #calling the class functions
             slime.draw()
 
-        for purpSlime in purpleSlimeList:
+        for purpSlime in purpleSlimeList:#calling the class functions
             purpSlime.draw()
 
-        wizard.draw()
+        for wizard in wizardList:#calling the class functions
+            wizard.draw()
+
         player.draw()
-        for item in inventoryList:
+        for item in inventoryList:#calling the class functions
             item.draw()
 
 
@@ -1285,8 +1294,8 @@ while running:
         if player.health == 0:
             dead = True
 
-    if dead:
-        screenRect = Rect(0,0,1280,720)
+    if dead: #pauses game, resets health
+        screenRect = Rect(0,0,1280,720)  #UI stuff
         draw.rect(screen,(0,0,0,250),screenRect)
         restart = andy44.render("Restart", True, (200,200,200))
         restart2 = andy58.render("Restart", True, (255,255,0))
@@ -1297,7 +1306,7 @@ while running:
         closeRect = Rect(600,600,90,50)
         restartRect = Rect(570,500,160,50)
         
-        if closeRect.collidepoint(mx,my):
+        if closeRect.collidepoint(mx,my): #yellow highlight
             screen.blit(close2,(600,590))
             if leftClick:
                 quit()
@@ -1313,29 +1322,29 @@ while running:
         else:
             screen.blit(restart,(590,500))
 
-        display.flip()
+        display.flip() #update screen
         
-    if paused:
-        screenRect = Rect(0,0,1280,720)
+    if paused: #press ESC to pause
+        screenRect = Rect(0,0,1280,720) #UI stuff
         draw.rect(screen,(0,0,0,250),screenRect)
         close = andy44.render("Exit",True,(200,200,200))
         close2 = andy58.render("Exit", True,(255,255,0))
         infoText = andy44.render("Press Esc. to Resume",True,(200,200,200))
         screen.blit(infoText,(480,300))
         closeRect = Rect(630,600,60,50)
-        if closeRect.collidepoint(mx,my):
+        if closeRect.collidepoint(mx,my): #yellow highlights
             screen.blit(close2,(620,590))
-            if leftClick:
+            if leftClick: #closes game
                 quit()
         else:
             screen.blit(close,(630,600))
 
         display.flip()
 with open('blockspickle.pickle', 'wb') as f:
-    pickle.dump(blockList, f)
+    pickle.dump(blockList, f) #updating pickle file
 
 with open("inventory.pickle", "wb") as f:
-    pickle.dump(inventoryPickleList, f)
+    pickle.dump(inventoryPickleList, f) #updating pickle file
 
 with open("trees.pickle", "wb") as f:
     pickle.dump(treesList, f)
