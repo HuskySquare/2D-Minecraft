@@ -7,7 +7,7 @@ from pygame import *
 
 init()  # Initialzie directly after importing to avoid module conflicts
 import os #Used similar for glob
-
+playerflag=False
 img = {"hair": [],
        "head": image.load("player/Player_Head.png").subsurface(0, 0, 40, 56).copy(),
        "undershirt": image.load("player/Player_Undershirt.png").subsurface(0, 0, 40, 56).copy(),
@@ -375,7 +375,7 @@ class shoes():
 
 
 def create():
-    global temp
+    global temp,playerflag
     bg = Surface((40, 1120), SRCALPHA)
     bg2 = Surface((40, 1120), SRCALPHA)
 
@@ -431,9 +431,9 @@ def create():
         current.draw(bg, temp, (0, i))
 
         bg2.blit(hand2, (0, i))
-    image.save(bg, "player/Characters/everything.png")
-    image.save(bg2, "player/Characters/hands2.png")
-    import FSE
+    image.save(bg, "player/Characters/everything1.png")
+    playerflag=True
+
     import FSE
 # everything{0}.png".format(
 #         "".join(os.listdir("player/Characters")).count("everything") + 1))

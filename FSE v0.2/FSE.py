@@ -25,13 +25,13 @@ init() #start the enginessss....
 """Pickle files preserve data in the directory:
 these are essential in our program, as everything involves reading
 these files"""
-with open("blockspickle.pickle", "rb") as f: 
+with open("world/blockspickle.pickle", "rb") as f:
     blockList = pickle.load(f)
 
 with open("inventory.pickle", "rb") as f:
     inventoryPickleList = pickle.load(f)
 
-with open("trees.pickle", "rb") as f:
+with open("world/trees.pickle", "rb") as f:
     treesList = pickle.load(f)
 
 screen = display.set_mode((1280, 720))
@@ -62,7 +62,7 @@ background2 = transform.scale(image.load("images/Background_2.png").convert(32, 
 background3 = transform.scale(image.load("images/Background_3.png").convert(32, SRCALPHA), (1280, 720))
 
 pics = []
-sprite = image.load("player/Characters/everything.png")
+sprite = image.load("player/Characters/everything1.png")
 
 for i in range(0, 1120, 56): #player sprites
     pics.append(sprite.subsurface((0, i, 40, 56)))
@@ -1093,7 +1093,6 @@ BLOCK = 1
 TOOL = 2
 deleteList = []
 ##########################################################################
-import menu
 
 pygame.mixer.music.load(music[0])
 pygame.mixer.music.play()
