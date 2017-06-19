@@ -407,6 +407,7 @@ def create():
         bg2.blit(hand2,(0,i))
     image.save(bg,"player/Characters/everything{0}.png".format("".join(os.listdir("player/Characters")).count("everything")+1))
     image.save(bg2,"player/Characters/hands2_{0}.png".format("".join(os.listdir("player/Characters")).count("hands")+1))
+    import FSE
 running= True
 intro()
 
