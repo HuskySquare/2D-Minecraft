@@ -43,7 +43,7 @@ screen.fill((255, 255, 255))
 
 background = transform.scale(image.load("images/background.png"), (1248, 704))
 background.set_alpha(100)
-bar = image.load("Hue.png")
+bar = image.load("player/Hue.png")
 andy = font.Font("player/HW ANDY.ttf", 50)
 clock = time.Clock()
 counter = 0  # Used to control what hair to use
