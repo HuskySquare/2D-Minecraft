@@ -161,7 +161,7 @@ while screening:
         if buttonRectQuit.collidepoint((mx,my)):
             screen.blit(leave2,(603,470))
             if leftClick:
-                out=open("falg.txt","w")
+                out=open("flag.txt","w")
                 out.write("0")
                 out.close()
                 quit()
