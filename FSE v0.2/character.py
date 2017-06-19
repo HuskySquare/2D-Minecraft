@@ -36,7 +36,7 @@ x = [file for file in os.listdir("player/hair")]  # x is a temporary variable th
 for i, j in zip(x, range(1, len(x) + 1)):
     names.append("Hair {0}".format(j))
     img["hair"].append(image.load("player/hair/" + i).subsurface(0, 0, 40, 56).copy())
-    
+
 del x
 screen = display.set_mode((1248, 704))
 screen.fill((255, 255, 255))
@@ -67,9 +67,9 @@ options = {"hair": andy.render("Hair", 1, (200,200,200)), "skin": andy.render("S
            "undershirt": andy.render("Undershirt", 1, (200,200,200)), "pants": andy.render("Pants", 1, (200,200,200)),
            "shoes": andy.render("Shoes", 1, (200,200,200)), "eye": andy.render("Eyes", 1, (200,200,200))}
 # options is a dictionary storing all the text surface
- 
- 
- 
+
+
+
 class current():  #current is a class that is dedicated to draw to the person on the screen.
     def __init__(self, head, hair, undershirt, shirt, pants, shoes, hands, eye):
         self.head = head
@@ -82,7 +82,7 @@ class current():  #current is a class that is dedicated to draw to the person on
         self.eye1 = img["eye1"].copy()
         self.eye2 = eye
 
-    def draw(bg, self, pos):   #the draw function draws the person at pos in order. 
+    def draw(bg, self, pos):   #the draw function draws the person at pos in order.
         bg.blit(self.head, pos)
         bg.blit(self.eye1, pos)
         bg.blit(self.eye2, pos)
@@ -118,20 +118,20 @@ The classes used below work similarly.
 The menu fucntion draws the interface while the check the function check for mouse collision
 '''
 
-class intro():  # The interface 
+class intro():  # The interface
 
     def menu():      #This draws the menu
-        screen.fill((0, 0, 0)) #fills black screen first    
+        screen.fill((0, 0, 0)) #fills black screen first
         screen.blit(background, (0, 0)) #background is translucent: gives cool effect
         current.draw(screen, default, rect["intro"]["body"][:2])
-        
+
         screen.blit(options["hair"], rect["intro"]["hair"][:2]) #blitting text options on screen
         screen.blit(options["eye"], rect["intro"]["eye"][:2])
         screen.blit(options["skin"], rect["intro"]["skin"][:2])
         screen.blit(options["clothes"], rect["intro"]["clothes"][:2])
         screen.blit(options["create"], rect["intro"]["create"][:2])
-        
-        
+
+
     def check():
         global anchor #the anchor changes based on what you click
         if Rect(rect["intro"]["hair"]).collidepoint(mx, my) and mb[0] == 1:
@@ -154,10 +154,10 @@ class intro():  # The interface
 
 class eye():
     def menu():
-        global colour 
+        global colour
         screen.fill((0, 0, 0)) #fills black
         screen.blit(background, (0, 0)) #adjusted alpha on background
-        screen.blit(bar, rect["eye"]["bar"][:2]) #blits if eye is selected 
+        screen.blit(bar, rect["eye"]["bar"][:2]) #blits if eye is selected
         screen.blit(options["back"], rect["eye"]["back"][:2])
         temp = img["eye2"].copy()
         temp.fill(Color(255, 255, 255) - colour["eye"], special_flags=BLEND_SUB)
@@ -228,33 +228,7 @@ class hair():
             anchor = "intro"
             intro.menu()
 
-    def updatehair():
-        global counter, colour, h
-        counter += 1
-        try:
-            screen.fill((0, 0, 0))
-            screen.blit(background, (0, 0))
-            screen.blit(bar, (478, 298))
-            screen.blit(andy.render(names[counter], 1, (0, 0, 0)), (499, 208))
-            h = hair[counter].copy()
-            h.fill(Color(255, 255, 255) - colour, special_flags=BLEND_SUB)
-            default.hair = h
-            current.draw(screen, default, (604, 65))
-            # screen.blit(h, (530,65))
-        except IndexError:
-            counter = 0
-
-    def updatecolour():
-        global counter, colour, text
-        colour = screen.get_at((mx, my))
-        screen.fill((0, 0, 0))
-        screen.blit(background, (0, 0))
-        screen.blit(bar, (478, 298))
-        screen.blit(andy.render(names[counter], 1, (0, 0, 0)), (499, 208))
-        h = img["hair"][counter].subsurface(0, 0, 40, 56).copy()
-        h.fill(Color(255, 255, 255) - colour, special_flags=BLEND_SUB)
-        # screen.blit(h, (530, 65))
-
+    
 
 class clothes():
     def menu():
@@ -271,7 +245,7 @@ class clothes():
 
     def check():
         global anchor
-    
+
         if Rect(rect["clothes"]["back"]).collidepoint(mx, my) and mb[0] == 1:
             anchor = "intro"
             intro.menu()
@@ -374,10 +348,10 @@ class shoes():
             clothes.menu()
 
 
-def create():
-    global temp
-    bg = Surface((40, 1120), SRCALPHA)
-    bg2 = Surface((40, 1120), SRCALPHA)
+def create():   #A function made for saving the entire person and used it in the game.
+    
+    bg = Surface((40, 1120), SRCALPHA)  # A surface used to save with the entire person.
+    bg2 = Surface((40, 1120), SRCALPHA)  # A surface used to save with onlt the alternative hands.
 
     for i in range(0, 1120, 56):
         save = []
@@ -408,7 +382,6 @@ def create():
         else:
             save.append(image.load("player/Player_Head.png").subsurface(0, i, 40, 54).copy())
             save.append(img["hair"][counter].copy())
-
             save.append(image.load("player/Player_Undershirt.png").subsurface(0, i, 40, 54).copy())
             save.append(image.load("player/Player_Shirt.png").subsurface(0, i, 40, 54).copy())
             save.append(image.load("player/Player_Pants.png").subsurface(0, i, 40, 56).copy())
@@ -432,7 +405,7 @@ def create():
 
         bg2.blit(hand2, (0, i))
     image.save(bg, "player/Characters/everything1.png")
-    out=open("flag.txt","w")  # flag.txt file serves the purpose as a flag so when the user return the menu, it will return back to the previously opened window. 
+    out=open("flag.txt","w")  # flag.txt file serves the purpose as a flag so when the user return the menu, it will return back to the previously opened window.
     out.write("1")
     out.close()
     import menu   #Go back to the menu
@@ -441,7 +414,7 @@ running = True
 intro() #Initialzie the intro window
 
 while running:
-    
+
     mx, my = mouse.get_pos()
     mb = mouse.get_pressed()
 
@@ -464,7 +437,7 @@ while running:
         pants.check()
     elif anchor == "shoes":
         shoes.check()
-   
+
 
     for evt in event.get():
         if evt.type == QUIT:
@@ -476,7 +449,7 @@ while running:
                 rightClick = True
 
     display.flip()
-    clock.tick(15) 
+    clock.tick(15)
 
 quit()
 
